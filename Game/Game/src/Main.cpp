@@ -12,7 +12,7 @@
 # include "Common.hpp"
 # include "Title.hpp"
 # include "HowTo.hpp"
-# include "Game.hpp"
+# include "Battle.hpp"
 
 void Main()
 {
@@ -37,7 +37,7 @@ void Main()
 	manager
 		.add<Title>(State::Title)
 		.add<HowTo>(State::HowTo)
-		.add<Game>(State::Game)
+		.add<Battle>(State::Battle)
 		.setFadeColor(ColorF(1.0));
 
 	// （ゲームシーンから開始する場合はコメントを外す）

@@ -9,7 +9,7 @@ enum class State
 
 	HowTo,
 
-	Game
+	Battle
 };
 
 // ゲームデータ

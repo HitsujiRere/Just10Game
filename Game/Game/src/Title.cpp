@@ -20,7 +20,7 @@ void Title::update()
 
 	if (m_startButton.leftClicked())
 	{
-		changeScene(State::Game);
+		changeScene(State::Battle);
 	}
 
 	if (m_howtoButton.leftClicked())
