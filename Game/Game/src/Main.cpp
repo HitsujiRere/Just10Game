@@ -32,13 +32,24 @@ void Main()
 	FontAsset::Register(U"Text", 30, Typeface::Regular);
 	FontAsset::Register(U"Header", 50, Typeface::Bold);
 
+	// 同じ形式かどうかはloadVersionで判定
+	constexpr int32 loadVersion = 0;
 	// GameDataをロード
 	std::shared_ptr<GameData> loadData(new GameData());
 	{
 		BinaryReader reader(U"GameData.bin");
 		if (reader)
 		{
-			reader.read(*loadData);
+			int32 readedLoadVer;
+			reader.read(readedLoadVer);
+			if (readedLoadVer == loadVersion)
+			{
+				reader.read(*loadData);
+			}
+			else
+			{
+				Print << U"Cannot read 'GameData.bin!'";
+			}
 		}
 	}
 
@@ -62,6 +73,7 @@ void Main()
 		BinaryWriter writter(U"GameData.bin");
 		if (writter)
 		{
+			writter.write(loadVersion);
 			writter.write(*manager.get());
 		}
 	}
