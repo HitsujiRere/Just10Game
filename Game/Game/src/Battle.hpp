@@ -13,24 +13,28 @@ private:
 	const int32 cellMaxNumber = 5;
 
 	// セルの表示用大きさ
-	//const Size cellDrawSize = Size(40, 40);
-	const Size cellDrawSize = Size(64, 64);
+	const Size cellDrawSize = Size(40, 40);
+	//const Size cellDrawSize = Size(64, 64);
 
 	// フィールドの大きさ
-	const Size fieldSize = Size(6, 6);
+	const Size fieldSize = Size(6, 12);
 	// フィールドの左上の位置
 	const Point fieldPos = Point(cellDrawSize * Size(1, 2));
 	// フィールド
 	CellField field = CellField(fieldSize);
 	// フィールドのセルのJust10の要素となっている回数
 	Grid<int32> just10Times = Grid<int32>(fieldSize);
-
-	// 落とすセル
-	Cell dropCell = Cell::getRandomCell(cellMaxNumber);
-	// 落とすフィールドのx
-	int32 dropCellFieldX = 0;
 	// セルの移動先
 	Grid<Point> fieldMoveTo = Grid<Point>(fieldSize);
+
+	// 落とすセル
+	Cell dropCell = Cell::RandomCell(cellMaxNumber);
+	// 落とすフィールドのx
+	int32 dropCellFieldX = 0;
+	// 落とすセルの移動時間
+	double dropCellCoolTime = 0.1;
+	// 落とすセルの移動残り時間
+	double dropCellTimer = 0.1;
 
 	// 操作できるかどうか
 	bool canOperate = true;
@@ -56,10 +60,13 @@ private:
 	// 返り値は消えるものがあるかどうか
 	bool updatedField();
 
+	// 落とすセルを取得する
+	Cell& getDropCell(int32 n);
+
 public:
 
 	// デバッグ用のPrintをするかどうか
-	bool debugPrint = true;
+	bool debugPrint = false;
 
 	Battle(const InitData& init);
 

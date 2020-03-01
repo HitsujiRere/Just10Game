@@ -16,8 +16,8 @@
 
 void Main()
 {
-	// （ウィンドウの閉じるボタンを押したときだけ終了する場合はコメントを外す）
-	//System::SetTerminationTriggers(UserAction::CloseButtonClicked);
+	// ESCキーで終了しない
+	System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
 
 	// タイトルを設定
 	Window::SetTitle(U"Just10Game");
@@ -39,9 +39,6 @@ void Main()
 		.add<HowTo>(State::HowTo)
 		.add<Battle>(State::Battle)
 		.setFadeColor(ColorF(1.0));
-
-	// （ゲームシーンから開始する場合はコメントを外す）
-	//manager.init(State::Game);
 
 	while (System::Update())
 	{

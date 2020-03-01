@@ -55,5 +55,5 @@ public:
 	Texture getTexture() const;
 
 	// ƒ‰ƒ“ƒ_ƒ€‚È”š‚ÌƒZƒ‹‚ğ•Ô‚·
-	static Cell getRandomCell(int32 maxNumber = 9, bool existsEmpty = false, bool existsObstruct = false);
+	static Cell RandomCell(int32 maxNumber = 9, bool existsEmpty = false, bool existsObstruct = false);
 };

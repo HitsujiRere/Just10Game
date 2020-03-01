@@ -257,13 +257,13 @@ void CellField::draw(Point fieldPos, Size cellSize, std::function<Point(Point, i
 }
 
 
-CellField CellField::GetRandomField(Size size, int32 maxNumber, bool existsEmpty, bool existsObstruct)
+CellField CellField::RandomField(Size size, int32 maxNumber, bool existsEmpty, bool existsObstruct)
 {
 	CellField field(size);
 
 	for (auto p : step(field.Field.size()))
 	{
-		field.Field.at(p) = Cell::getRandomCell(maxNumber, existsEmpty, existsObstruct);
+		field.Field.at(p) = Cell::RandomCell(maxNumber, existsEmpty, existsObstruct);
 	}
 
 	field.updateJust10Times();

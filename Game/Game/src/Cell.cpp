@@ -64,7 +64,7 @@ Texture Cell::getTexture() const
 	}
 }
 
-Cell Cell::getRandomCell(int32 maxNumber, bool existsEmpty, bool existsObstruct)
+Cell Cell::RandomCell(int32 maxNumber, bool existsEmpty, bool existsObstruct)
 {
 	int32 max = maxNumber;
 	if (existsEmpty)	max++;

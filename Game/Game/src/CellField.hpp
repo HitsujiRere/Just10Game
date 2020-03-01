@@ -67,5 +67,5 @@ public:
 		std::function<Color(Point, int32)> colorFunc) const;
 
 	// ランダムな数字のセルのフィールドを返す
-	static CellField GetRandomField(Size size = Size(0, 0), int32 maxNumber = 9, bool existsEmpty = false, bool existsObstruct = false);
+	static CellField RandomField(Size size = Size(0, 0), int32 maxNumber = 9, bool existsEmpty = false, bool existsObstruct = false);
 };

@@ -14,7 +14,7 @@ void Battle::update()
 		// フィールドをランダムに変更する
 		if (KeyEnter.down())
 		{
-			field = CellField::GetRandomField(fieldSize, cellMaxNumber, false, false);
+			field = CellField::RandomField(fieldSize, cellMaxNumber, false, false);
 			updatedField();
 		}
 		// フィールドを無に変更する
@@ -34,16 +34,16 @@ void Battle::update()
 			dropCell = Cell(nextNumber);
 		}
 		// 落とすセルを移動する
-		if (KeyRight.down() && dropCellFieldX < fieldSize.x - 1)
+		if (KeyRight.pressed() && dropCellFieldX < fieldSize.x - 1)
 		{
 			dropCellFieldX++;
 		}
-		if (KeyLeft.down() && dropCellFieldX > 0)
+		if (KeyLeft.pressed() && dropCellFieldX > 0)
 		{
 			dropCellFieldX--;
 		}
 		//セルを落下させる
-		if (KeyDown.down())
+		if (KeyDown.pressed())
 		{
 			field.pushCell(dropCell, dropCellFieldX);
 
@@ -51,7 +51,7 @@ void Battle::update()
 			canOperate = false;
 			isFallingTime = true;
 			fieldMoveTo = field.getFallTo();
-			Print << U"Falling...";
+			if (debugPrint)	Print << U"Falling...";
 
 			//dropCell = Cell::getRandomCell(cellMaxNumber);
 		}
@@ -69,7 +69,8 @@ void Battle::update()
 			if (deletingTimer > deletingCoolTime)
 			{
 				int32 dc = field.deleteCells(just10Times);
-				Print << U"Deleted {} Cells!"_fmt(dc);
+				if (debugPrint)	Print << U"Deleted {} Cells!"_fmt(dc);
+				m_score += dc;
 
 				isDeletingTime = false;
 				deletingTimer = 0.0;
@@ -77,7 +78,7 @@ void Battle::update()
 				// 落下処理へ移行
 				isFallingTime = true;
 				fieldMoveTo = field.getFallTo();
-				Print << U"Falling...";
+				if (debugPrint)	Print << U"Falling...";
 
 				//field.fallCells(fieldMoveTo);
 				//fieldJust10Time = field.getJust10Times();
@@ -98,7 +99,7 @@ void Battle::update()
 			if (fallingTimer > fallingCoolTime)
 			{
 				field.fallCells(fieldMoveTo);
-				Print << U"Falled Cells!";
+				if (debugPrint)	Print << U"Falled Cells!";
 
 				isFallingTime = false;
 				fallingTimer = 0.0;
@@ -112,15 +113,19 @@ void Battle::update()
 		}
 	}
 
-	/*if (false)
+	if (KeyEscape.down())
 	{
 		changeScene(State::Title);
 		getData().highScore = Max(getData().highScore, m_score);
-	}*/
+	}
 }
 
 void Battle::draw() const
 {
+	// スコアの表示
+	FontAsset(U"Text")(U"Score:{}"_fmt(m_score)).drawAt(Scene::Center().x, 30);
+
+	// Just10の回数の表示
 	if (KeyControl.pressed())
 	{
 		for (auto p : step(fieldSize))
@@ -137,11 +142,15 @@ void Battle::draw() const
 				if (just10Times.at(p))
 					return (p * cellDrawSize);
 				else
-					return (((fieldMoveTo.at(p) - p) * fallingTimer / fallingCoolTime + p) * cellDrawSize).asPoint();
+				{
+					double e = EaseOutCubic(fallingTimer / fallingCoolTime);
+					return (Vec2(p * cellDrawSize).lerp(Vec2(fieldMoveTo.at(p) * cellDrawSize), e)).asPoint();
+					//return (((fieldMoveTo.at(p) - p) * fallingTimer / fallingCoolTime + p) * cellDrawSize).asPoint();
+				}
 			},
 			[this](Point p, int32 n) {
 				if (just10Times.at(p))
-					return Color(255, 255 * (1.0 - deletingTimer / deletingCoolTime));
+					return Color(255, (int32)(255 * (1.0 - deletingTimer / deletingCoolTime)));
 				else
 					return Color(255, 255);
 			});
@@ -173,4 +182,9 @@ bool Battle::updatedField()
 	}
 
 	return false;
+}
+
+Cell& Battle::getDropCell(int32 num)
+{
+	return dropCell;
 }
