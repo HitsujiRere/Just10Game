@@ -27,14 +27,19 @@ private:
 	// セルの移動先
 	Grid<Point> fieldMoveTo = Grid<Point>(fieldSize);
 
-	// 落とすセル
-	Cell dropCell = Cell::RandomCell(cellMaxNumber);
 	// 落とすフィールドのx
 	int32 dropCellFieldX = 0;
 	// 落とすセルの移動時間
 	double dropCellCoolTime = 0.1;
 	// 落とすセルの移動残り時間
 	double dropCellTimer = 0.1;
+	// 落とすセルの1ループのNumberの数
+	Array<int32> dropCellsNumCnt1Loop = Array<int32>
+	{
+		0, 1, 1, 1, 1, 1,
+	};
+	// 落とすセルの次のスタック
+	Array<Cell> dropCells = Array<Cell>();
 
 	// 操作できるかどうか
 	bool canOperate = true;
@@ -62,6 +67,10 @@ private:
 
 	// 落とすセルを取得する
 	Cell& getDropCell(int32 n);
+
+	// 落とすセルを取得する
+	// numを超えても追加しない
+	const Cell& getDropCellConst(int32 num) const;
 
 public:
 

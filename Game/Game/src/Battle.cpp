@@ -4,6 +4,7 @@
 Battle::Battle(const InitData& init)
 	: IScene(init)
 {
+	getDropCell(5);
 }
 
 void Battle::update()
@@ -19,6 +20,7 @@ void Battle::update()
 			field = CellField::RandomField(fieldSize, cellMaxNumber, false, false);
 			updatedField();
 		}
+
 		// フィールドを無に変更する
 		if (KeyBackspace.down())
 		{
@@ -30,11 +32,12 @@ void Battle::update()
 		if (KeyUp.down())
 		{
 			// 1 ~ cellMaxNumberで1周する
-			int32 nextNumber = dropCell.getNumber() + 1;
+			int32 nextNumber = getDropCell(0).getNumber() + 1;
 			if (nextNumber > cellMaxNumber)
 				nextNumber = 1;
-			dropCell = Cell(nextNumber);
+			getDropCell(0) = Cell(nextNumber);
 		}
+
 		// 落とすセルを移動する
 		if (KeyRight.pressed() || KeyLeft.pressed())
 		{
@@ -60,10 +63,11 @@ void Battle::update()
 		{
 			dropCellTimer = dropCellCoolTime;
 		}
+
 		//セルを落下させる
 		if (KeyDown.pressed())
 		{
-			field.pushCell(dropCell, dropCellFieldX);
+			field.pushCell(getDropCell(0), dropCellFieldX);
 
 			// 落下処理へ移行
 			canOperate = false;
@@ -71,7 +75,7 @@ void Battle::update()
 			fieldMoveTo = field.getFallTo();
 			if (debugPrint)	Print << U"Falling...";
 
-			dropCell = Cell::RandomCell(cellMaxNumber);
+			dropCells.remove_at(0);
 		}
 	}
 	// 操作不可能（演出処理実行中）
@@ -95,15 +99,6 @@ void Battle::update()
 				isFallingTime = true;
 				fieldMoveTo = field.getFallTo();
 				if (debugPrint)	Print << U"Falling...";
-
-				//field.fallCells(fieldMoveTo);
-				//fieldJust10Time = field.getJust10Times();
-
-				/*if (fieldJust10Time.any([](int32 n) { return n != 0; }))
-				{
-					deletingJust10Timer = 0.0;
-					Print << U"Deleting...";
-				}*/
 			}
 		}
 
@@ -129,6 +124,7 @@ void Battle::update()
 		}
 	}
 
+
 	if (KeyEscape.down())
 	{
 		changeScene(State::Title);
@@ -140,6 +136,13 @@ void Battle::draw() const
 {
 	// スコアの表示
 	FontAsset(U"Text")(U"Score:{}"_fmt(m_score)).drawAt(Scene::Center().x, 30);
+
+	// Nextセルの描画
+	getDropCellConst(1).getTexture().resized(cellDrawSize * 2).draw(fieldPos + Point((fieldSize.x + 1), 0) * cellDrawSize);
+	for (int32 i = 2; i <= 5; ++i)
+	{
+		getDropCellConst(i).getTexture().resized(cellDrawSize).draw(fieldPos + Point((fieldSize.x + 1), i) * cellDrawSize);
+	}
 
 	// Just10の回数の表示
 	if (KeyControl.pressed())
@@ -154,7 +157,7 @@ void Battle::draw() const
 	else
 	{
 		field.draw(fieldPos, cellDrawSize,
-			[this](Point p, int32 n) {
+			[this](Point p, int32) {
 				if (just10Times.at(p))
 					return (p * cellDrawSize);
 				else
@@ -164,7 +167,7 @@ void Battle::draw() const
 					//return (((fieldMoveTo.at(p) - p) * fallingTimer / fallingCoolTime + p) * cellDrawSize).asPoint();
 				}
 			},
-			[this](Point p, int32 n) {
+			[this](Point p, int32) {
 				if (just10Times.at(p))
 					return Color(255, (int32)(255 * (1.0 - deletingTimer / deletingCoolTime)));
 				else
@@ -172,14 +175,12 @@ void Battle::draw() const
 			});
 	}
 
-	// 落とすセルの表示
+	// 落とすセルの描画
 	{
 		const Point dropCellPos(fieldPos + Point(cellDrawSize.x * dropCellFieldX, -cellDrawSize.y));
 
-		dropCell.getTexture().resized(cellDrawSize).draw(dropCellPos);
+		getDropCellConst(0).getTexture().resized(cellDrawSize).draw(dropCellPos);
 	}
-
-	//Print << field.getGrid();
 }
 
 
@@ -202,5 +203,25 @@ bool Battle::updatedField()
 
 Cell& Battle::getDropCell(int32 num)
 {
-	return dropCell;
+	// dropCellsを追加
+	while (num + 10 >= dropCells.size())
+	{
+		Array<Cell> addArray;
+		for (auto i : step((int32)dropCellsNumCnt1Loop.size()))
+		{
+			for (auto j : step(dropCellsNumCnt1Loop.at(i)))
+			{
+				addArray << Cell(i);
+			}
+		}
+		addArray.shuffle();
+		dropCells.append(addArray);
+	}
+
+	return dropCells.at(num);
+}
+
+const Cell& Battle::getDropCellConst(int32 num) const
+{
+	return dropCells.at(num);
 }
