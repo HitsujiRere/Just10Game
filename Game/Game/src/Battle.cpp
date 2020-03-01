@@ -8,6 +8,8 @@ Battle::Battle(const InitData& init)
 
 void Battle::update()
 {
+	const double deltaTime = Scene::DeltaTime();
+
 	// 操作可能
 	if (canOperate)
 	{
@@ -34,13 +36,29 @@ void Battle::update()
 			dropCell = Cell(nextNumber);
 		}
 		// 落とすセルを移動する
+		if (KeyRight.pressed() || KeyLeft.pressed())
+		{
+			dropCellTimer += deltaTime;
+		}
 		if (KeyRight.pressed() && dropCellFieldX < fieldSize.x - 1)
 		{
-			dropCellFieldX++;
+			if (dropCellTimer > dropCellCoolTime)
+			{
+				dropCellFieldX++;
+				dropCellTimer = 0.0;
+			}
 		}
 		if (KeyLeft.pressed() && dropCellFieldX > 0)
 		{
-			dropCellFieldX--;
+			if (dropCellTimer > dropCellCoolTime)
+			{
+				dropCellFieldX--;
+				dropCellTimer = 0.0;
+			}
+		}
+		if (KeyRight.up() || KeyLeft.up())
+		{
+			dropCellTimer = dropCellCoolTime;
 		}
 		//セルを落下させる
 		if (KeyDown.pressed())
@@ -53,14 +71,12 @@ void Battle::update()
 			fieldMoveTo = field.getFallTo();
 			if (debugPrint)	Print << U"Falling...";
 
-			//dropCell = Cell::getRandomCell(cellMaxNumber);
+			dropCell = Cell::RandomCell(cellMaxNumber);
 		}
 	}
 	// 操作不可能（演出処理実行中）
 	else
 	{
-		const double deltaTime = Scene::DeltaTime();
-
 		// セルが消える演出
 		if (isDeletingTime)
 		{
