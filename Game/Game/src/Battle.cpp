@@ -4,12 +4,15 @@
 Battle::Battle(const InitData& init)
 	: IScene(init)
 {
-	getDropCell(5);
+	getDropCell(10);
 }
 
 void Battle::update()
 {
 	const double deltaTime = Scene::DeltaTime();
+
+	// 常に10個以上確保しておく（Next表示対策）
+	getDropCell(10);
 
 	// 操作可能
 	if (canOperate)
@@ -204,7 +207,7 @@ bool Battle::updatedField()
 Cell& Battle::getDropCell(int32 num)
 {
 	// dropCellsを追加
-	while (num + 10 >= dropCells.size())
+	while (num >= dropCells.size())
 	{
 		Array<Cell> addArray;
 		for (auto i : step((int32)dropCellsNumCnt1Loop.size()))

@@ -32,8 +32,18 @@ void Main()
 	FontAsset::Register(U"Text", 30, Typeface::Regular);
 	FontAsset::Register(U"Header", 50, Typeface::Bold);
 
+	// GameDataをロード
+	std::shared_ptr<GameData> loadData(new GameData());
+	{
+		BinaryReader reader(U"GameData.bin");
+		if (reader)
+		{
+			reader.read(*loadData);
+		}
+	}
+
 	// シーンと遷移時の色を設定
-	MyApp manager;
+	MyApp manager(loadData);
 	manager
 		.add<Title>(State::Title)
 		.add<HowTo>(State::HowTo)
@@ -45,6 +55,14 @@ void Main()
 		if (!manager.update())
 		{
 			break;
+		}
+	}
+
+	{
+		BinaryWriter writter(U"GameData.bin");
+		if (writter)
+		{
+			writter.write(*manager.get());
 		}
 	}
 }

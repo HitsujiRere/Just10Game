@@ -9,6 +9,10 @@ HowTo::HowTo(const InitData& init)
 
 void HowTo::update()
 {
+	if (KeyEscape.down())
+	{
+		changeScene(State::Title);
+	}
 }
 
 void HowTo::draw() const
