@@ -132,22 +132,19 @@ void Battle::draw() const
 	// フィールドの描画
 	else
 	{
-		/*field.draw(fieldPos, cellSize,
-			[&just10Times, &fieldMoveTo, deleteJust10Timer, cellSize](Point p, int32 n) {
+		field.draw(fieldPos, cellDrawSize,
+			[this](Point p, int32 n) {
 				if (just10Times.at(p))
-					return (p * cellSize);
+					return (p * cellDrawSize);
 				else
-					return ((p + Point(0, 1) * deleteJust10Timer) * cellSize).asPoint();
-				//return (((fieldMoveTo.at(p) - p) * deleteJust10Timer + p) * cellSize).asPoint();
+					return (((fieldMoveTo.at(p) - p) * fallingTimer / fallingCoolTime + p) * cellDrawSize).asPoint();
 			},
-			[&just10Times, deletingTimer](Point p, int32 n) {
+			[this](Point p, int32 n) {
 				if (just10Times.at(p))
-					return Color(255, 255 * (1.0 - deleteJust10Timer / 1.0));
+					return Color(255, 255 * (1.0 - deletingTimer / deletingCoolTime));
 				else
 					return Color(255, 255);
-			});*/
-
-		field.draw(fieldPos, cellDrawSize);
+			});
 	}
 
 	// 落とすセルの表示

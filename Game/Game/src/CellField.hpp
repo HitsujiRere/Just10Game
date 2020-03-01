@@ -23,8 +23,7 @@ private:
 
 	// Just10Times‚ğXV‚·‚é
 	void updateJust10Times();
-
-	
+		
 
 public:
 	// 0*0‚ÌEmpty‚Å‰Šú‰»

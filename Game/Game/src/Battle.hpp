@@ -47,7 +47,7 @@ private:
 	// Just10消去待機残り時間
 	double fallingTimer = 0.0;
 	// Just10消去待機時間
-	double fallingCoolTime = 1.0;
+	double fallingCoolTime = 0.5;
 
 	// スコア
 	int32 m_score = 0;
