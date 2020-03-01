@@ -10,6 +10,8 @@ void CellField::clearField(Size size)
 	{
 		Field.at(pos) = Cell();
 	}
+
+	updateJust10Times();
 }
 
 void CellField::updateJust10Times()
@@ -20,48 +22,48 @@ void CellField::updateJust10Times()
 	Just10Times = Grid<int32>(size);
 
 	// ミノの数字の2次元累積和
-	Grid<int32> cellCSum(size + Size(1, 1));
+	Grid<int32> numCSum(size + Size(1, 1));
 
 	try
 	{
 		// minoCSumを作成する
-		for (auto p : step(cellCSum.size()))
+		for (auto p : step(numCSum.size()))
 		{
 			int32 n = 0;
 			if (p.x > 0)
 			{
-				n += cellCSum[p - Point(1, 0)];
+				n += numCSum[p - Point(1, 0)];
 			}
 			if (p.y > 0)
 			{
-				n += cellCSum[p - Point(0, 1)];
+				n += numCSum[p - Point(0, 1)];
 			}
 			if (p.x > 0 && p.y > 0)
 			{
-				n -= cellCSum[p - Point(1, 1)];
+				n -= numCSum[p - Point(1, 1)];
 				n += Field[p - Point(1, 1)].getNumber();
 			}
 
-			cellCSum[p] = n;
+			numCSum[p] = n;
 		}
 
 		// Just10の要素となっている回数の差分を調べる
 		// 右端と左端のxを先に決める
-		for (auto beginx : step(cellCSum.width() - 1))
+		for (auto beginx : step(numCSum.width() - 1))
 		{
-			for (auto endx = beginx + 1; endx < cellCSum.width(); endx++)
+			for (auto endx = beginx + 1; endx < numCSum.width(); endx++)
 			{
 				// しゃくとり法で求める
 				int32 beginy = 0;
 				int32 endy = 1;
-				while (beginy < cellCSum.height() - 1 &&
-					endy < cellCSum.height())
+				while (beginy < numCSum.height() - 1 &&
+					endy < numCSum.height())
 				{
 					//Print << U"( {} ~ {} , {} ~ {} )"_fmt(beginx, endx, beginy, endy);
-					int32 sum = cellCSum.at(endy, endx)
-						- cellCSum.at(beginy, endx)
-						- cellCSum.at(endy, beginx)
-						+ cellCSum.at(beginy, beginx);
+					int32 sum = numCSum.at(endy, endx)
+						- numCSum.at(beginy, endx)
+						- numCSum.at(endy, beginx)
+						+ numCSum.at(beginy, beginx);
 					//Print << U"sum:" << sum;
 					if (sum > 10)
 					{
@@ -165,12 +167,12 @@ Grid<Point> CellField::getFallTo() const
 
 	for (auto x : step((int32)Field.width()))
 	{
-		int32 pushY = Field.height() - 1;
-		for (int32 y = Field.height() - 1; y >= 0; --y)
+		int32 pushY = (int32)Field.height() - (int32)1;
+		for (int32 y = (int32)Field.height() - (int32)1; y >= 0; --y)
 		{
 			if (Field.at(y, x).getNumber() != (int32)CellTypeNumber::Empty)
 			{
-				FallTo.at(y, x) = Point(pushY, x);
+				FallTo.at(y, x) = Point(x, pushY);
 				pushY--;
 			}
 		}
@@ -185,10 +187,12 @@ void CellField::fallCells(Grid<Point> FallTo)
 
 	for (auto p : step(Field.size()))
 	{
-		Field.at(FallTo.at(p)) = Field.at(p);
+		FieldFall.at(FallTo.at(p)) = Field.at(p);
 	}
 
 	Field = FieldFall;
+
+	updateJust10Times();
 }
 
 bool CellField::pushCell(const Cell& cell, int32 x)
@@ -199,6 +203,8 @@ bool CellField::pushCell(const Cell& cell, int32 x)
 	}
 
 	Field.at(0, x) = cell;
+
+	updateJust10Times();
 
 	return true;
 }
@@ -214,6 +220,9 @@ int32 CellField::deleteCells(Grid<int> isDelete)
 			deleted++;
 		}
 	}
+
+	updateJust10Times();
+
 	return deleted;
 }
 
@@ -256,6 +265,8 @@ CellField CellField::GetRandomField(Size size, int32 maxNumber, bool existsEmpty
 	{
 		field.Field.at(p) = Cell::getRandomCell(maxNumber, existsEmpty, existsObstruct);
 	}
+
+	field.updateJust10Times();
 
 	return field;
 }
