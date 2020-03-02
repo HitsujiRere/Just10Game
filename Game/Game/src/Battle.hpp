@@ -19,7 +19,7 @@ private:
 	// フィールドの大きさ
 	const Size fieldSize = Size(6, 12);
 	// フィールドの左上の位置
-	const Point fieldPos = Point(cellDrawSize * Size(1, 2));
+	const Point fieldPos = Point(cellDrawSize * Size(4, 2));
 	// フィールド
 	CellField field = CellField(fieldSize);
 	// フィールドのセルのJust10の要素となっている回数
@@ -40,6 +40,9 @@ private:
 	};
 	// 落とすセルの次のスタック
 	Array<Cell> dropCells = Array<Cell>();
+
+	// ホールドセル
+	Cell holdCell = Cell((int32)CellTypeNumber::Empty);
 
 	// 操作できるかどうか
 	bool canOperate = true;

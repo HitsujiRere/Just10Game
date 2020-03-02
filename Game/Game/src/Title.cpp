@@ -49,7 +49,7 @@ void Title::draw() const
 	FontAsset(U"Menu")(U"あそびかた").drawAt(m_howtoButton.center(), ColorF(0.25));
 	FontAsset(U"Menu")(U"おわる").drawAt(m_exitButton.center(), ColorF(0.25));
 
-	Rect(0, 500, Scene::Width(), Scene::Height() - 500)
+	Rect(0, Scene::Height() * 0.7, Scene::Width(), Scene::Height() * 0.3)
 		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
 
 	const int32 highScore = getData().highScore;

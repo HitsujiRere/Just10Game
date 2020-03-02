@@ -31,6 +31,24 @@ void Battle::update()
 			updatedField();
 		}
 
+		// セルをホールドする
+		if (KeyTab.down())
+		{
+			if (holdCell.getNumber() == (int32)CellTypeNumber::Empty)
+			{
+				holdCell = getDropCell(0);
+				dropCells.remove_at(0);
+			}
+			else
+			{
+				Cell tmp = holdCell;
+				holdCell = dropCells.at(0);
+				dropCells.at(0) = tmp;
+			}
+
+			if (debugPrint)	Print << U"Hold...";
+		}
+
 		// 落とすセルを変更する
 		if (KeyUp.down())
 		{
@@ -137,16 +155,27 @@ void Battle::update()
 
 void Battle::draw() const
 {
+	Rect(0, Scene::Height() * 0.7, Scene::Width(), Scene::Height() * 0.3)
+		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
+
 	// スコアの表示
 	FontAsset(U"Text")(U"Score:{}"_fmt(m_score)).drawAt(Scene::Center().x, 30);
 
 	// Nextセルの描画
-	getDropCellConst(1).getTexture().resized(cellDrawSize * 2).draw(fieldPos + Point((fieldSize.x + 1), 0) * cellDrawSize);
+	FontAsset(U"Text")(U"Next").drawAt(fieldPos + Vec2(fieldSize.x + 2, -0.5) * cellDrawSize);
+	getDropCellConst(1).getTexture().resized(cellDrawSize * 2).draw(fieldPos + Vec2(fieldSize.x + 1, 0) * cellDrawSize);
 	for (int32 i = 2; i <= 5; ++i)
 	{
-		getDropCellConst(i).getTexture().resized(cellDrawSize).draw(fieldPos + Point((fieldSize.x + 1), i) * cellDrawSize);
+		getDropCellConst(i).getTexture().resized(cellDrawSize).draw(fieldPos + Vec2(fieldSize.x + 1, i) * cellDrawSize);
 	}
 
+	// ホールドの表示
+	FontAsset(U"Text")(U"Hold").drawAt(fieldPos + Vec2(-2, -0.5) * cellDrawSize);
+	holdCell.getTexture().resized(cellDrawSize * 2).draw(fieldPos + Point(-3, 0) * cellDrawSize);
+
+	// フィールドの背景
+	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).draw(ColorF(0.2, 0.8, 0.4));
+	// フィールドの枠
 	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).drawFrame(10, Palette::Forestgreen);
 
 	// Just10の回数の表示
@@ -177,7 +206,7 @@ void Battle::draw() const
 				else
 					return Color(255, 255);
 			},
-				[this](Point, int32 n) {
+				[this](Point, int32) {
 				return Color(0, 0);
 			});
 	}

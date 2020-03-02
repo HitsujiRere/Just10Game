@@ -22,6 +22,6 @@ void HowTo::draw() const
 	FontAsset(U"Header")(headerText).drawAt(center.movedBy(4, 6), ColorF(0.0, 0.5));
 	FontAsset(U"Header")(headerText).drawAt(center);
 
-	Rect(0, 500, Scene::Width(), Scene::Height() - 500)
+	Rect(0, Scene::Height() * 0.7, Scene::Width(), Scene::Height() * 0.3)
 		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
 }
