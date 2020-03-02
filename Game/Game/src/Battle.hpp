@@ -46,6 +46,8 @@ private:
 
 	// 操作できるかどうか
 	bool canOperate = true;
+	// 落とすセルを落下できるかどうか
+	bool canDrop = true;
 
 	// Just10消去待機時間かどうか
 	bool isDeletingTime = false;

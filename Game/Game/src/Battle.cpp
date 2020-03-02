@@ -86,12 +86,12 @@ void Battle::update()
 		}
 
 		//セルを落下させる
-		if (KeyDown.pressed())
+		if (canDrop && KeyDown.pressed())
 		{
 			field.pushCell(getDropCell(0), dropCellFieldX);
 
 			// 落下処理へ移行
-			canOperate = false;
+			canDrop = false;
 			isFallingTime = true;
 			fieldMoveTo = field.getFallTo();
 			if (debugPrint)	Print << U"Falling...";
@@ -99,8 +99,8 @@ void Battle::update()
 			dropCells.remove_at(0);
 		}
 	}
-	// 操作不可能（演出処理実行中）
-	else
+
+	// 演出処理
 	{
 		// セルが消える演出
 		if (isDeletingTime)
@@ -139,7 +139,7 @@ void Battle::update()
 				// 消えるものがあるなら、消える演出へ
 				if (!updatedField())
 				{
-					canOperate = true;
+					canDrop = true;
 				}
 			}
 		}
@@ -227,7 +227,7 @@ bool Battle::updatedField()
 	// Just10で消えるものがあるなら、消える時間にする
 	if (just10Times.any([](int32 n) { return n != 0; }))
 	{
-		canOperate = false;
+		canDrop = false;
 		isDeletingTime = true;
 		if (debugPrint)	Print << U"Deleting...";
 
