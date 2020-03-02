@@ -5,8 +5,11 @@ Tabキー : セルをホールドチェンジする
 F4キー : フルスクリーン
 F5キー : 画面サイズの変更
 
-
 製作者 : HitsujiRere
 連絡先 : https://twitter.com/HitsujiRere
 
 使用ライブラリ : OpenSiv3D
+
+
+ECSキー : 戻る
+
