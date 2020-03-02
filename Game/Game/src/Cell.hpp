@@ -56,4 +56,7 @@ public:
 
 	// ランダムな数字のセルを返す
 	static Cell RandomCell(int32 maxNumber = 9, bool existsEmpty = false, bool existsObstruct = false);
+
+	// セルの数字ごとのテクスチャを返す
+	static Array<Texture> getTextures();
 };

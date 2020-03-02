@@ -17,6 +17,9 @@ struct GameData
 {
 	// ハイスコア
 	int32 highScore = 0;
+
+	// プレイ回数
+	int32 playTime = 0;
 };
 
 // シーン管理クラス

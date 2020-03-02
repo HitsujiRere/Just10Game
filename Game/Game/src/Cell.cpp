@@ -91,3 +91,8 @@ Cell Cell::RandomCell(int32 maxNumber, bool existsEmpty, bool existsObstruct)
 
 	return Cell(number);
 }
+
+Array<Texture> Cell::getTextures()
+{
+	return Textures;
+}

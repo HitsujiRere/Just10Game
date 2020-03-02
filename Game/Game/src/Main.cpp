@@ -50,10 +50,10 @@ void Main()
 	FontAsset::Register(U"Menu", 30, Typeface::Regular);
 	FontAsset::Register(U"Score", 36, Typeface::Bold);
 	FontAsset::Register(U"Text", 30, Typeface::Regular);
-	FontAsset::Register(U"Header", 50, Typeface::Bold);
+	FontAsset::Register(U"Header", 100, Typeface::Bold);
 
 	// 同じ形式かどうかはloadVersionで判定
-	constexpr int32 loadVersion = 0;
+	constexpr int32 loadVersion = 1;
 	// GameDataをロード
 	std::shared_ptr<GameData> loadData(new GameData());
 	{
@@ -68,7 +68,7 @@ void Main()
 			}
 			else
 			{
-				Print << U"Cannot read 'GameData.bin!'";
+				Print << U"Cannot read 'GameData.bin'!";
 			}
 		}
 	}

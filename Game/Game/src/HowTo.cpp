@@ -4,7 +4,20 @@
 HowTo::HowTo(const InitData& init)
 	: IScene(init)
 {
-
+	TextReader reader(Resource(U"texts/HowTo_desc.txt"));
+	if (reader)
+	{
+		desc = U"";
+		String line;
+		while (reader.readLine(line))
+		{
+			desc += line + U"\n";
+		}
+	}
+	else
+	{
+		desc = U"Cannot read 'HowTo_desc.txt'!";
+	}
 }
 
 void HowTo::update()
@@ -17,11 +30,16 @@ void HowTo::update()
 
 void HowTo::draw() const
 {
-	const String headerText = U"あそびかた";
-	const Vec2 center(Scene::Center().x, 40);
-	FontAsset(U"Header")(headerText).drawAt(center.movedBy(4, 6), ColorF(0.0, 0.5));
-	FontAsset(U"Header")(headerText).drawAt(center);
+	// タイトルの表示
+	{
+		const String headerText = U"あそびかた";
+		const Vec2 center(Scene::Center().x, 80);
+		FontAsset(U"Header")(headerText).drawAt(center.movedBy(4, 6), ColorF(0.0, 0.5));
+		FontAsset(U"Header")(headerText).drawAt(center);
+	}
 
-	Rect(0, Scene::Height() * 0.7, Scene::Width(), Scene::Height() * 0.3)
+	FontAsset(U"Text")(desc).draw(Arg::topCenter(Scene::Center().x, 200));
+
+	Rect(0, (int32)(Scene::Height() * 0.7), Scene::Width(), (int32)(Scene::Height() * 0.3))
 		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
 }
