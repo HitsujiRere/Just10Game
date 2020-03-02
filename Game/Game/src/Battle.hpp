@@ -13,8 +13,8 @@ private:
 	const int32 cellMaxNumber = 5;
 
 	// セルの表示用大きさ
-	const Size cellDrawSize = Size(40, 40);
-	//const Size cellDrawSize = Size(64, 64);
+	//const Size cellDrawSize = Size(40, 40);
+	const Size cellDrawSize = Size(64, 64);
 
 	// フィールドの大きさ
 	const Size fieldSize = Size(6, 12);

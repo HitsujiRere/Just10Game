@@ -226,19 +226,22 @@ int32 CellField::deleteCells(Grid<int> isDelete)
 	return deleted;
 }
 
-void CellField::draw(Point fieldPos, Size cellSize) const
+void CellField::draw(Point fieldPos, Size cellSize, Color backcolor) const
 {
 	for (auto p : step(Field.size()))
 	{
 		Cell cell = Field.at(p);
 		Point pos = fieldPos + cellSize * p;
 
+		Rect(pos, cellSize).draw(backcolor);
 		cell.getTexture().resized(cellSize).draw(pos);
 	}
 }
 
-void CellField::draw(Point fieldPos, Size cellSize, std::function<Point(Point, int32)> posFunc, 
-	std::function<Color(Point, int32)> colorFunc) const
+void CellField::draw(Point fieldPos, Size cellSize, 
+	std::function<Point(Point, int32)> posFunc, 
+	std::function<Color(Point, int32)> colorFunc,
+	std::function<Color(Point, int32)> backcolorFunc) const
 {
 	try
 	{
@@ -247,6 +250,7 @@ void CellField::draw(Point fieldPos, Size cellSize, std::function<Point(Point, i
 			Cell cell = Field.at(p);
 			Point pos = fieldPos + posFunc(p, cell.getNumber());
 
+			Rect(pos, cellSize).draw(backcolorFunc(p, cell.getNumber()));
 			cell.getTexture().resized(cellSize).draw(pos, colorFunc(p, cell.getNumber()));
 		}
 	}

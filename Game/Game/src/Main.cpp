@@ -16,17 +16,37 @@
 
 void Main()
 {
+	// バージョン
+	const Vector3D<int32> version(0, 0, 0);
+
 	// ESCキーで終了しない
 	System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
 
 	// タイトルを設定
 	Window::SetTitle(U"Just10Game");
+	// ウィンドウサイズ
+	const Array<Size> windowSizes
+	{
+		Size(1920, 1080),	// 1.00
+		Size(1440, 810),	// 0.75
+		Size(960, 540),		// 0.50
+		Size(480, 270),		// 0.25
+	};
+	// 現在のウィンドウサイズ番号
+	int32 windowSizeNum = 0;
+	// フルスクリーンかどうか
+	bool isFullscreen = false;
+	Window::Resize(windowSizes[windowSizeNum]);
+	// 手動でリサイズできるように変更
+	Window::SetStyle(WindowStyle::Sizable);
 
+	// 16:9のシーンに変更
+	//Scene::Resize(1600, 900);
 	// 背景色を設定
 	Scene::SetBackground(ColorF(0.2, 0.8, 0.4));
 
 	// 使用するフォントアセットを登録
-	FontAsset::Register(U"Title", 100, U"example/font/AnnyantRoman/AnnyantRoman.ttf");
+	FontAsset::Register(U"Title", 200, U"example/font/AnnyantRoman/AnnyantRoman.ttf");
 	FontAsset::Register(U"Menu", 30, Typeface::Regular);
 	FontAsset::Register(U"Score", 36, Typeface::Bold);
 	FontAsset::Register(U"Text", 30, Typeface::Regular);
@@ -63,6 +83,19 @@ void Main()
 
 	while (System::Update())
 	{
+		if (KeyF5.down())
+		{
+			windowSizeNum = ++windowSizeNum % windowSizes.size();
+			Window::Resize(windowSizes[windowSizeNum], WindowResizeOption::KeepSceneSize);
+		}
+
+		if (KeyF4.down())
+		{
+			isFullscreen ^= true;
+			const bool isSetFullscreen = Window::SetFullscreen(isFullscreen);
+			Scene::Resize(windowSizes[0]);
+		}
+
 		if (!manager.update())
 		{
 			break;

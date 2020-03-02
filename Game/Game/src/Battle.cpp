@@ -147,6 +147,8 @@ void Battle::draw() const
 		getDropCellConst(i).getTexture().resized(cellDrawSize).draw(fieldPos + Point((fieldSize.x + 1), i) * cellDrawSize);
 	}
 
+	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).drawFrame(10, Palette::Forestgreen);
+
 	// Just10ÇÃâÒêîÇÃï\é¶
 	if (KeyControl.pressed())
 	{
@@ -167,7 +169,6 @@ void Battle::draw() const
 				{
 					double e = EaseOutCubic(fallingTimer / fallingCoolTime);
 					return (Vec2(p * cellDrawSize).lerp(Vec2(fieldMoveTo.at(p) * cellDrawSize), e)).asPoint();
-					//return (((fieldMoveTo.at(p) - p) * fallingTimer / fallingCoolTime + p) * cellDrawSize).asPoint();
 				}
 			},
 			[this](Point p, int32) {
@@ -175,6 +176,9 @@ void Battle::draw() const
 					return Color(255, (int32)(255 * (1.0 - deletingTimer / deletingCoolTime)));
 				else
 					return Color(255, 255);
+			},
+				[this](Point, int32 n) {
+				return Color(0, 0);
 			});
 	}
 

@@ -37,8 +37,8 @@ void Title::update()
 void Title::draw() const
 {
 	const String titleText = U"Just 10 Game";
-	const Vec2 center(Scene::Center().x, 120);
-	FontAsset(U"Title")(titleText).drawAt(center.movedBy(4, 6), ColorF(0.0, 0.5));
+	const Vec2 center(Scene::Center().x, 150);
+	FontAsset(U"Title")(titleText).drawAt(center.movedBy(6, 9), ColorF(0.0, 0.5));
 	FontAsset(U"Title")(titleText).drawAt(center);
 
 	m_startButton.draw(ColorF(1.0, m_startTransition.value())).drawFrame(2);
@@ -53,5 +53,5 @@ void Title::draw() const
 		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
 
 	const int32 highScore = getData().highScore;
-	FontAsset(U"Score")(U"High score: {}"_fmt(highScore)).drawAt(Vec2(620, 550));
+	FontAsset(U"Score")(U"High score: {}"_fmt(highScore)).drawAt(Scene::Center().movedBy(300, 0));
 }

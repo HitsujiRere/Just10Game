@@ -59,12 +59,13 @@ public:
 	int32 deleteCells(Grid<int> isDelete);
 
 	// フィールドを描く
-	void draw(Point fieldPos, Size cellSize) const;
+	void draw(Point fieldPos, Size cellSize, Color backcolor = Color(0, 0)) const;
 
 	// フィールドを描く
 	void draw(Point fieldPos, Size cellSize, 
 		std::function<Point(Point, int32)> posFunc,
-		std::function<Color(Point, int32)> colorFunc) const;
+		std::function<Color(Point, int32)> colorFunc,
+		std::function<Color(Point, int32)> backcolorFunc) const;
 
 	// ランダムな数字のセルのフィールドを返す
 	static CellField RandomField(Size size = Size(0, 0), int32 maxNumber = 9, bool existsEmpty = false, bool existsObstruct = false);
