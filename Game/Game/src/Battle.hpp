@@ -4,6 +4,19 @@
 # include "Cell.hpp"
 # include "CellField.hpp"
 
+// 試合の状態
+enum class BattleState
+{
+	// 試合中
+	playing,
+	// 勝ち
+	win,
+	// 負け
+	lose,
+	// 引き分け
+	tie,
+};
+
 // ゲームシーン
 class Battle : public MyApp::Scene
 {
@@ -65,6 +78,15 @@ private:
 
 	// スコア
 	int32 m_score = 0;
+
+	// 勝敗
+	int32 state = (int32)BattleState::playing;
+	// 負け演出残り時間
+	double loseTimer = 0.0;
+	// 負け演出時間
+	double loseCoolTime = 2.0;
+	// 負け待機時間
+	double loseWaitTime = 10.0;
 
 	// fieldJust10Timesなどの更新
 	// 返り値は消えるものがあるかどうか

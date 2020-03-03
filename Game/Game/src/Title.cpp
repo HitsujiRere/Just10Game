@@ -20,7 +20,6 @@ void Title::update()
 
 	if (m_startButton.leftClicked())
 	{
-		getData().playTime++;
 		changeScene(State::Battle);
 	}
 

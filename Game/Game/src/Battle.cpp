@@ -4,6 +4,8 @@
 Battle::Battle(const InitData& init)
 	: IScene(init)
 {
+	getData().playTime++;
+
 	getDropCell(10);
 }
 
@@ -143,6 +145,17 @@ void Battle::update()
 				}
 			}
 		}
+
+		// セルが落ちる演出
+		if (state == (int32)BattleState::lose)
+		{
+			loseTimer += deltaTime;
+
+			if (loseTimer > loseWaitTime)
+			{
+				changeScene(State::Title);
+			}
+		}
 	}
 
 
@@ -196,7 +209,7 @@ void Battle::draw() const
 					return (p * cellDrawSize);
 				else
 				{
-					double e = EaseOutCubic(fallingTimer / fallingCoolTime);
+					const double e = EaseOutCubic(fallingTimer / fallingCoolTime);
 					return (Vec2(p * cellDrawSize).lerp(Vec2(fieldMoveTo.at(p) * cellDrawSize), e)).asPoint();
 				}
 			},
@@ -217,6 +230,15 @@ void Battle::draw() const
 
 		getDropCellConst(0).getTexture().resized(cellDrawSize).draw(dropCellPos);
 	}
+
+	// 負けという知らせの描画
+	if (state == (int32)BattleState::lose)
+	{
+		const double e = EaseOutBounce(loseTimer / loseCoolTime <= 1.0 ? loseTimer / loseCoolTime : 1.0);
+		const Vec2 pos(Vec2(fieldPos.x + fieldSize.x * cellDrawSize.x / 2.0, -100).lerp(fieldPos + fieldSize * cellDrawSize / 2.0, e));
+		FontAsset(U"Header")(U"Lose").drawAt(pos, Palette::Black);
+		FontAsset(U"Text")(U"タイトルへ戻るまで{:.0f}s"_fmt(loseWaitTime - loseTimer)).drawAt(pos.movedBy(0, 100), Palette::Black);
+	}
 }
 
 
@@ -232,6 +254,17 @@ bool Battle::updatedField()
 		if (debugPrint)	Print << U"Deleting...";
 
 		return true;
+	}
+
+	// 一番上のyにセルがあるなら、負け
+	for (auto x : step(field.size().x))
+	{
+		if (field.getGrid().at(x, 0).getNumber() != (int32)CellTypeNumber::Empty)
+		{
+			canOperate = false;
+			state = (int32)BattleState::lose;
+			return false;
+		}
 	}
 
 	return false;

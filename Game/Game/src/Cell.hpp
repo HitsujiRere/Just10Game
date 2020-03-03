@@ -20,7 +20,9 @@ enum class CellTypeNumber
 	Cell8,
 	Cell9,
 	Cell10,
+	// ‹ó
 	Empty = 11,
+	// ƒWƒƒƒ}
 	Obstruct = 12,
 };
 
