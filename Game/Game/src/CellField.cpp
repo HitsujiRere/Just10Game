@@ -91,7 +91,7 @@ void CellField::updateJust10Times()
 			}
 		}
 
-		// minoJust10TimeDiffGrid‚©‚çminoJust10TimeGrid‚Ö—İÏ‚·‚é
+		// —İÏ‚·‚é
 		// x•ûŒü‚Ö‰ÁZ
 		for (auto p : step(size))
 		{
@@ -260,12 +260,11 @@ void CellField::draw(Point fieldPos, Size cellSize,
 	}
 }
 
-
 CellField CellField::RandomField(Size size, int32 maxNumber, bool existsEmpty, bool existsObstruct)
 {
 	CellField field(size);
 
-	for (auto p : step(field.Field.size()))
+	for (auto p : step(Size(0, 1), field.Field.size() - Size(0, 1)))
 	{
 		field.Field.at(p) = Cell::RandomCell(maxNumber, existsEmpty, existsObstruct);
 	}

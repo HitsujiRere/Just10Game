@@ -40,8 +40,6 @@ void Main()
 	// 手動でリサイズできるように変更
 	Window::SetStyle(WindowStyle::Sizable);
 
-	// 16:9のシーンに変更
-	//Scene::Resize(1600, 900);
 	// 背景色を設定
 	Scene::SetBackground(ColorF(0.2, 0.8, 0.4));
 

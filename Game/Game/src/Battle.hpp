@@ -43,14 +43,16 @@ private:
 	// 落とすフィールドのx
 	int32 dropCellFieldX = 0;
 	// 落とすセルの移動時間
-	double dropCellCoolTime = 0.1;
+	const double dropCellCoolTime = 0.1;
 	// 落とすセルの移動残り時間
 	double dropCellTimer = 0.1;
 	// 落とすセルの1ループのNumberの数
-	Array<int32> dropCellsNumCnt1Loop = Array<int32>
+	const Array<int32> dropCells1LoopNum = Array<int32>
 	{
 		0, 1, 1, 1, 1, 1,
 	};
+	// 落とすセルの1ループ
+	Array<Cell> dropCells1LoopCells;
 	// 落とすセルの次のスタック
 	Array<Cell> dropCells = Array<Cell>();
 
@@ -67,14 +69,14 @@ private:
 	// Just10消去待機残り時間
 	double deletingTimer = 0.0;
 	// Just10消去待機時間
-	double deletingCoolTime = 1.0;
+	const double deletingCoolTime = 1.0;
 
 	// セル落下待機時間かどうか
 	bool isFallingTime = false;
 	// Just10消去待機残り時間
 	double fallingTimer = 0.0;
 	// Just10消去待機時間
-	double fallingCoolTime = 0.5;
+	const double fallingCoolTime = 0.5;
 
 	// スコア
 	int32 m_score = 0;
@@ -84,7 +86,7 @@ private:
 	// 負け演出残り時間
 	double loseTimer = 0.0;
 	// 負け演出時間
-	double loseCoolTime = 2.0;
+	const double loseCoolTime = 2.0;
 	// 負け待機時間
 	double loseWaitTime = 10.0;
 

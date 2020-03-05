@@ -13,7 +13,7 @@ void Title::update()
 	m_howtoTransition.update(m_howtoButton.mouseOver());
 	m_exitTransition.update(m_exitButton.mouseOver());
 
-	if (m_startButton.mouseOver() || m_exitButton.mouseOver())
+	if (m_startButton.mouseOver() || m_howtoButton.mouseOver()  ||m_exitButton.mouseOver())
 	{
 		Cursor::RequestStyle(CursorStyle::Hand);
 	}

@@ -68,5 +68,6 @@ public:
 		std::function<Color(Point, int32)> backcolorFunc) const;
 
 	// ランダムな数字のセルのフィールドを返す
+	// ただし最上部は空になる
 	static CellField RandomField(Size size = Size(0, 0), int32 maxNumber = 9, bool existsEmpty = false, bool existsObstruct = false);
 };

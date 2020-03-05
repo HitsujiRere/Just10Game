@@ -6,6 +6,15 @@ Battle::Battle(const InitData& init)
 {
 	getData().playTime++;
 
+	for (auto i : step((int32)dropCells1LoopNum.size()))
+	{
+		for (auto j : step(dropCells1LoopNum.at(i)))
+		{
+			dropCells1LoopCells << Cell(i);
+		}
+	}
+
+
 	getDropCell(10);
 }
 
@@ -20,14 +29,14 @@ void Battle::update()
 	if (canOperate)
 	{
 		// フィールドをランダムに変更する
-		if (KeyEnter.down())
+		if (canDrop && KeyEnter.down())
 		{
 			field = CellField::RandomField(fieldSize, cellMaxNumber, false, false);
 			updatedField();
 		}
 
 		// フィールドを無に変更する
-		if (KeyBackspace.down())
+		if (canDrop && KeyBackspace.down())
 		{
 			field = CellField(fieldSize);
 			updatedField();
@@ -146,12 +155,12 @@ void Battle::update()
 			}
 		}
 
-		// セルが落ちる演出
+		// 負けと表示する演出
 		if (state == (int32)BattleState::lose)
 		{
 			loseTimer += deltaTime;
 
-			if (loseTimer > loseWaitTime)
+			if (loseTimer > loseWaitTime || KeyZ.down())
 			{
 				changeScene(State::Title);
 			}
@@ -259,7 +268,7 @@ bool Battle::updatedField()
 	// 一番上のyにセルがあるなら、負け
 	for (auto x : step(field.size().x))
 	{
-		if (field.getGrid().at(x, 0).getNumber() != (int32)CellTypeNumber::Empty)
+		if (field.getGrid().at(0, x).getNumber() != (int32)CellTypeNumber::Empty)
 		{
 			canOperate = false;
 			state = (int32)BattleState::lose;
@@ -275,16 +284,7 @@ Cell& Battle::getDropCell(int32 num)
 	// dropCellsを追加
 	while (num >= dropCells.size())
 	{
-		Array<Cell> addArray;
-		for (auto i : step((int32)dropCellsNumCnt1Loop.size()))
-		{
-			for (auto j : step(dropCellsNumCnt1Loop.at(i)))
-			{
-				addArray << Cell(i);
-			}
-		}
-		addArray.shuffle();
-		dropCells.append(addArray);
+		dropCells.append(dropCells1LoopCells.shuffled());
 	}
 
 	return dropCells.at(num);
