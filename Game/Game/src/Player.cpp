@@ -161,7 +161,7 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 	// NextƒZƒ‹‚Ì•`‰æ
 	FontAsset(U"Text")(U"Next").drawAt(fieldPos + Vec2(fieldSize.x + 2, -0.5) * cellDrawSize);
 	getDropCellConst(1).getTexture().resized(cellDrawSize * 2).draw(fieldPos + Vec2(fieldSize.x + 1, 0) * cellDrawSize);
-	for (int32 i = 2; i <= 5; ++i)
+	for (auto i : step(2, 4))
 	{
 		getDropCellConst(i).getTexture().resized(cellDrawSize).draw(fieldPos + Vec2(fieldSize.x + 1, i) * cellDrawSize);
 	}

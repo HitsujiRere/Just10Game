@@ -2,6 +2,9 @@
 # pragma once
 # include <Siv3D.hpp> // OpenSiv3D v0.4.2
 
+// バージョン
+const Vector3D<int32> Version(0, 1, 0);
+
 // シーンの名前
 enum class State
 {

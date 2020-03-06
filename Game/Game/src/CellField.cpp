@@ -51,7 +51,7 @@ void CellField::updateJust10Times()
 		// 右端と左端のxを先に決める
 		for (auto beginx : step(numCSum.width() - 1))
 		{
-			for (auto endx = beginx + 1; endx < numCSum.width(); endx++)
+			for (auto endx : step(beginx + 1, numCSum.width() - beginx - 1))
 			{
 				// しゃくとり法で求める
 				int32 beginy = 0;
@@ -168,7 +168,7 @@ Grid<Point> CellField::getFallTo() const
 	for (auto x : step((int32)Field.width()))
 	{
 		int32 pushY = (int32)Field.height() - (int32)1;
-		for (int32 y = (int32)Field.height() - (int32)1; y >= 0; --y)
+		for (auto y : step(Field.height() - 1, Field.height(), -1))
 		{
 			if (Field.at(y, x).getNumber() != (int32)CellTypeNumber::Empty)
 			{
@@ -189,12 +189,10 @@ void CellField::moveCells(Grid<Point> moveTo)
 {
 	Grid<Cell> fieldMoved(Field.size());
 
-	Print << U"move to";
 	for (auto p : step(Field.size()))
 	{
 		if (moveTo.at(p).x >= 0 && moveTo.at(p).y >= 0)
 		{
-			Print << U"({}) = {} -> {}"_fmt(p, Field.at(p).getNumber(), moveTo.at(p));
 			fieldMoved.at(moveTo.at(p)) = Field.at(p);
 		}
 	}

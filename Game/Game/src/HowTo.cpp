@@ -38,7 +38,7 @@ void HowTo::draw() const
 		FontAsset(U"Header")(headerText).drawAt(center);
 	}
 
-	FontAsset(U"Text")(desc).draw(Arg::topCenter(Scene::Center().x, 200));
+	FontAsset(U"Desc")(desc).draw(Arg::topCenter(Scene::Center().x, 200));
 
 	Rect(0, (int32)(Scene::Height() * 0.7), Scene::Width(), (int32)(Scene::Height() * 0.3))
 		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));

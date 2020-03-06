@@ -16,9 +16,6 @@
 
 void Main()
 {
-	// バージョン
-	const Vector3D<int32> version(0, 0, 0);
-
 	// ESCキーで終了しない
 	System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
 
@@ -45,10 +42,12 @@ void Main()
 
 	// 使用するフォントアセットを登録
 	FontAsset::Register(U"Title", 200, U"example/font/AnnyantRoman/AnnyantRoman.ttf");
+	FontAsset::Register(U"Version", 60, Typeface::Regular);
 	FontAsset::Register(U"Menu", 30, Typeface::Regular);
 	FontAsset::Register(U"Score", 36, Typeface::Bold);
-	FontAsset::Register(U"Text", 30, Typeface::Regular);
 	FontAsset::Register(U"Header", 100, Typeface::Bold);
+	FontAsset::Register(U"Text", 45, Typeface::Regular);
+	FontAsset::Register(U"Desc", 30, Typeface::Regular);
 
 	// 同じ形式かどうかはloadVersionで判定
 	constexpr int32 loadVersion = 1;
@@ -66,7 +65,7 @@ void Main()
 			}
 			else
 			{
-				Print << U"Cannot read 'GameData.bin'!";
+				//Print << U"Cannot read 'GameData.bin'!";
 			}
 		}
 	}

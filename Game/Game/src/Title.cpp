@@ -13,7 +13,7 @@ void Title::update()
 	m_howtoTransition.update(m_howtoButton.mouseOver());
 	m_exitTransition.update(m_exitButton.mouseOver());
 
-	if (m_startButton.mouseOver() || m_howtoButton.mouseOver()  ||m_exitButton.mouseOver())
+	if (m_startButton.mouseOver() || m_howtoButton.mouseOver() || m_exitButton.mouseOver())
 	{
 		Cursor::RequestStyle(CursorStyle::Hand);
 	}
@@ -36,11 +36,14 @@ void Title::update()
 
 void Title::draw() const
 {
-	const String titleText = U"Just 10 Game";
-	const Vec2 center(Scene::Center().x, 150);
-	FontAsset(U"Title")(titleText).drawAt(center.movedBy(6, 9), ColorF(0.0, 0.5));
-	FontAsset(U"Title")(titleText).drawAt(center);
-
+	{
+		const String titleText = U"Just 10 Game";
+		const Vec2 titlePos(Scene::Center().x, 150);
+		FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(6, 9), ColorF(0.0, 0.5));
+		const Rect titleArea = FontAsset(U"Title")(titleText).drawAt(titlePos);
+		FontAsset(U"Version")(U"Ver {}.{}.{}"_fmt(Version.x, Version.y, Version.z)).draw(Arg::topRight(titlePos.movedBy(titleArea.size.x / 2, 120)));
+	}
+	
 	m_startButton.draw(ColorF(1.0, m_startTransition.value())).drawFrame(2);
 	m_howtoButton.draw(ColorF(1.0, m_howtoTransition.value())).drawFrame(2);
 	m_exitButton.draw(ColorF(1.0, m_exitTransition.value())).drawFrame(2);
