@@ -1,6 +1,6 @@
 ﻿
 //
-// Just10Game
+// Just10Game  ver 0.1.0
 // made by HitsujiRere
 //
 
