@@ -48,7 +48,7 @@ public:
 	Grid<Point> getFallTo() const;
 
 	// —‰ºæ‚ÉˆÚ“®‚³‚¹‚é
-	void fallCells(Grid<Point> FallTo);
+	void moveCells(Grid<Point> FallTo);
 
 	// (x,0)‚ÉƒZƒ‹‚ğ’u‚­
 	// •Ô‚è’l‚Í‚Å‚«‚½‚©‚Ç‚¤‚©

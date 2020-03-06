@@ -58,14 +58,14 @@ void Player::update()
 		}
 
 		// 落とすセルを変更する
-		/*if (KeyUp.down())
+		if (KeyUp.down())
 		{
 			// 1 ~ cellMaxNumberで1周する
 			int32 nextNumber = getDropCell(0).getNumber() + 1;
-			if (nextNumber > cellMaxNumber)
+			if (nextNumber >= dropCells1LoopNum.size())
 				nextNumber = 1;
 			getDropCell(0) = Cell(nextNumber);
-		}*/
+		}
 
 		// 落とすセルを移動する
 		if (KeyRight.pressed() || KeyLeft.pressed())
@@ -138,7 +138,7 @@ void Player::update()
 
 			if (fallingTimer > fallingCoolTime)
 			{
-				field.fallCells(fieldMoveTo);
+				field.moveCells(fieldMoveTo);
 				if (debugPrint)	Print << U"Falled Cells!";
 
 				isFallingTime = false;
@@ -152,6 +152,8 @@ void Player::update()
 			}
 		}
 	}
+
+	//Print << U"(0,0) = {}"_fmt(field.getGrid().at(0, 0).getNumber());
 }
 
 void Player::draw(Point fieldPos, Size cellDrawSize) const
@@ -169,7 +171,7 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 	holdCell.getTexture().resized(cellDrawSize * 2).draw(fieldPos + Point(-3, 0) * cellDrawSize);
 
 	// フィールドの背景
-	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).draw(ColorF(0.2, 0.8, 0.4));
+	//Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).draw(ColorF(0.2, 0.8, 0.4));
 	// フィールドの枠
 	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).drawFrame(10, Palette::Forestgreen);
 

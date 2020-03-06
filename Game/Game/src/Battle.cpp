@@ -52,6 +52,6 @@ void Battle::draw() const
 		const Vec2 to(fieldPos + player.fieldSize * cellSize / 2.0);
 		const Vec2 pos(Vec2(fieldPos.x + player.fieldSize.x * cellSize.x / 2.0, -100).lerp(to, e));
 		FontAsset(U"Header")(U"Lose").drawAt(pos, Palette::Black);
-		FontAsset(U"Text")(U"タイトルへ戻るまで{:.0f}s"_fmt(loseWaitTime - loseTimer)).drawAt(pos.movedBy(0, 100), Palette::Black);
+		FontAsset(U"Text")(U"タイトルへ戻るまで{:.0f}s"_fmt(loseWaitTime - loseTimer < 0 ? 0 : loseWaitTime - loseTimer)).drawAt(pos.movedBy(0, 100), Palette::Black);
 	}
 }

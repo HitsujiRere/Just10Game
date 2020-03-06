@@ -175,22 +175,31 @@ Grid<Point> CellField::getFallTo() const
 				FallTo.at(y, x) = Point(x, pushY);
 				pushY--;
 			}
+			else
+			{
+				FallTo.at(y, x) = Point(-1, -1);
+			}
 		}
 	}
 
 	return FallTo;
 }
 
-void CellField::fallCells(Grid<Point> FallTo)
+void CellField::moveCells(Grid<Point> moveTo)
 {
-	Grid<Cell> FieldFall(Field.size());
+	Grid<Cell> fieldMoved(Field.size());
 
+	Print << U"move to";
 	for (auto p : step(Field.size()))
 	{
-		FieldFall.at(FallTo.at(p)) = Field.at(p);
+		if (moveTo.at(p).x >= 0 && moveTo.at(p).y >= 0)
+		{
+			Print << U"({}) = {} -> {}"_fmt(p, Field.at(p).getNumber(), moveTo.at(p));
+			fieldMoved.at(moveTo.at(p)) = Field.at(p);
+		}
 	}
 
-	Field = FieldFall;
+	Field = fieldMoved;
 
 	updateJust10Times();
 }
