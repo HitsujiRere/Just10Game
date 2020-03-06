@@ -154,6 +154,66 @@ void Player::update()
 	}
 }
 
+void Player::draw(Point fieldPos, Size cellDrawSize) const
+{
+	// Nextセルの描画
+	FontAsset(U"Text")(U"Next").drawAt(fieldPos + Vec2(fieldSize.x + 2, -0.5) * cellDrawSize);
+	getDropCellConst(1).getTexture().resized(cellDrawSize * 2).draw(fieldPos + Vec2(fieldSize.x + 1, 0) * cellDrawSize);
+	for (int32 i = 2; i <= 5; ++i)
+	{
+		getDropCellConst(i).getTexture().resized(cellDrawSize).draw(fieldPos + Vec2(fieldSize.x + 1, i) * cellDrawSize);
+	}
+
+	// ホールドの表示
+	FontAsset(U"Text")(U"Hold").drawAt(fieldPos + Vec2(-2, -0.5) * cellDrawSize);
+	holdCell.getTexture().resized(cellDrawSize * 2).draw(fieldPos + Point(-3, 0) * cellDrawSize);
+
+	// フィールドの背景
+	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).draw(ColorF(0.2, 0.8, 0.4));
+	// フィールドの枠
+	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).drawFrame(10, Palette::Forestgreen);
+
+	// Just10の回数の表示
+	if (KeyControl.pressed())
+	{
+		for (auto p : step(fieldSize))
+		{
+			Point pos = fieldPos + cellDrawSize * p + cellDrawSize / 2;
+			FontAsset(U"Text")(U"{}"_fmt(just10Times.at(p))).draw(pos, Palette::Black);
+		}
+	}
+	// フィールドの描画
+	else
+	{
+		field.draw(fieldPos, cellDrawSize,
+			[&](Point p, int32) {
+				if (just10Times.at(p))
+					return (p * cellDrawSize);
+				else
+				{
+					const double e = EaseOutCubic(fallingTimer / fallingCoolTime);
+					return (Vec2(p * cellDrawSize).lerp(Vec2(fieldMoveTo.at(p) * cellDrawSize), e)).asPoint();
+				}
+			},
+			[&](Point p, int32) {
+				if (just10Times.at(p))
+					return Color(255, (int32)(255 * (1.0 - deletingTimer / deletingCoolTime)));
+				else
+					return Color(255, 255);
+			},
+				[this](Point, int32) {
+				return Color(0, 0);
+			});
+	}
+
+	// 落とすセルの描画
+	{
+		const Point dropCellPos(fieldPos + Point(cellDrawSize.x * dropCellFieldX, -cellDrawSize.y));
+
+		getDropCellConst(0).getTexture().resized(cellDrawSize).draw(dropCellPos);
+	}
+}
+
 Cell& Player::getDropCell(int32 num)
 {
 	// dropCellsを追加

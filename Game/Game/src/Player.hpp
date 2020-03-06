@@ -93,5 +93,6 @@ public:
 	const Cell& getDropCellConst(int32 num) const;
 
 	void update();
-};
 
+	void draw(Point fieldPos, Size cellDrawSize) const;
+};
