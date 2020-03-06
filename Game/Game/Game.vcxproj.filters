@@ -380,6 +380,9 @@
     <ClCompile Include="src\Battle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Title.hpp">
@@ -398,6 +401,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Battle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Player.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
