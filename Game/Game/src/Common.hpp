@@ -3,7 +3,7 @@
 # include <Siv3D.hpp> // OpenSiv3D v0.4.2
 
 // バージョン
-const Vector3D<int32> Version(0, 1, 0);
+const Vector3D<int32> Version(0, 2, 0);
 
 // 戻るキー
 const KeyGroup backKeys(KeyEscape, KeyX);
