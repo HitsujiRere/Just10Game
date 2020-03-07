@@ -15,7 +15,7 @@ Player::Player(Array<int32> _dropCells1LoopNum) : dropCells1LoopNum(_dropCells1L
 	getDropCell(10);
 }
 
-void Player::update()
+void Player::update(PlayerKeySet keySet)
 {
 	const double deltaTime = Scene::DeltaTime();
 
@@ -26,21 +26,21 @@ void Player::update()
 	if (canOperate)
 	{
 		// フィールドをランダムに変更する
-		/*if (canDrop && KeyEnter.down())
+		if (canDrop && keySet.toRandom.down())
 		{
-			field = CellField::RandomField(fieldSize, cellMaxNumber, false, false);
+			field = CellField::RandomField(fieldSize, dropCells1LoopNum.size() - 1, false, false);
 			updatedField();
-		}*/
+		}
 
 		// フィールドを無に変更する
-		if (canDrop && KeyBackspace.down())
+		if (canDrop && keySet.toEmpty.down())
 		{
 			field = CellField(fieldSize);
 			updatedField();
 		}
 
 		// セルをホールドする
-		if (KeyTab.down())
+		if (keySet.hold.down())
 		{
 			if (holdCell.getNumber() == (int32)CellTypeNumber::Empty)
 			{
@@ -58,7 +58,7 @@ void Player::update()
 		}
 
 		// 落とすセルを変更する
-		if (KeyUp.down())
+		if (keySet.changeCell.down())
 		{
 			// 1 ~ cellMaxNumberで1周する
 			int32 nextNumber = getDropCell(0).getNumber() + 1;
@@ -68,19 +68,11 @@ void Player::update()
 		}
 
 		// 落とすセルを移動する
-		if (KeyRight.pressed() || KeyLeft.pressed())
+		if (keySet.moveL.pressed() || keySet.moveR.pressed())
 		{
 			dropCellTimer += deltaTime;
 		}
-		if (KeyRight.pressed() && dropCellFieldX < fieldSize.x - 1)
-		{
-			if (dropCellTimer > dropCellCoolTime)
-			{
-				dropCellFieldX++;
-				dropCellTimer = 0.0;
-			}
-		}
-		if (KeyLeft.pressed() && dropCellFieldX > 0)
+		if (keySet.moveL.pressed() && dropCellFieldX > 0)
 		{
 			if (dropCellTimer > dropCellCoolTime)
 			{
@@ -88,13 +80,21 @@ void Player::update()
 				dropCellTimer = 0.0;
 			}
 		}
-		if (KeyRight.up() || KeyLeft.up())
+		if (keySet.moveR.pressed() && dropCellFieldX < fieldSize.x - 1)
+		{
+			if (dropCellTimer > dropCellCoolTime)
+			{
+				dropCellFieldX++;
+				dropCellTimer = 0.0;
+			}
+		}
+		if (keySet.moveL.up() || keySet.moveR.up())
 		{
 			dropCellTimer = dropCellCoolTime;
 		}
 
 		//セルを落下させる
-		if (canDrop && KeyDown.pressed())
+		if (canDrop && keySet.drop.pressed())
 		{
 			field.pushCell(getDropCell(0), dropCellFieldX);
 
@@ -151,13 +151,21 @@ void Player::update()
 				}
 			}
 		}
-	}
 
-	//Print << U"(0,0) = {}"_fmt(field.getGrid().at(0, 0).getNumber());
+		// 負けと表示する演出
+		if (state == (int32)BattleState::lose)
+		{
+			loseTimer += deltaTime;
+		}
+	}
 }
 
 void Player::draw(Point fieldPos, Size cellDrawSize) const
 {
+	// スコアの表示
+	FontAsset(U"Text")(U"Score:{}"_fmt(m_score))
+		.drawAt(fieldPos.movedBy(fieldSize.x * cellDrawSize.x / 2, fieldSize.y * cellDrawSize.y + 30), ColorF(0.25));
+
 	// Nextセルの描画
 	FontAsset(U"Text")(U"Next").drawAt(fieldPos + Vec2(fieldSize.x + 2, -0.5) * cellDrawSize);
 	getDropCellConst(1).getTexture().resized(cellDrawSize * 2).draw(fieldPos + Vec2(fieldSize.x + 1, 0) * cellDrawSize);
@@ -171,7 +179,7 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 	holdCell.getTexture().resized(cellDrawSize * 2).draw(fieldPos + Point(-3, 0) * cellDrawSize);
 
 	// フィールドの背景
-	//Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).draw(ColorF(0.2, 0.8, 0.4));
+	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).draw(ColorF(0.2, 0.8, 0.4));
 	// フィールドの枠
 	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).drawFrame(10, Palette::Forestgreen);
 
@@ -199,7 +207,10 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 			},
 			[&](Point p, int32) {
 				if (just10Times.at(p))
-					return Color(255, (int32)(255 * (1.0 - deletingTimer / deletingCoolTime)));
+				{
+					const double e = EaseOutCubic(deletingTimer / deletingCoolTime);
+					return Color(255, (int32)(255 * (1.0 - e)));
+				}
 				else
 					return Color(255, 255);
 			},
@@ -213,6 +224,15 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 		const Point dropCellPos(fieldPos + Point(cellDrawSize.x * dropCellFieldX, -cellDrawSize.y));
 
 		getDropCellConst(0).getTexture().resized(cellDrawSize).draw(dropCellPos);
+	}
+
+	// 負けという知らせの描画
+	if (state == (int32)BattleState::lose)
+	{
+		const double e = EaseOutBounce(loseTimer / loseCoolTime <= 1.0 ? loseTimer / loseCoolTime : 1.0);
+		const Vec2 to(fieldPos + fieldSize * cellDrawSize / 2.0);
+		const Vec2 pos(Vec2(fieldPos.x + fieldSize.x * cellDrawSize.x / 2.0, -100).lerp(to, e));
+		FontAsset(U"Header")(U"Lose").drawAt(pos, Palette::Black);
 	}
 }
 

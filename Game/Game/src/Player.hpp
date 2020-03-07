@@ -17,14 +17,38 @@ enum class BattleState
 	tie,
 };
 
+// プレイヤーのキーセット
+class PlayerKeySet
+{
+public:
+	KeyGroup moveL = KeyGroup();
+	KeyGroup moveR = KeyGroup();
+	KeyGroup drop = KeyGroup();
+	KeyGroup hold = KeyGroup();
+	KeyGroup changeCell = KeyGroup();
+	KeyGroup toRandom = KeyGroup();
+	KeyGroup toEmpty = KeyGroup();
+
+	PlayerKeySet();
+
+	PlayerKeySet(KeyGroup _moveL, KeyGroup _moveR, KeyGroup _drop, KeyGroup _hold,
+		KeyGroup _changeCell = KeyGroup(), KeyGroup _toRandom = KeyGroup(),
+		KeyGroup _toEmpty = KeyGroup())
+		: moveL(_moveL)
+		, moveR(_moveR)
+		, drop(_drop)
+		, hold(_hold)
+		, changeCell(_changeCell)
+		, toRandom(_toRandom)
+		, toEmpty(_toEmpty)
+	{
+	}
+};
+
 // プレイヤー
 class Player
 {
 private:
-	// 落とすセルの移動時間
-	const double dropCellCoolTime = 0.1;
-	// 落とすセルの移動残り時間
-	double dropCellTimer = 0.1;
 	// 落とすセルの1ループ
 	Array<Cell> dropCells1LoopCells;
 	// 落とすセルの次のスタック
@@ -49,6 +73,10 @@ public:
 	// セルの移動先
 	Grid<Point> fieldMoveTo = Grid<Point>(fieldSize);
 
+	// 落とすセルの移動時間
+	const double dropCellCoolTime = 0.1;
+	// 落とすセルの移動残り時間
+	double dropCellTimer = 0.1;
 	// 落とすフィールドのx
 	int32 dropCellFieldX = 0;
 	// 落とすセルの1ループのNumberの数
@@ -79,6 +107,11 @@ public:
 	// Just10消去待機時間
 	const double fallingCoolTime = 0.5;
 
+	// 負け演出残り時間
+	double loseTimer = 0.0;
+	// 負け演出時間
+	const double loseCoolTime = 2.0;
+
 	// スコア
 	int32 m_score = 0;
 
@@ -92,7 +125,26 @@ public:
 	// numを超えても追加しない
 	const Cell& getDropCellConst(int32 num) const;
 
-	void update();
+	void update(PlayerKeySet keySet);
 
 	void draw(Point fieldPos, Size cellDrawSize) const;
+};
+
+class PlayerData
+{
+public:
+	Player player;
+	PlayerKeySet keySet;
+	Point fieldPos;
+
+	PlayerData()
+	{
+	}
+
+	PlayerData(Player _player, PlayerKeySet _keySet, Point _fieldPos)
+		: player(_player)
+		, keySet(_keySet)
+		, fieldPos(_fieldPos)
+	{
+	}
 };
