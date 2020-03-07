@@ -64,8 +64,7 @@ public:
 	// フィールドを描く
 	void draw(Point fieldPos, Size cellSize, 
 		std::function<Point(Point, int32)> posFunc,
-		std::function<Color(Point, int32)> colorFunc,
-		std::function<Color(Point, int32)> backcolorFunc) const;
+		std::function<Color(Point, int32)> colorFunc) const;
 
 	// ランダムな数字のセルのフィールドを返す
 	// ただし最上部は空になる

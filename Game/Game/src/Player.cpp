@@ -28,7 +28,7 @@ void Player::update(PlayerKeySet keySet)
 		// フィールドをランダムに変更する
 		if (canDrop && keySet.toRandom.down())
 		{
-			field = CellField::RandomField(fieldSize, dropCells1LoopNum.size() - 1, false, false);
+			field = CellField::RandomField(fieldSize, (int32)dropCells1LoopNum.size() - 1, false, false);
 			updatedField();
 		}
 
@@ -179,9 +179,9 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 	holdCell.getTexture().resized(cellDrawSize * 2).draw(fieldPos + Point(-3, 0) * cellDrawSize);
 
 	// フィールドの背景
-	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).draw(ColorF(0.2, 0.8, 0.4));
+	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).draw(fieldColor);
 	// フィールドの枠
-	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).drawFrame(10, Palette::Forestgreen);
+	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).drawFrame(10, ColorF(0.2));
 
 	// Just10の回数の表示
 	if (KeyControl.pressed())
@@ -212,11 +212,9 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 					return Color(255, (int32)(255 * (1.0 - e)));
 				}
 				else
-					return Color(255, 255);
-			},
-				[this](Point, int32) {
-				return Color(0, 0);
-			});
+					return Color(255);
+			}
+			);
 	}
 
 	// 落とすセルの描画

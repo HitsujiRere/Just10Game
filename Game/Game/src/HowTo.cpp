@@ -22,7 +22,7 @@ HowTo::HowTo(const InitData& init)
 
 void HowTo::update()
 {
-	if (KeyEscape.down())
+	if (backKeys.down())
 	{
 		changeScene(State::Title);
 	}
@@ -34,8 +34,8 @@ void HowTo::draw() const
 	{
 		const String headerText = U"‚ ‚»‚Ñ‚©‚½";
 		const Vec2 center(Scene::Center().x, 80);
-		FontAsset(U"Header")(headerText).drawAt(center.movedBy(4, 6), ColorF(0.0, 0.5));
-		FontAsset(U"Header")(headerText).drawAt(center);
+		FontAsset(U"Header")(headerText).drawAt(center.movedBy(4, 6), ColorF(0.0, 0.4));
+		FontAsset(U"Header")(headerText).drawAt(center, Color(0.2));
 	}
 
 	FontAsset(U"Desc")(desc).draw(Arg::topCenter(Scene::Center().x, 200), ColorF(0.25));

@@ -38,7 +38,7 @@ void Main()
 	Window::SetStyle(WindowStyle::Sizable);
 
 	// 背景色を設定
-	Scene::SetBackground(ColorF(0.2, 0.8, 0.4));
+	Scene::SetBackground(ColorF(1.0));
 
 	// 使用するフォントアセットを登録
 	FontAsset::Register(U"Title", 200, U"example/font/AnnyantRoman/AnnyantRoman.ttf");

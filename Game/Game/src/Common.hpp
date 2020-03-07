@@ -5,6 +5,9 @@
 // バージョン
 const Vector3D<int32> Version(0, 1, 0);
 
+// 戻るキー
+const KeyGroup backKeys(KeyEscape, KeyX);
+
 // シーンの名前
 enum class State
 {

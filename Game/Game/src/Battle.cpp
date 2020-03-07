@@ -7,18 +7,21 @@ Battle::Battle(const InitData& init)
 	getData().playTime++;
 
 	{
+		auto player = Player();
 		const KeyGroup moveL = (KeyA | Key());
 		const KeyGroup moveR = (KeyD | Key());
 		const KeyGroup drop = (KeyS | Key());
 		const KeyGroup hold = (KeyW | Key());
-		playerDatas << PlayerData(Player(), PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 2)));
+		playerDatas << PlayerData(player, PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 2)));
 	}
 	{
+		auto player = Player();
+		player.fieldColor = Color(231, 184, 194);
 		const KeyGroup moveL = (KeyLeft | Key());
 		const KeyGroup moveR = (KeyRight | Key());
 		const KeyGroup drop = (KeyDown | Key());
 		const KeyGroup hold = (KeyUp | Key());
-		playerDatas << PlayerData(Player(), PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 2)).movedBy(Scene::Center().x, 0));
+		playerDatas << PlayerData(player, PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 2)).movedBy(Scene::Center().x, 0));
 	}
 }
 
@@ -45,7 +48,7 @@ void Battle::update()
 		}
 	}
 
-	if (KeyEscape.down())
+	if (backKeys.down())
 	{
 		int32 hightScore = getData().highScore;
 		for (auto& playerData : playerDatas)

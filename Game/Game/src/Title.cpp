@@ -39,14 +39,14 @@ void Title::draw() const
 	{
 		const String titleText = U"Just 10 Game";
 		const Vec2 titlePos(Scene::Center().x, 150);
-		FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(6, 9), ColorF(0.0, 0.5));
-		const Rect titleArea = FontAsset(U"Title")(titleText).drawAt(titlePos);
+		FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(9, 15), ColorF(0.0, 0.4));
+		const Rect titleArea = FontAsset(U"Title")(titleText).drawAt(titlePos, ColorF(0.2));
 		FontAsset(U"Version")(U"Ver {}.{}.{}"_fmt(Version.x, Version.y, Version.z)).draw(Arg::topRight(titlePos.movedBy(titleArea.size.x / 2, 120)));
 	}
 	
-	m_startButton.draw(ColorF(1.0, m_startTransition.value())).drawFrame(2);
-	m_howtoButton.draw(ColorF(1.0, m_howtoTransition.value())).drawFrame(2);
-	m_exitButton.draw(ColorF(1.0, m_exitTransition.value())).drawFrame(2);
+	m_startButton.draw(ColorF(1.0, m_startTransition.value())).drawFrame(2, ColorF(0.2));
+	m_howtoButton.draw(ColorF(1.0, m_howtoTransition.value())).drawFrame(2, ColorF(0.2));
+	m_exitButton.draw(ColorF(1.0, m_exitTransition.value())).drawFrame(2, ColorF(0.2));
 
 	FontAsset(U"Menu")(U"はじめる").drawAt(m_startButton.center(), ColorF(0.25));
 	FontAsset(U"Menu")(U"あそびかた").drawAt(m_howtoButton.center(), ColorF(0.25));

@@ -247,8 +247,7 @@ void CellField::draw(Point fieldPos, Size cellSize, Color backcolor) const
 
 void CellField::draw(Point fieldPos, Size cellSize, 
 	std::function<Point(Point, int32)> posFunc, 
-	std::function<Color(Point, int32)> colorFunc,
-	std::function<Color(Point, int32)> backcolorFunc) const
+	std::function<Color(Point, int32)> colorFunc) const
 {
 	try
 	{
@@ -257,7 +256,6 @@ void CellField::draw(Point fieldPos, Size cellSize,
 			Cell cell = Field.at(p);
 			Point pos = fieldPos + posFunc(p, cell.getNumber());
 
-			Rect(pos, cellSize).draw(backcolorFunc(p, cell.getNumber()));
 			cell.getTexture().resized(cellSize).draw(pos, colorFunc(p, cell.getNumber()));
 		}
 	}
