@@ -27,23 +27,27 @@ Battle::Battle(const InitData& init)
 
 void Battle::update()
 {
+	// デバッグ用死亡
+	if (Key4.down())
+	{
+		playerDatas.at(0).player.state = BattleState::lose;
+	}
+
 	const double deltaTime = Scene::DeltaTime();
 
 	for (auto& playerData : playerDatas)
 	{
-		{
-			playerData.player.update(playerData.keySet);
-		}
+		playerData.player.update(playerData.keySet);
 
-		// 演出処理
+		// 負けと表示する演出
+		if (playerData.player.state == BattleState::lose)
 		{
-			// 負けと表示する演出
-			if (playerData.player.state == (int32)BattleState::lose)
+			isFinished = true;
+			backTimer += deltaTime;
+
+			if (backTimer > backTime || backKeys.down())
 			{
-				if (playerData.player.loseTimer > loseWaitTime || KeyZ.down())
-				{
-					changeScene(State::Title);
-				}
+				changeScene(State::Title);
 			}
 		}
 	}
@@ -53,7 +57,7 @@ void Battle::update()
 		int32 hightScore = getData().highScore;
 		for (auto& playerData : playerDatas)
 		{
-			hightScore = Max(hightScore, playerData.player.m_score);
+			hightScore = Max(hightScore, playerData.player.score);
 		}
 		getData().highScore = hightScore;
 		changeScene(State::Title);
@@ -69,16 +73,31 @@ void Battle::draw() const
 	{
 		playerData.player.draw(playerData.fieldPos, cellSize);
 
-		// 負けという知らせの描画
-		if (playerData.player.state == (int32)BattleState::lose)
+		// スコア
+		FontAsset(U"Text")(U"Score:{}"_fmt(playerData.player.score))
+			.drawAt(playerData.fieldPos.movedBy(playerData.player.fieldSize.x * cellSize.x / 2, playerData.player.fieldSize.y * cellSize.y + 30), ColorF(0.25));
+		// コンボ
+		FontAsset(U"Text")(U"Combo:{}"_fmt(playerData.player.combo))
+			.drawAt(playerData.fieldPos.movedBy(playerData.player.fieldSize.x * cellSize.x / 2, playerData.player.fieldSize.y * cellSize.y + 75), ColorF(0.25));
+
+		// 負けの知らせ
+		if (playerData.player.state != BattleState::playing)
 		{
-			//const double e = EaseOutBounce(Min(player.first.loseTimer / player.first.loseCoolTime, 1.0));
-			//const Vec2 to(fieldPos + player.first.fieldSize * cellSize / 2.0);
-			//const Vec2 pos(Vec2(fieldPos.x + player.first.fieldSize.x * cellSize.x / 2.0, -100).lerp(to, e));
-			//FontAsset(U"Text")(U"タイトルへ戻るまで{:.0f}s"_fmt(Max(loseWaitTime - player.first.loseTimer, 0.0)))
-				//.drawAt(pos.movedBy(0, 100), ColorF(0.0));
-			FontAsset(U"Text")(U"タイトルへ戻るまで{:.0f}s"_fmt(Max(loseWaitTime - playerData.player.loseTimer, 0.0)))
-				.drawAt(Scene::Center(), ColorF(0.0));
+			const double e = EaseOutBounce(playerData.player.loseTimer / playerData.player.loseCoolTime <= 1.0 ? playerData.player.loseTimer / playerData.player.loseCoolTime : 1.0);
+			const Vec2 to(playerData.fieldPos + playerData.player.fieldSize * cellSize / 2.0);
+			const Vec2 pos(Vec2(playerData.fieldPos.x + playerData.player.fieldSize.x * cellSize.x / 2.0, -100).lerp(to, e));
+			String text = U"";
+			if (playerData.player.state == BattleState::win)	text = U"Win";
+			if (playerData.player.state == BattleState::tie)	text = U"Tie";
+			if (playerData.player.state == BattleState::lose)	text = U"Lose";
+			FontAsset(U"Header")(text).drawAt(pos, Palette::Black);
 		}
+	}
+
+	// タイトルに戻るカウントダウン
+	if (isFinished)
+	{
+		FontAsset(U"Text")(U"タイトルへ戻るまで{:.0f}s"_fmt(Max(backTime - backTimer, 0.0)))
+			.drawAt(Scene::Center(), ColorF(0.0));
 	}
 }

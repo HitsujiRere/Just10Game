@@ -11,10 +11,16 @@ const KeyGroup backKeys(KeyEscape, KeyX);
 // シーンの名前
 enum class State
 {
+	// タイトル
 	Title,
 
+	// 遊び方
 	HowTo,
 
+	// 練習プレイ
+	Plactice, 
+
+	// 対戦プレイ
 	Battle
 };
 

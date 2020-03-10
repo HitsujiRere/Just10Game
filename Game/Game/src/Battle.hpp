@@ -14,11 +14,16 @@ private:
 	//const Size cellDrawSize = Size(40, 40);
 	const Size cellSize = Size(64, 64);
 
-	// 負け待機時間
-	double loseWaitTime = 10.0;
-
 	// プレイヤーと、それぞれの操作キー
 	Array<PlayerData> playerDatas = Array<PlayerData>();
+
+	// 終了したかどうか
+	bool isFinished = false;
+
+	// 終了演出残り時間
+	double backTimer = 0.0;
+	// 終了時間時間
+	double backTime = 10.0;
 
 public:
 

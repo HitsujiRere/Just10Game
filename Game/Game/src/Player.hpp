@@ -29,7 +29,9 @@ public:
 	KeyGroup toRandom = KeyGroup();
 	KeyGroup toEmpty = KeyGroup();
 
-	PlayerKeySet();
+	PlayerKeySet()
+	{
+	}
 
 	PlayerKeySet(KeyGroup _moveL, KeyGroup _moveR, KeyGroup _drop, KeyGroup _hold,
 		KeyGroup _changeCell = KeyGroup(), KeyGroup _toRandom = KeyGroup(),
@@ -42,6 +44,19 @@ public:
 		, toRandom(_toRandom)
 		, toEmpty(_toEmpty)
 	{
+	}
+
+	PlayerKeySet& operator=(const PlayerKeySet& another)
+	{
+		this->moveL = another.moveL;
+		this->moveR = another.moveR;
+		this->drop = another.drop;
+		this->hold = another.hold;
+		this->changeCell = another.changeCell;
+		this->toRandom = another.toRandom;
+		this->toEmpty = another.toEmpty;
+
+		return *this;
 	}
 };
 
@@ -60,6 +75,10 @@ private:
 
 public:
 	Player(Array<int32> _dropCells1LoopNum = { 0, 1, 1, 1, 1, 1 });
+	//Player(const Player& another);
+	//Player(Player&& another);
+
+	Player& operator=(const Player& another);
 
 	// デバッグ用のPrintをするかどうか
 	bool debugPrint = false;
@@ -83,7 +102,7 @@ public:
 	// 落とすフィールドのx
 	int32 dropCellFieldX = 0;
 	// 落とすセルの1ループのNumberの数
-	const Array<int32> dropCells1LoopNum = Array<int32>
+	Array<int32> dropCells1LoopNum = Array<int32>
 	{
 		0, 1, 1, 1, 1, 1,
 	};
@@ -116,10 +135,12 @@ public:
 	const double loseCoolTime = 2.0;
 
 	// スコア
-	int32 m_score = 0;
+	int32 score = 0;
+	// コンボ回数
+	int32 combo = 0;
 
 	// 勝敗
-	int32 state = (int32)BattleState::playing;
+	BattleState state = BattleState::playing;
 
 	// 落とすセルを取得する
 	Cell& getDropCell(int32 n);
@@ -142,6 +163,9 @@ public:
 
 	PlayerData()
 	{
+		player = Player();
+		keySet = PlayerKeySet();
+		fieldPos = Point();
 	}
 
 	PlayerData(Player _player, PlayerKeySet _keySet, Point _fieldPos)
@@ -149,5 +173,20 @@ public:
 		, keySet(_keySet)
 		, fieldPos(_fieldPos)
 	{
+	}
+
+	PlayerData(const PlayerData& data)
+		: player(data.player)
+		, keySet(data.keySet)
+		, fieldPos(data.fieldPos)
+	{
+	}
+
+	PlayerData& operator=(const PlayerData& data)
+	{
+		this->player = data.player;
+		this->keySet = data.keySet;
+		this->fieldPos = data.fieldPos;
+		return *this;
 	}
 };

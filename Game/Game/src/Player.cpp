@@ -11,8 +11,34 @@ Player::Player(Array<int32> _dropCells1LoopNum) : dropCells1LoopNum(_dropCells1L
 		}
 	}
 
-
 	getDropCell(10);
+}
+
+Player& Player::operator=(const Player& another)
+{
+	this->dropCells1LoopNum = another.dropCells1LoopNum;
+	this->dropCells1LoopCells = another.dropCells1LoopCells;
+	this->debugPrint = another.debugPrint;
+	this->field = another.field;
+	this->just10Times = another.just10Times;
+	this->fieldMoveTo = another.fieldMoveTo;
+	this->fieldColor = another.fieldColor;
+	this->dropCellTimer = another.dropCellTimer;
+	this->dropCellFieldX = another.dropCellFieldX;
+	this->dropCells1LoopNum = another.dropCells1LoopNum;
+	this->holdCell = another.holdCell;
+	this->canOperate = another.canOperate;
+	this->canDrop = another.canDrop;
+	this->isDeletingTime = another.isDeletingTime;
+	this->deletingTimer = another.deletingTimer;
+	this->isFallingTime = another.isFallingTime;
+	this->fallingTimer = another.fallingTimer;
+	this->loseTimer = another.loseTimer;
+	this->score = another.score;
+	this->combo = another.combo;
+	this->state = another.state;
+
+	return *this;
 }
 
 void Player::update(PlayerKeySet keySet)
@@ -119,7 +145,9 @@ void Player::update(PlayerKeySet keySet)
 			{
 				int32 dc = field.deleteCells(just10Times);
 				if (debugPrint)	Print << U"Deleted {} Cells!"_fmt(dc);
-				m_score += dc;
+				// コンボ倍率においては要調整
+				score += dc * (combo + 1) * (combo + 1);
+				combo++;
 
 				isDeletingTime = false;
 				deletingTimer = 0.0;
@@ -144,16 +172,17 @@ void Player::update(PlayerKeySet keySet)
 				isFallingTime = false;
 				fallingTimer = 0.0;
 
-				// 消えるものがあるなら、消える演出へ
+				// 消えるものがあるないなら、動かせるようにする
 				if (!updatedField())
 				{
 					canDrop = true;
+					combo = 0;
 				}
 			}
 		}
 
 		// 負けと表示する演出
-		if (state == (int32)BattleState::lose)
+		if (state == BattleState::lose)
 		{
 			loseTimer += deltaTime;
 		}
@@ -162,10 +191,6 @@ void Player::update(PlayerKeySet keySet)
 
 void Player::draw(Point fieldPos, Size cellDrawSize) const
 {
-	// スコアの表示
-	FontAsset(U"Text")(U"Score:{}"_fmt(m_score))
-		.drawAt(fieldPos.movedBy(fieldSize.x * cellDrawSize.x / 2, fieldSize.y * cellDrawSize.y + 30), ColorF(0.25));
-
 	// Nextセルの描画
 	FontAsset(U"Text")(U"Next").drawAt(fieldPos + Vec2(fieldSize.x + 2, -0.5) * cellDrawSize);
 	getDropCellConst(1).getTexture().resized(cellDrawSize * 2).draw(fieldPos + Vec2(fieldSize.x + 1, 0) * cellDrawSize);
@@ -223,15 +248,6 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 
 		getDropCellConst(0).getTexture().resized(cellDrawSize).draw(dropCellPos);
 	}
-
-	// 負けという知らせの描画
-	if (state == (int32)BattleState::lose)
-	{
-		const double e = EaseOutBounce(loseTimer / loseCoolTime <= 1.0 ? loseTimer / loseCoolTime : 1.0);
-		const Vec2 to(fieldPos + fieldSize * cellDrawSize / 2.0);
-		const Vec2 pos(Vec2(fieldPos.x + fieldSize.x * cellDrawSize.x / 2.0, -100).lerp(to, e));
-		FontAsset(U"Header")(U"Lose").drawAt(pos, Palette::Black);
-	}
 }
 
 Cell& Player::getDropCell(int32 num)
@@ -270,7 +286,7 @@ bool Player::updatedField()
 		if (field.getGrid().at(0, x).getNumber() != (int32)CellTypeNumber::Empty)
 		{
 			canOperate = false;
-			state = (int32)BattleState::lose;
+			state = BattleState::lose;
 			return false;
 		}
 	}

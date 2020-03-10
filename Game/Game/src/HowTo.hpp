@@ -10,11 +10,7 @@ private:
 
 	// à–¾
 	String desc;
-
-	// g—p‚·‚é‰æ‘œ
-	Array<Texture> descImages =
-	{
-	};
+	//Array<String> descs = Array<String>();
 
 public:
 

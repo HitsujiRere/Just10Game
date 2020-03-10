@@ -9,14 +9,18 @@ HowTo::HowTo(const InitData& init)
 	{
 		desc = U"";
 		String line;
+
 		while (reader.readLine(line))
+		//for (int32 i = 0; reader.readLine(line); ++i)
 		{
 			desc += line + U"\n";
+			//descs.push_back(line);
 		}
 	}
 	else
 	{
 		desc = U"Cannot read 'HowTo_desc.txt'!";
+		//descs.push_back(U"Cannot read 'HowTo_desc.txt'!");
 	}
 }
 
@@ -35,11 +39,16 @@ void HowTo::draw() const
 		const String headerText = U"‚ ‚»‚Ñ‚©‚½";
 		const Vec2 center(Scene::Center().x, 80);
 		FontAsset(U"Header")(headerText).drawAt(center.movedBy(4, 6), ColorF(0.0, 0.4));
-		FontAsset(U"Header")(headerText).drawAt(center, Color(0.2));
+		FontAsset(U"Header")(headerText).drawAt(center, ColorF(0.2));
 	}
 
 	FontAsset(U"Desc")(desc).draw(Arg::topCenter(Scene::Center().x, 200), ColorF(0.25));
+	/*for (int32 i = 0; i < descs.size(); ++i)
+	{
+		FontAsset(U"Desc")(descs[i])
+			.draw(Arg::topCenter(Scene::Center().x, 200 + 30 * i), ColorF(0.25));
+	}*/
 
-	Rect(0, (int32)(Scene::Height() * 0.7), Scene::Width(), (int32)(Scene::Height() * 0.3))
-		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
+	//Rect(0, (int32)(Scene::Height() * 0.7), Scene::Width(), (int32)(Scene::Height() * 0.3))
+		//.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
 }
