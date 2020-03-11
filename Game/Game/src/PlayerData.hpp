@@ -21,4 +21,3 @@ public:
 
 	PlayerData& operator=(const PlayerData& another);
 };
-

@@ -1,5 +1,6 @@
 ﻿
 # pragma once
+
 # include "Common.hpp"
 # include "Cell.hpp"
 # include "CellField.hpp"
@@ -28,6 +29,9 @@ private:
 	double backTime = 10.0;
 
 public:
+
+	// バトルの種類
+	static BattleType battleType;
 
 	// デバッグ用のPrintをするかどうか
 	bool debugPrint = false;

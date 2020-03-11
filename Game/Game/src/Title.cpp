@@ -22,11 +22,13 @@ void Title::update()
 
 	if (m_placticeButton.leftClicked())
 	{
-		changeScene(State::Plactice);
+		Battle::battleType = BattleType::By1;
+		changeScene(State::Battle);
 	}
 
 	if (m_battleButton.leftClicked())
 	{
+		Battle::battleType = BattleType::By2;
 		changeScene(State::Battle);
 	}
 
