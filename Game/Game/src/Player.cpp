@@ -143,7 +143,12 @@ void Player::update(PlayerKeySet keySet)
 
 			if (deletingTimer > deletingCoolTime)
 			{
-				int32 dc = field.deleteCells(just10Times);
+				int32 dc = 0;
+				for (auto p : step(fieldSize))
+				{
+					dc += just10Times.at(p);
+				}
+				field.deleteCells(just10Times);
 				if (debugPrint)	Print << U"Deleted {} Cells!"_fmt(dc);
 				// コンボ倍率においては要調整
 				score += dc * (combo + 1) * (combo + 1);
@@ -214,12 +219,19 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 		for (auto p : step(fieldSize))
 		{
 			Point pos = fieldPos + cellDrawSize * p + cellDrawSize / 2;
-			FontAsset(U"Text")(U"{}"_fmt(just10Times.at(p))).draw(pos, Palette::Black);
+			FontAsset(U"Text")(U"{}"_fmt(just10Times.at(p))).drawAt(pos, Palette::Black);
 		}
 	}
 	// フィールドの描画
 	else
 	{
+		for (int32 x : step(fieldSize.x))
+		{
+			Point pos = fieldPos + Point(x, 0) * cellDrawSize;
+
+			Cell::getTexture((int32)CellTypeNumber::No).resized(cellDrawSize).draw(pos);
+		}
+
 		field.draw(fieldPos, cellDrawSize,
 			[&](Point p, int32) {
 				if (just10Times.at(p))

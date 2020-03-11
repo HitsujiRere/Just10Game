@@ -15,7 +15,7 @@ Battle::Battle(const InitData& init)
 		const KeyGroup moveR = (KeyD | KeyRight);
 		const KeyGroup drop = (KeyS | KeyDown);
 		const KeyGroup hold = (KeyW | KeyUp);
-		playerDatas << PlayerData(player, PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 2)));
+		playerDatas << PlayerData(player, PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 3)));
 	}
 	
 	if (battleType == BattleType::By2)
@@ -26,7 +26,7 @@ Battle::Battle(const InitData& init)
 			const KeyGroup moveR = (KeyD | Key());
 			const KeyGroup drop = (KeyS | Key());
 			const KeyGroup hold = (KeyW | Key());
-			playerDatas << PlayerData(player, PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 2)));
+			playerDatas << PlayerData(player, PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 3)));
 		}
 		{
 			auto player = Player();
@@ -35,7 +35,7 @@ Battle::Battle(const InitData& init)
 			const KeyGroup moveR = (KeyRight | Key());
 			const KeyGroup drop = (KeyDown | Key());
 			const KeyGroup hold = (KeyUp | Key());
-			playerDatas << PlayerData(player, PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 2)).movedBy(Scene::Center().x, 0));
+			playerDatas << PlayerData(player, PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 3)).movedBy(Scene::Center().x, 0));
 		}
 	}
 }

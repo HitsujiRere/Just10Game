@@ -96,3 +96,8 @@ Array<Texture> Cell::getTextures()
 {
 	return Textures;
 }
+
+Texture Cell::getTexture(int32 num)
+{
+	return Textures.at(num);
+}

@@ -24,6 +24,8 @@ enum class CellTypeNumber
 	Empty = 11,
 	// ジャマ
 	Obstruct = 12,
+	// No
+	No = 13,
 };
 
 
@@ -61,4 +63,5 @@ public:
 
 	// セルの数字ごとのテクスチャを返す
 	static Array<Texture> getTextures();
+	static Texture getTexture(int32 num);
 };

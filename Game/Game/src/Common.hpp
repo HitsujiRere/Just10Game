@@ -9,16 +9,6 @@ const Vector3D<int32> Version(0, 2, 0);
 // 戻るキー
 const KeyGroup backKeys(KeyEscape, KeyX, KeyDelete, KeyBackspace);
 
-// バトルの種類
-enum class BattleType
-{
-	// 1人であそぶ
-	By1,
-
-	// 2人でたたかう
-	By2,
-};
-
 // シーンの名前
 enum class State
 {

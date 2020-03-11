@@ -8,6 +8,16 @@
 # include "PlayerKeySet.hpp"
 # include "PlayerData.hpp"
 
+// バトルの種類
+enum class BattleType
+{
+	// 1人であそぶ
+	By1,
+
+	// 2人でたたかう
+	By2,
+};
+
 // ゲームシーン
 class Battle : public MyApp::Scene
 {
