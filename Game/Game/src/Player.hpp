@@ -1,8 +1,10 @@
+
 #pragma once
 
 # include "Common.hpp"
 # include "Cell.hpp"
 # include "CellField.hpp"
+# include "PlayerKeySet.hpp"
 
 // 試合の状態
 enum class BattleState
@@ -15,49 +17,6 @@ enum class BattleState
 	lose,
 	// 引き分け
 	tie,
-};
-
-// プレイヤーのキーセット
-class PlayerKeySet
-{
-public:
-	KeyGroup moveL = KeyGroup();
-	KeyGroup moveR = KeyGroup();
-	KeyGroup drop = KeyGroup();
-	KeyGroup hold = KeyGroup();
-	KeyGroup changeCell = KeyGroup();
-	KeyGroup toRandom = KeyGroup();
-	KeyGroup toEmpty = KeyGroup();
-
-	PlayerKeySet()
-	{
-	}
-
-	PlayerKeySet(KeyGroup _moveL, KeyGroup _moveR, KeyGroup _drop, KeyGroup _hold,
-		KeyGroup _changeCell = KeyGroup(), KeyGroup _toRandom = KeyGroup(),
-		KeyGroup _toEmpty = KeyGroup())
-		: moveL(_moveL)
-		, moveR(_moveR)
-		, drop(_drop)
-		, hold(_hold)
-		, changeCell(_changeCell)
-		, toRandom(_toRandom)
-		, toEmpty(_toEmpty)
-	{
-	}
-
-	PlayerKeySet& operator=(const PlayerKeySet& another)
-	{
-		this->moveL = another.moveL;
-		this->moveR = another.moveR;
-		this->drop = another.drop;
-		this->hold = another.hold;
-		this->changeCell = another.changeCell;
-		this->toRandom = another.toRandom;
-		this->toEmpty = another.toEmpty;
-
-		return *this;
-	}
 };
 
 // プレイヤー
@@ -152,41 +111,4 @@ public:
 	void update(PlayerKeySet keySet);
 
 	void draw(Point fieldPos, Size cellDrawSize) const;
-};
-
-class PlayerData
-{
-public:
-	Player player;
-	PlayerKeySet keySet;
-	Point fieldPos;
-
-	PlayerData()
-	{
-		player = Player();
-		keySet = PlayerKeySet();
-		fieldPos = Point();
-	}
-
-	PlayerData(Player _player, PlayerKeySet _keySet, Point _fieldPos)
-		: player(_player)
-		, keySet(_keySet)
-		, fieldPos(_fieldPos)
-	{
-	}
-
-	PlayerData(const PlayerData& data)
-		: player(data.player)
-		, keySet(data.keySet)
-		, fieldPos(data.fieldPos)
-	{
-	}
-
-	PlayerData& operator=(const PlayerData& data)
-	{
-		this->player = data.player;
-		this->keySet = data.keySet;
-		this->fieldPos = data.fieldPos;
-		return *this;
-	}
 };

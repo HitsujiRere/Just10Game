@@ -4,6 +4,8 @@
 # include "Cell.hpp"
 # include "CellField.hpp"
 # include "Player.hpp"
+# include "PlayerKeySet.hpp"
+# include "PlayerData.hpp"
 
 // ゲームシーン
 class Plactice : public MyApp::Scene

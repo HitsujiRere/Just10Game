@@ -52,8 +52,7 @@ void Plactice::draw() const
 		playerData.player.draw(playerData.fieldPos, cellSize);
 
 		// スコア
-		FontAsset(U"Text")(U"Score:{}"_fmt(playerData.player.score))
-			.drawAt(playerData.fieldPos.movedBy(playerData.player.fieldSize.x * cellSize.x / 2, playerData.player.fieldSize.y * cellSize.y + 30), ColorF(0.25));
+		FontAsset(U"Text")(U"Score:{}"_fmt(playerData.player.score)).drawAt(playerData.fieldPos.movedBy(playerData.player.fieldSize.x * cellSize.x / 2, playerData.player.fieldSize.y * cellSize.y + 30), ColorF(0.25));
 		// コンボ
 		FontAsset(U"Text")(U"Combo:{}"_fmt(playerData.player.combo))
 			.drawAt(playerData.fieldPos.movedBy(playerData.player.fieldSize.x * cellSize.x / 2, playerData.player.fieldSize.y * cellSize.y + 75), ColorF(0.25));

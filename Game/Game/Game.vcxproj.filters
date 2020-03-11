@@ -386,6 +386,12 @@
     <ClCompile Include="src\Plactice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\PlayerKeySet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Title.hpp">
@@ -410,6 +416,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Plactice.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PlayerData.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PlayerKeySet.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
