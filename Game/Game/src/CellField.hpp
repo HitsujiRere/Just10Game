@@ -52,7 +52,11 @@ public:
 
 	// (x,0)にセルを置く
 	// 返り値はできたかどうか
-	bool pushCell(const Cell& cell, int32 x);
+	bool pushTopCell(const Cell& cell, int32 x);
+
+	// x行の下にObstructをn個追加する
+	// 返り値はできたかどうか
+	bool pushUnderObsructs(int32 x, int32 n);
 
 	// isDeleteの要素が0以外なら削除
 	// 返り値は消したセルの数

@@ -1,14 +1,14 @@
 
 # include "Battle.hpp"
 
-BattleType Battle::battleType = BattleType::By1;
+PlayerCount Battle::playerCnt = PlayerCount::By1;
 
 Battle::Battle(const InitData& init)
 	: IScene(init)
 {
 	getData().playTime++;
 
-	if (battleType == BattleType::By1)
+	if (playerCnt == PlayerCount::By1)
 	{
 		auto player = Player();
 		const KeyGroup moveL = (KeyA | KeyLeft);
@@ -17,8 +17,8 @@ Battle::Battle(const InitData& init)
 		const KeyGroup hold = (KeyW | KeyUp);
 		playerDatas << PlayerData(player, PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 3)));
 	}
-	
-	if (battleType == BattleType::By2)
+
+	if (playerCnt == PlayerCount::By2)
 	{
 		{
 			auto player = Player();
@@ -50,9 +50,17 @@ void Battle::update()
 
 	const double deltaTime = Scene::DeltaTime();
 
-	for (auto& playerData : playerDatas)
+	for (auto i : step((int32)playerCnt))
 	{
-		playerData.player.update(playerData.keySet);
+		auto& playerData = playerDatas.at(i);
+
+		int32 obstruct = playerData.player.update(playerData.keySet);
+
+		if (playerCnt == PlayerCount::By2 && obstruct > 0)
+		{
+			Print << U"send obstructs.";
+			playerDatas.at((i + 1) % 2).player.sendObstructs(obstruct);
+		}
 
 		// •‰‚¯‚Æ•\Ž¦‚·‚é‰‰o
 		if (playerData.player.state == BattleState::lose)

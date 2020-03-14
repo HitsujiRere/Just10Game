@@ -47,7 +47,7 @@ public:
 	// フィールド
 	CellField field = CellField(fieldSize);
 	// フィールドのセルのJust10の要素となっている回数
-	Grid<int32> just10Times = Grid<int32>(fieldSize);
+	Grid<int32> deleteField = Grid<int32>(fieldSize);
 	// セルの移動先
 	Grid<Point> fieldMoveTo = Grid<Point>(fieldSize);
 
@@ -95,8 +95,18 @@ public:
 
 	// スコア
 	int32 score = 0;
+	// スコア計算関数
+	std::function<int32(int32 dc, int32 combo, int32 score)> scoreFunc
+		= [](int32 d, int32 c, int32 s) {return s + d * (c + 1) * (c + 1); };
 	// コンボ回数
 	int32 combo = 0;
+
+	// 作ったオジャマ
+	int32 obstructsMaked = 0;
+	// 保留中の受けたオジャマの数
+	int32 obstructsSentSum = 0;
+	// 保留中の受けたオジャマの列別数
+	Array<int32> obstructsSentArray = Array<int32>(fieldSize.x);
 
 	// 勝敗
 	BattleState state = BattleState::playing;
@@ -108,7 +118,12 @@ public:
 	// numを超えても追加しない
 	const Cell& getDropCellConst(int32 num) const;
 
-	void update(PlayerKeySet keySet);
+	// 更新する
+	// 返り値は作成したオジャマ
+	int32 update(PlayerKeySet keySet);
 
 	void draw(Point fieldPos, Size cellDrawSize) const;
+
+	// オジャマを送る
+	void sendObstructs(int32 obstructs);
 };

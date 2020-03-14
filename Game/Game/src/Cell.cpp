@@ -39,7 +39,15 @@ Cell::Cell()
 	}
 }
 
-Cell::Cell(int number) : Number(number)
+Cell::Cell(int32 number) : Number(number)
+{
+	if (Textures.size() == 0)
+	{
+		loadTextures();
+	}
+}
+
+Cell::Cell(CellTypeNumber number) : Number((int32)number)
 {
 	if (Textures.size() == 0)
 	{

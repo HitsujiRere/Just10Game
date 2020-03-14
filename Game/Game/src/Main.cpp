@@ -16,9 +16,6 @@
 
 void Main()
 {
-	// ESCキーで終了しない
-	System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
-
 	// タイトルを設定
 	Window::SetTitle(U"Just10Game");
 	// ウィンドウサイズ
@@ -93,9 +90,16 @@ void Main()
 			Scene::Resize(windowSizes[0]);
 		}
 
-		if (!manager.update())
+		try
 		{
-			break;
+			if (!manager.update())
+			{
+				break;
+			}
+		}
+		catch (std::exception & e)
+		{
+			Print << Unicode::Widen(e.what()) << U" in call manager.update()";
 		}
 	}
 

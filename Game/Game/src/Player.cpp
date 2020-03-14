@@ -20,7 +20,7 @@ Player& Player::operator=(const Player& another)
 	this->dropCells1LoopCells = another.dropCells1LoopCells;
 	this->debugPrint = another.debugPrint;
 	this->field = another.field;
-	this->just10Times = another.just10Times;
+	this->deleteField = another.deleteField;
 	this->fieldMoveTo = another.fieldMoveTo;
 	this->fieldColor = another.fieldColor;
 	this->dropCellTimer = another.dropCellTimer;
@@ -41,8 +41,10 @@ Player& Player::operator=(const Player& another)
 	return *this;
 }
 
-void Player::update(PlayerKeySet keySet)
+int32 Player::update(PlayerKeySet keySet)
 {
+	int32 ret = 0;
+
 	const double deltaTime = Scene::DeltaTime();
 
 	// 常に10個以上確保しておく（Next表示対策）
@@ -51,6 +53,28 @@ void Player::update(PlayerKeySet keySet)
 	// 操作可能
 	if (canOperate)
 	{
+		// オジャマを落とす
+		if (obstructsSentSum)
+		{
+			for (auto x : step(fieldSize.x))
+			{
+				if (obstructsSentArray.at(x) > 0)
+				{
+					field.pushUnderObsructs(x, obstructsSentArray.at(x));
+					obstructsSentSum -= obstructsSentArray.at(x);
+					obstructsSentArray.at(x) = 0;
+				}
+			}
+
+			// 落下処理へ移行
+			canDrop = false;
+			isFallingTime = true;
+			fieldMoveTo = field.getFallTo();
+			if (debugPrint)	Print << U"Falling...";
+
+			dropCells.remove_at(0);
+		}
+
 		// フィールドをランダムに変更する
 		if (canDrop && keySet.toRandom.down())
 		{
@@ -122,7 +146,7 @@ void Player::update(PlayerKeySet keySet)
 		//セルを落下させる
 		if (canDrop && keySet.drop.pressed())
 		{
-			field.pushCell(getDropCell(0), dropCellFieldX);
+			field.pushTopCell(getDropCell(0), dropCellFieldX);
 
 			// 落下処理へ移行
 			canDrop = false;
@@ -143,15 +167,22 @@ void Player::update(PlayerKeySet keySet)
 
 			if (deletingTimer > deletingCoolTime)
 			{
+				// 有効Just10Timesの合計
 				int32 dc = 0;
 				for (auto p : step(fieldSize))
 				{
-					dc += just10Times.at(p);
+					if (field.getGrid().at(p).getNumber() != (int32)CellTypeNumber::Obstruct)
+					{
+						dc += deleteField.at(p);
+					}
 				}
-				field.deleteCells(just10Times);
-				if (debugPrint)	Print << U"Deleted {} Cells!"_fmt(dc);
+
+				field.deleteCells(deleteField);
+				if (debugPrint)	Print << U"Delete {} Cells!"_fmt(dc);
+
 				// コンボ倍率においては要調整
-				score += dc * (combo + 1) * (combo + 1);
+				score = scoreFunc(dc, combo, score);
+				obstructsMaked += score;
 				combo++;
 
 				isDeletingTime = false;
@@ -182,6 +213,8 @@ void Player::update(PlayerKeySet keySet)
 				{
 					canDrop = true;
 					combo = 0;
+					ret = obstructsMaked;
+					obstructsMaked = 0;
 				}
 			}
 		}
@@ -192,6 +225,8 @@ void Player::update(PlayerKeySet keySet)
 			loseTimer += deltaTime;
 		}
 	}
+
+	return ret;
 }
 
 void Player::draw(Point fieldPos, Size cellDrawSize) const
@@ -219,7 +254,7 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 		for (auto p : step(fieldSize))
 		{
 			Point pos = fieldPos + cellDrawSize * p + cellDrawSize / 2;
-			FontAsset(U"Text")(U"{}"_fmt(just10Times.at(p))).drawAt(pos, Palette::Black);
+			FontAsset(U"Text")(U"{}"_fmt(deleteField.at(p))).drawAt(pos, Palette::Black);
 		}
 	}
 	// フィールドの描画
@@ -234,7 +269,7 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 
 		field.draw(fieldPos, cellDrawSize,
 			[&](Point p, int32) {
-				if (just10Times.at(p))
+				if (deleteField.at(p))
 					return (p * cellDrawSize);
 				else
 				{
@@ -243,7 +278,7 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 				}
 			},
 			[&](Point p, int32) {
-				if (just10Times.at(p))
+				if (deleteField.at(p))
 				{
 					const double e = EaseOutCubic(deletingTimer / deletingCoolTime);
 					return Color(255, (int32)(255 * (1.0 - e)));
@@ -280,10 +315,32 @@ const Cell& Player::getDropCellConst(int32 num) const
 
 bool Player::updatedField()
 {
-	just10Times = field.getJust10Times();
+	deleteField = field.getJust10Times();
+
+	// 消えるセルの周りにあるオジャマも消す
+	for (auto p : step(fieldSize))
+	{
+		if (field.getGrid().at(p).getNumber() == (int32)CellTypeNumber::Obstruct)
+		{
+			Print << U"p = {}"_fmt(p);
+			for (auto i : step(1, 4, 2))
+			{
+				Point padd = Point(i / 3 - 1, i % 3 - 1);
+				Print << U"i,padd = {},{}"_fmt(i, padd);
+				if (0 <= p.x + padd.x && p.x + padd.x < fieldSize.x
+					&& 0 <= p.y + padd.y && p.y + padd.y < fieldSize.y
+					&& field.getGrid().at(p + padd).getNumber() != (int32)CellTypeNumber::Obstruct
+					&& deleteField.at(p + padd) > 0)
+				{
+					deleteField.at(p) = 1;
+				}
+			}
+		}
+	}
+
 
 	// Just10で消えるものがあるなら、消える時間にする
-	if (just10Times.any([](int32 n) { return n != 0; }))
+	if (deleteField.any([](int32 n) { return n != 0; }))
 	{
 		canDrop = false;
 		isDeletingTime = true;
@@ -304,4 +361,23 @@ bool Player::updatedField()
 	}
 
 	return false;
+}
+
+void Player::sendObstructs(int32 obstructs)
+{
+	obstructsSentSum += obstructs;
+	for (auto i : step(fieldSize.x))
+	{
+		obstructsSentArray.at(i) += obstructs / fieldSize.x;
+	}
+	obstructs %= fieldSize.x;
+	Array<int32> put(fieldSize.x);
+	for (auto i : step(fieldSize.x))
+	{
+		put.at(i) = i;
+	}
+	for (auto i : put.choice(obstructs))
+	{
+		++obstructsSentArray.at(i);
+	}
 }

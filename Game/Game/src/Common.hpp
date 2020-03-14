@@ -34,3 +34,11 @@ struct GameData
 
 // シーン管理クラス
 using MyApp = SceneManager<State, GameData>;
+
+// a/bを切り上げしたものを返す
+template<class T>
+T divup(T a, T b)
+{
+	if (a % b == 0) { return a / b; }
+	return a / b + (T)1;
+}

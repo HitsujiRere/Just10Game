@@ -4,7 +4,8 @@
 Title::Title(const InitData& init)
 	: IScene(init)
 {
-
+	// ESCキーで終了する
+	System::SetTerminationTriggers(System::GetTerminationTriggers() | UserAction::EscapeKeyDown);
 }
 
 void Title::update()
@@ -22,18 +23,27 @@ void Title::update()
 
 	if (m_placticeButton.leftClicked())
 	{
-		Battle::battleType = BattleType::By1;
+		// ESCキーで終了しない
+		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
+
+		Battle::playerCnt = PlayerCount::By1;
 		changeScene(State::Battle);
 	}
 
 	if (m_battleButton.leftClicked())
 	{
-		Battle::battleType = BattleType::By2;
+		// ESCキーで終了しない
+		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
+
+		Battle::playerCnt = PlayerCount::By2;
 		changeScene(State::Battle);
 	}
 
 	if (m_howtoButton.leftClicked())
 	{
+		// ESCキーで終了しない
+		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
+
 		changeScene(State::HowTo);
 	}
 

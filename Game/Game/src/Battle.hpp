@@ -8,14 +8,14 @@
 # include "PlayerKeySet.hpp"
 # include "PlayerData.hpp"
 
-// バトルの種類
-enum class BattleType
+// バトルのプレイヤーの人数
+enum class PlayerCount
 {
 	// 1人であそぶ
-	By1,
+	By1 = 1,
 
 	// 2人でたたかう
-	By2,
+	By2 = 2,
 };
 
 // ゲームシーン
@@ -41,7 +41,7 @@ private:
 public:
 
 	// バトルの種類
-	static BattleType battleType;
+	static PlayerCount playerCnt;
 
 	// デバッグ用のPrintをするかどうか
 	bool debugPrint = false;

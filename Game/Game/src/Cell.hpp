@@ -49,7 +49,11 @@ public:
 
 	// number‚Å‰Šú‰»
 	// ‰‰ñ‚ÍLoadTextures()‚ğÀs‚·‚é
-	Cell(int number);
+	Cell(int32 number);
+
+	// number‚Å‰Šú‰»
+	// ‰‰ñ‚ÍLoadTextures()‚ğÀs‚·‚é
+	Cell(CellTypeNumber number);
 
 	// ”š‚ğæ“¾‚·‚é
 	int32 getNumber() const;
