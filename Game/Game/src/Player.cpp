@@ -60,7 +60,7 @@ int32 Player::update(PlayerKeySet keySet)
 			{
 				if (obstructsSentArray.at(x) > 0)
 				{
-					field.pushUnderObsructs(x, obstructsSentArray.at(x) * sendObstrucePer);
+					field.pushUnderObsructs(x, (int32)(obstructsSentArray.at(x) * sendObstrucePer));
 					obstructsSentSum -= obstructsSentArray.at(x);
 					obstructsSentArray.at(x) = 0;
 				}
@@ -356,7 +356,7 @@ bool Player::updatedField()
 
 void Player::sendObstructs(int32 obstructs)
 {
-	obstructs /= sentObstrucePer;
+	obstructs = (int32)(obstructs * sentObstrucePer);
 
 	obstructsSentSum += obstructs;
 	for (auto i : step(fieldSize.x))

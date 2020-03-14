@@ -39,7 +39,7 @@ void Main()
 
 	// 使用するフォントアセットを登録
 	FontAsset::Register(U"Title", 200, U"example/font/AnnyantRoman/AnnyantRoman.ttf");
-	FontAsset::Register(U"Version", 60, Typeface::Regular);
+	FontAsset::Register(U"Version", 60, Typeface::Black);
 	FontAsset::Register(U"Menu", 30, Typeface::Regular);
 	FontAsset::Register(U"Score", 36, Typeface::Bold);
 	FontAsset::Register(U"Header", 100, Typeface::Bold);
@@ -103,6 +103,7 @@ void Main()
 		}
 	}
 
+	// GameDataを保存
 	{
 		BinaryWriter writter(U"GameData.bin");
 		if (writter)

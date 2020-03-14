@@ -66,7 +66,7 @@ void Title::draw() const
 		FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(8, 16), ColorF(0.0, 0.14));
 		FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(8, 14), ColorF(0.0, 0.14));
 		const Rect titleArea = FontAsset(U"Title")(titleText).drawAt(titlePos, ColorF(0.2));
-		FontAsset(U"Version")(U"Ver {}.{}.{}"_fmt(Version.x, Version.y, Version.z)).draw(Arg::topRight(titlePos.movedBy(titleArea.size.x / 2, 120)));
+		FontAsset(U"Version")(U"Ver {}.{}.{}"_fmt(Version.x, Version.y, Version.z)).draw(Arg::topRight(titlePos.movedBy(titleArea.size.x / 2, 120)), ColorF(0.2));
 	}
 
 	m_placticeButton
