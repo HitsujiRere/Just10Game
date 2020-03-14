@@ -54,25 +54,17 @@ int32 Player::update(PlayerKeySet keySet)
 	if (canOperate)
 	{
 		// オジャマを落とす
-		if (obstructsSentSum)
+		if (obstructsSentSum > 0)
 		{
 			for (auto x : step(fieldSize.x))
 			{
 				if (obstructsSentArray.at(x) > 0)
 				{
-					field.pushUnderObsructs(x, obstructsSentArray.at(x));
+					field.pushUnderObsructs(x, obstructsSentArray.at(x) * sendObstrucePer);
 					obstructsSentSum -= obstructsSentArray.at(x);
 					obstructsSentArray.at(x) = 0;
 				}
 			}
-
-			// 落下処理へ移行
-			canDrop = false;
-			isFallingTime = true;
-			fieldMoveTo = field.getFallTo();
-			if (debugPrint)	Print << U"Falling...";
-
-			dropCells.remove_at(0);
 		}
 
 		// フィールドをランダムに変更する
@@ -181,8 +173,9 @@ int32 Player::update(PlayerKeySet keySet)
 				if (debugPrint)	Print << U"Delete {} Cells!"_fmt(dc);
 
 				// コンボ倍率においては要調整
-				score = scoreFunc(dc, combo, score);
-				obstructsMaked += score;
+				int32 scoreAdd = scoreFunc(dc, combo);
+				score += scoreAdd;
+				obstructsMaked += scoreAdd;
 				combo++;
 
 				isDeletingTime = false;
@@ -322,11 +315,9 @@ bool Player::updatedField()
 	{
 		if (field.getGrid().at(p).getNumber() == (int32)CellTypeNumber::Obstruct)
 		{
-			Print << U"p = {}"_fmt(p);
 			for (auto i : step(1, 4, 2))
 			{
 				Point padd = Point(i / 3 - 1, i % 3 - 1);
-				Print << U"i,padd = {},{}"_fmt(i, padd);
 				if (0 <= p.x + padd.x && p.x + padd.x < fieldSize.x
 					&& 0 <= p.y + padd.y && p.y + padd.y < fieldSize.y
 					&& field.getGrid().at(p + padd).getNumber() != (int32)CellTypeNumber::Obstruct
@@ -365,6 +356,8 @@ bool Player::updatedField()
 
 void Player::sendObstructs(int32 obstructs)
 {
+	obstructs /= sentObstrucePer;
+
 	obstructsSentSum += obstructs;
 	for (auto i : step(fieldSize.x))
 	{

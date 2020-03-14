@@ -96,8 +96,8 @@ public:
 	// スコア
 	int32 score = 0;
 	// スコア計算関数
-	std::function<int32(int32 dc, int32 combo, int32 score)> scoreFunc
-		= [](int32 d, int32 c, int32 s) {return s + d * (c + 1) * (c + 1); };
+	std::function<int32(int32 dc, int32 combo)> scoreFunc
+		= [](int32 d, int32 c) {return d * (c + 1) * (c + 1); };
 	// コンボ回数
 	int32 combo = 0;
 
@@ -107,6 +107,11 @@ public:
 	int32 obstructsSentSum = 0;
 	// 保留中の受けたオジャマの列別数
 	Array<int32> obstructsSentArray = Array<int32>(fieldSize.x);
+
+	// 与えるダメージ割合
+	double sendObstrucePer = 1.0;
+	// 与えられるダメージ割合
+	double sentObstrucePer = 1.0;
 
 	// 勝敗
 	BattleState state = BattleState::playing;
