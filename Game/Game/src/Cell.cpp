@@ -31,7 +31,7 @@ void Cell::loadTextures()
 
 Cell::Cell()
 {
-	Number = (int32)CellTypeNumber::Empty;
+	Number = (int32)CellType::Empty;
 
 	if (Textures.size() == 0)
 	{
@@ -47,7 +47,7 @@ Cell::Cell(int32 number) : Number(number)
 	}
 }
 
-Cell::Cell(CellTypeNumber number) : Number((int32)number)
+Cell::Cell(CellType number) : Number((int32)number)
 {
 	if (Textures.size() == 0)
 	{
@@ -85,15 +85,15 @@ Cell Cell::RandomCell(int32 maxNumber, bool existsEmpty, bool existsObstruct)
 		if (number == maxNumber + 1)
 		{
 			if (existsEmpty)
-				number = (int32)CellTypeNumber::Empty;
+				number = (int32)CellType::Empty;
 			else if (existsObstruct)
-				number = (int32)CellTypeNumber::Obstruct;
+				number = (int32)CellType::Obstruct;
 		}
 
 		if (number == maxNumber + 2)
 		{
 			if (existsObstruct)
-				number = (int32)CellTypeNumber::Obstruct;
+				number = (int32)CellType::Obstruct;
 		}
 	}
 
@@ -108,4 +108,9 @@ Array<Texture> Cell::getTextures()
 Texture Cell::getTexture(int32 num)
 {
 	return Textures.at(num);
+}
+
+Cell::operator String() const
+{
+	return Format(Number);
 }

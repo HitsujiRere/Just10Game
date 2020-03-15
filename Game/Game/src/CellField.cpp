@@ -154,6 +154,18 @@ Size CellField::size() const
 	return Field.size();
 }
 
+void CellField::setCell(Cell& cell, int32 x, int32 y)
+{
+	Field.at(y, x) = cell;
+	updateJust10Times();
+}
+
+void CellField::setCell(Cell& cell, Point p)
+{
+	Field.at(p) = cell;
+	updateJust10Times();
+}
+
 Grid<Point> CellField::getFallTo() const
 {
 	Grid<Point> FallTo(Field.size());
@@ -163,7 +175,7 @@ Grid<Point> CellField::getFallTo() const
 		int32 pushY = (int32)Field.height() - (int32)1;
 		for (auto y : step(Field.height() - 1, Field.height(), -1))
 		{
-			if (Field.at(y, x).getNumber() != (int32)CellTypeNumber::Empty)
+			if (Field.at(y, x).getNumber() != (int32)CellType::Empty)
 			{
 				FallTo.at(y, x) = Point(x, pushY);
 				pushY--;
@@ -178,26 +190,68 @@ Grid<Point> CellField::getFallTo() const
 	return FallTo;
 }
 
+Grid<Point> CellField::getFloatTo(Array<int32> floats) const
+{
+	if (Setting::debugPrint)	Print << U"begin CellField::getFloatTo()";
+
+	Size size = this->size();
+	Grid<Point> FloatTo(size);
+
+	if (Setting::debugPrint)	Print << U"floats";
+	if (Setting::debugPrint)	Print << floats;
+
+	try
+	{
+		for (auto x : step(size.x))
+		{
+			for (auto y : step(size.y))
+			{
+				FloatTo.at(y, x) = y >= floats[x] ? Point(x, y - floats[x]) : Point(-1, -1);
+			}
+		}
+	}
+	catch (std::exception & e)
+	{
+		Print << Unicode::Widen(e.what()) << U" in getFloatTo()";
+	}
+
+	if (Setting::debugPrint)	Print << U"end CellField::getFloatTo()";
+
+	if (Setting::debugPrint)	Print << U"FloatTo";
+	if (Setting::debugPrint)	Print << FloatTo;
+
+	return FloatTo;
+}
+
 void CellField::moveCells(Grid<Point> moveTo)
 {
+	if (Setting::debugPrint || true)	Print << U"begin CellField::moveCells()";
 	Grid<Cell> fieldMoved(Field.size());
 
 	for (auto p : step(Field.size()))
 	{
-		if (moveTo.at(p).x >= 0 && moveTo.at(p).y >= 0)
+		try
 		{
-			fieldMoved.at(moveTo.at(p)) = Field.at(p);
+			if (moveTo.at(p).x >= 0 && moveTo.at(p).y >= 0)
+			{
+				fieldMoved.at(moveTo.at(p)) = Field.at(p);
+			}
+		}
+		catch (std::exception& e)
+		{
+			Print << Unicode::Widen(e.what()) << U"in moveCells()";
 		}
 	}
 
 	Field = fieldMoved;
 
+	if (Setting::debugPrint || true)	Print << U"end CellField::moveCells()";
 	updateJust10Times();
 }
 
 bool CellField::pushTopCell(const Cell& cell, int32 x)
 {
-	if (Field.at(0, x).getNumber() != (int32)CellTypeNumber::Empty)
+	if (Field.at(0, x).getNumber() != (int32)CellType::Empty)
 	{
 		return false;
 	}
@@ -209,23 +263,6 @@ bool CellField::pushTopCell(const Cell& cell, int32 x)
 	return true;
 }
 
-bool CellField::pushUnderObsructs(int32 x, int32 n)
-{
-	if (Field.at(n - 1, x).getNumber() != (int32)CellTypeNumber::Empty)
-	{
-		return false;
-	}
-
-	Size size = this->size();
-	for (auto y : step(size.y))
-	{
-		Field.at(y, x) = y + n < size.y
-			? Field.at(y + n, x) : Cell(CellTypeNumber::Obstruct);
-	}
-
-	return true;
-}
-
 int32 CellField::deleteCells(Grid<int> isDelete)
 {
 	int32 deleted = 0;
@@ -233,7 +270,7 @@ int32 CellField::deleteCells(Grid<int> isDelete)
 	{
 		if (isDelete.at(p) != 0)
 		{
-			Field.at(p) = (int32)CellTypeNumber::Empty;
+			Field.at(p) = (int32)CellType::Empty;
 			deleted++;
 		}
 	}

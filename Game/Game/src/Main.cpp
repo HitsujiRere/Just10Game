@@ -14,10 +14,12 @@
 # include "HowTo.hpp"
 # include "Battle.hpp"
 
+bool Setting::debugPrint = false;
+
 void Main()
 {
 	// タイトルを設定
-	Window::SetTitle(U"Just10Game");
+	Window::SetTitle(U"Just10Game Ver {}.{}.{}"_fmt(Version.x, Version.y, Version.z));
 	// ウィンドウサイズ
 	const Array<Size> windowSizes
 	{
@@ -62,7 +64,7 @@ void Main()
 			}
 			else
 			{
-				//Print << U"Cannot read 'GameData.bin'!";
+				if (Setting::debugPrint)	Print << U"Cannot read 'GameData.bin'!";
 			}
 		}
 	}
@@ -74,33 +76,48 @@ void Main()
 		.add<HowTo>(State::HowTo)
 		.add<Battle>(State::Battle)
 		.setFadeColor(ColorF(1.0));
-
+	/**
 	while (System::Update())
 	{
-		if (KeyF5.down())
-		{
-			windowSizeNum = ++windowSizeNum % windowSizes.size();
-			Window::Resize(windowSizes[windowSizeNum], WindowResizeOption::KeepSceneSize);
-		}
-
-		if (KeyF4.down())
-		{
-			isFullscreen ^= true;
-			const bool isSetFullscreen = Window::SetFullscreen(isFullscreen);
-			Scene::Resize(windowSizes[0]);
-		}
+	/*/
+	while (true)
+	{
+		if (Setting::debugPrint)	Print << U"call System::Update()";
+		if (!System::Update())	break;
+		if (Setting::debugPrint)	Print << U"end System::Update()";
+	/**/
+		if (Setting::debugPrint)	Print << U"start while()";
 
 		try
 		{
+			// 画面サイズ変更
+			if (KeyF5.down())
+			{
+				windowSizeNum = ++windowSizeNum % windowSizes.size();
+				Window::Resize(windowSizes[windowSizeNum], WindowResizeOption::KeepSceneSize);
+			}
+
+			// フルスクリーン変更
+			if (KeyF4.down())
+			{
+				isFullscreen ^= true;
+				const bool isSetFullscreen = Window::SetFullscreen(isFullscreen);
+				Scene::Resize(windowSizes[0]);
+			}
+
 			if (!manager.update())
 			{
 				break;
 			}
+
 		}
 		catch (std::exception & e)
 		{
 			Print << Unicode::Widen(e.what()) << U" in call manager.update()";
 		}
+
+		if (Setting::debugPrint)	Print << U"end while()";
+		if (Setting::debugPrint)	Print << U"";
 	}
 
 	// GameDataを保存

@@ -3,6 +3,7 @@
 
 # include <Siv3D.hpp> // OpenSiv3D v0.4.2
 
+
 // バージョン
 const Vector3D<int32> Version(0, 3, 0);
 
@@ -42,3 +43,13 @@ T divup(T a, T b)
 	if (a % b == 0) { return a / b; }
 	return a / b + (T)1;
 }
+
+class Setting
+{
+private:
+	Setting() { }
+
+public:
+	// デバッグの可否
+	static bool debugPrint;
+};

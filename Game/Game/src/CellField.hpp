@@ -5,8 +5,9 @@
 #	define MY_CELL_FIELD_INCLUDED
 #endif
 
-#include <Siv3D.hpp> // OpenSiv3D v0.4.2
-#include "Cell.hpp"
+# include <Siv3D.hpp> // OpenSiv3D v0.4.2
+# include "Common.hpp"
+# include "Cell.hpp"
 
 // セルを置くフィールド
 class CellField
@@ -44,8 +45,17 @@ public:
 	// フィールドのサイズを取得する
 	Size size() const;
 
+	// セルをセットする
+	void setCell(Cell& cell, int32 x, int32 y);
+
+	// セルをセットする
+	void setCell(Cell& cell, Point p);
+
 	// 落下先のデータを取得する
 	Grid<Point> getFallTo() const;
+
+	// 行をfloatsの浮かせた先のデータを取得する
+	Grid<Point> getFloatTo(Array<int32> floats) const;
 
 	// 落下先に移動させる
 	void moveCells(Grid<Point> FallTo);
@@ -53,10 +63,6 @@ public:
 	// (x,0)にセルを置く
 	// 返り値はできたかどうか
 	bool pushTopCell(const Cell& cell, int32 x);
-
-	// x行の下にObstructをn個追加する
-	// 返り値はできたかどうか
-	bool pushUnderObsructs(int32 x, int32 n);
 
 	// isDeleteの要素が0以外なら削除
 	// 返り値は消したセルの数

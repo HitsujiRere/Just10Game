@@ -43,9 +43,6 @@ public:
 	// バトルの種類
 	static PlayerCount playerCnt;
 
-	// デバッグ用のPrintをするかどうか
-	bool debugPrint = false;
-
 	Battle(const InitData& init);
 
 	void update() override;

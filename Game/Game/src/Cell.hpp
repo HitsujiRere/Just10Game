@@ -8,7 +8,7 @@
 #include <Siv3D.hpp> // OpenSiv3D v0.4.2
 
 // セルのタイプごとの数字
-enum class CellTypeNumber
+enum class CellType
 {
 	Cell1 = 1,
 	Cell2,
@@ -53,7 +53,7 @@ public:
 
 	// numberで初期化
 	// 初回はLoadTextures()を実行する
-	Cell(CellTypeNumber number);
+	Cell(CellType number);
 
 	// 数字を取得する
 	int32 getNumber() const;
@@ -68,4 +68,6 @@ public:
 	// セルの数字ごとのテクスチャを返す
 	static Array<Texture> getTextures();
 	static Texture getTexture(int32 num);
+
+	operator String() const;
 };

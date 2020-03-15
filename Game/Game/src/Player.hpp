@@ -39,9 +39,6 @@ public:
 
 	Player& operator=(const Player& another);
 
-	// デバッグ用のPrintをするかどうか
-	bool debugPrint = false;
-
 	// フィールドの大きさ
 	const Size fieldSize = Size(6, 12);
 	// フィールド
@@ -67,7 +64,7 @@ public:
 	};
 
 	// ホールドセル
-	Cell holdCell = Cell((int32)CellTypeNumber::Empty);
+	Cell holdCell = Cell((int32)CellType::Empty);
 
 	// 操作できるかどうか
 	bool canOperate = true;
@@ -78,7 +75,7 @@ public:
 	bool isDeletingTime = false;
 	// Just10消去待機残り時間
 	double deletingTimer = 0.0;
-	// Just10消去待機時間
+	// Just10消去待機最大時間
 	const double deletingCoolTime = 1.0;
 
 	// セル落下待機時間かどうか
@@ -88,16 +85,23 @@ public:
 	// Just10消去待機時間
 	const double fallingCoolTime = 0.5;
 
+	// セル押上待機時間かどうか
+	bool isPushedTime = false;
+	// セル押上待機残り時間
+	double pushedTimer = 0.0;
+	// セル押上待機最大時間
+	const double pushedCoolTime = 0.5;
+
 	// 負け演出残り時間
 	double loseTimer = 0.0;
-	// 負け演出時間
+	// 負け演出最大時間
 	const double loseCoolTime = 2.0;
 
 	// スコア
 	int32 score = 0;
 	// スコア計算関数
 	std::function<int32(int32 dc, int32 combo)> scoreFunc
-		= [](int32 d, int32 c) {return d * (c + 1) * (c + 1); };
+		= [](int32 d, int32 c) {return (int32)(d * (c / 2.0 + 1.0)); };
 	// コンボ回数
 	int32 combo = 0;
 
@@ -106,12 +110,14 @@ public:
 	// 保留中の受けたオジャマの数
 	int32 obstructsSentSum = 0;
 	// 保留中の受けたオジャマの列別数
-	Array<int32> obstructsSentArray = Array<int32>(fieldSize.x);
+	Array<int32> obstructsSentCntArray = Array<int32>(fieldSize.x);
+	// 表示保留中のオジャマ
+	Grid<Cell> obstructsCntDrawField = Grid<Cell>(fieldSize);
 
 	// 与えるダメージ割合
-	double sendObstrucePer = 1.0;
+	double atkRate = 1.0;
 	// 与えられるダメージ割合
-	double sentObstrucePer = 1.0;
+	double defRate = 1.0;
 
 	// 勝敗
 	BattleState state = BattleState::playing;
@@ -130,5 +136,5 @@ public:
 	void draw(Point fieldPos, Size cellDrawSize) const;
 
 	// オジャマを送る
-	void sendObstructs(int32 obstructs);
+	void sendObstructs(int32 obstructs, double atkRate);
 };
