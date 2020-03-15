@@ -30,7 +30,7 @@ struct GameData
 	int32 highScore = 0;
 
 	// プレイ回数
-	int32 playTime = 0;
+	int32 play_time = 0;
 };
 
 // シーン管理クラス
@@ -44,12 +44,15 @@ T divup(T a, T b)
 	return a / b + (T)1;
 }
 
+// ゲーム設定
 class Setting
 {
 private:
+
 	Setting() { }
 
 public:
-	// デバッグの可否
-	static bool debugPrint;
+
+	// デバッグのプリントの可否
+	static bool debug_print;
 };

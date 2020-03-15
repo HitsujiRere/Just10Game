@@ -26,7 +26,7 @@ private:
 	// 落とすセルの1ループ
 	Array<Cell> dropCells1LoopCells;
 	// 落とすセルの次のスタック
-	Array<Cell> dropCells = Array<Cell>();
+	Array<Cell> dropCellStack = Array<Cell>();
 
 	// fieldJust10Timesなどの更新
 	// 返り値は消えるものがあるかどうか
@@ -64,7 +64,7 @@ public:
 	};
 
 	// ホールドセル
-	Cell holdCell = Cell((int32)CellType::Empty);
+	Cell holdCell = Cell(CellType::Empty);
 
 	// 操作できるかどうか
 	bool canOperate = true;
@@ -122,12 +122,23 @@ public:
 	// 勝敗
 	BattleState state = BattleState::playing;
 
-	// 落とすセルを取得する
-	Cell& getDropCell(int32 n);
+	// 落とすセルを作成する
+	void makeDropCells(int32 min);
 
 	// 落とすセルを取得する
-	// numを超えても追加しない
-	const Cell& getDropCellConst(int32 num) const;
+	// numがdropCellStackのサイズを超えていたら追加する
+	inline const Cell& getDropCell(int32 num)
+	{
+		makeDropCells(num);
+
+		return dropCellStack.at(num);
+	}
+
+	// 落とすセルを取得する
+	inline const Cell& getDropCellConst(int32 num) const
+	{
+		return dropCellStack.at(num);
+	}
 
 	// 更新する
 	// 返り値は作成したオジャマ
@@ -136,5 +147,5 @@ public:
 	void draw(Point fieldPos, Size cellDrawSize) const;
 
 	// オジャマを送る
-	void sendObstructs(int32 obstructs, double atkRate);
+	void sendObstructs(double sent_obstructs);
 };

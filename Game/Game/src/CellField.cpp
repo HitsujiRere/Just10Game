@@ -2,13 +2,45 @@
 #include "CellField.hpp"
 
 
-void CellField::clearField(Size size)
+CellField::CellField()
+	: size(Size())
 {
-	Field = Grid<Cell>(size);
+	clearField();
+}
+
+CellField::CellField(int32 width, int32 height)
+	: size(width, height)
+{
+	clearField();
+}
+
+CellField::CellField(Size _size)
+	: size(_size)
+{
+	clearField();
+}
+
+void CellField::setCell(Cell& cell, int32 x, int32 y)
+{
+	field.at(y, x) = cell;
+
+	updateJust10Times();
+}
+
+void CellField::setCell(Cell& cell, Point p)
+{
+	field.at(p) = cell;
+
+	updateJust10Times();
+}
+
+void CellField::clearField()
+{
+	field = Grid<Cell>(size);
 
 	for (auto pos : step(size))
 	{
-		Field.at(pos) = Cell();
+		field.at(pos) = Cell();
 	}
 
 	updateJust10Times();
@@ -16,10 +48,8 @@ void CellField::clearField(Size size)
 
 void CellField::updateJust10Times()
 {
-	const auto size = Field.size();
-
 	// èâä˙âªÇ∑ÇÈ
-	Just10Times = Grid<int32>(size);
+	just10Times = Grid<int32>(size);
 
 	// É~ÉmÇÃêîéöÇÃ2éüå≥ó›êœòa
 	Grid<int32> numCSum(size + Size(1, 1));
@@ -39,7 +69,7 @@ void CellField::updateJust10Times()
 		if (p.x > 0 && p.y > 0)
 		{
 			n -= numCSum[p - Point(1, 1)];
-			n += Field[p - Point(1, 1)].getNumber();
+			n += static_cast<int32>(field[p - Point(1, 1)].getType());
 		}
 
 		numCSum[p] = n;
@@ -70,14 +100,14 @@ void CellField::updateJust10Times()
 				else if (sum == 10)
 				{
 					// ç∑ï™Çâ¡éZÅiÇ¢Ç‡Ç∑ñ@Åj
-					Just10Times.at(beginy, beginx)++;
-					if (endx < Just10Times.width())
-						Just10Times.at(beginy, endx)--;
-					if (endy < Just10Times.height())
-						Just10Times.at(endy, beginx)--;
-					if (endx < Just10Times.width() &&
-						endy < Just10Times.height())
-						Just10Times.at(endy, endx)++;
+					just10Times.at(beginy, beginx)++;
+					if (endx < just10Times.width())
+						just10Times.at(beginy, endx)--;
+					if (endy < just10Times.height())
+						just10Times.at(endy, beginx)--;
+					if (endx < just10Times.width() &&
+						endy < just10Times.height())
+						just10Times.at(endy, endx)++;
 
 					endy++;
 				}
@@ -96,15 +126,15 @@ void CellField::updateJust10Times()
 		int32 n = 0;
 		if (p.x == 0)
 		{
-			n += Just10Times[p];
+			n += just10Times[p];
 		}
 		else // p.x > 0
 		{
-			n += Just10Times[p - Point(1, 0)];
-			n += Just10Times[p];
+			n += just10Times[p - Point(1, 0)];
+			n += just10Times[p];
 		}
 
-		Just10Times[p] = n;
+		just10Times[p] = n;
 	}
 	// yï˚å¸Ç÷â¡éZ
 	for (auto p : step(size))
@@ -112,70 +142,28 @@ void CellField::updateJust10Times()
 		int32 n = 0;
 		if (p.y == 0)
 		{
-			n += Just10Times[p];
+			n += just10Times[p];
 		}
 		else // p.y > 0
 		{
-			n += Just10Times[p - Point(0, 1)];
-			n += Just10Times[p];
+			n += just10Times[p - Point(0, 1)];
+			n += just10Times[p];
 		}
 
-		Just10Times[p] = n;
+		just10Times[p] = n;
 	}
-}
-
-CellField::CellField()
-{
-	clearField(Size());
-}
-
-CellField::CellField(int32 width, int32 height)
-{
-	clearField(Size(width, height));
-}
-
-CellField::CellField(Size size)
-{
-	clearField(size);
-}
-
-const Grid<Cell>& CellField::getGrid() const
-{
-	return Field;
-}
-
-Grid<int32> CellField::getJust10Times() const
-{
-	return Just10Times;
-}
-
-Size CellField::size() const
-{
-	return Field.size();
-}
-
-void CellField::setCell(Cell& cell, int32 x, int32 y)
-{
-	Field.at(y, x) = cell;
-	updateJust10Times();
-}
-
-void CellField::setCell(Cell& cell, Point p)
-{
-	Field.at(p) = cell;
-	updateJust10Times();
 }
 
 Grid<Point> CellField::getFallTo() const
 {
-	Grid<Point> FallTo(Field.size());
+	Grid<Point> FallTo(size);
 
-	for (auto x : step((int32)Field.width()))
+	for (auto x : step((int32)field.width()))
 	{
-		int32 pushY = (int32)Field.height() - (int32)1;
-		for (auto y : step(Field.height() - 1, Field.height(), -1))
+		int32 pushY = (int32)field.height() - (int32)1;
+		for (auto y : step(field.height() - 1, field.height(), -1))
 		{
-			if (Field.at(y, x).getNumber() != (int32)CellType::Empty)
+			if (field.at(y, x).getType() != CellType::Empty)
 			{
 				FallTo.at(y, x) = Point(x, pushY);
 				pushY--;
@@ -192,71 +180,44 @@ Grid<Point> CellField::getFallTo() const
 
 Grid<Point> CellField::getFloatTo(Array<int32> floats) const
 {
-	if (Setting::debugPrint)	Print << U"begin CellField::getFloatTo()";
-
-	Size size = this->size();
 	Grid<Point> FloatTo(size);
 
-	if (Setting::debugPrint)	Print << U"floats";
-	if (Setting::debugPrint)	Print << floats;
-
-	try
+	for (auto x : step(size.x))
 	{
-		for (auto x : step(size.x))
+		for (auto y : step(size.y))
 		{
-			for (auto y : step(size.y))
-			{
-				FloatTo.at(y, x) = y >= floats[x] ? Point(x, y - floats[x]) : Point(-1, -1);
-			}
+			FloatTo.at(y, x) = y >= floats[x] ? Point(x, y - floats[x]) : Point(-1, -1);
 		}
 	}
-	catch (std::exception & e)
-	{
-		Print << Unicode::Widen(e.what()) << U" in getFloatTo()";
-	}
-
-	if (Setting::debugPrint)	Print << U"end CellField::getFloatTo()";
-
-	if (Setting::debugPrint)	Print << U"FloatTo";
-	if (Setting::debugPrint)	Print << FloatTo;
 
 	return FloatTo;
 }
 
 void CellField::moveCells(Grid<Point> moveTo)
 {
-	if (Setting::debugPrint || true)	Print << U"begin CellField::moveCells()";
-	Grid<Cell> fieldMoved(Field.size());
+	Grid<Cell> fieldMoved(size);
 
-	for (auto p : step(Field.size()))
+	for (auto p : step(size))
 	{
-		try
+		if (moveTo.at(p).x >= 0 && moveTo.at(p).y >= 0)
 		{
-			if (moveTo.at(p).x >= 0 && moveTo.at(p).y >= 0)
-			{
-				fieldMoved.at(moveTo.at(p)) = Field.at(p);
-			}
-		}
-		catch (std::exception& e)
-		{
-			Print << Unicode::Widen(e.what()) << U"in moveCells()";
+			fieldMoved.at(moveTo.at(p)) = field.at(p);
 		}
 	}
 
-	Field = fieldMoved;
+	field = fieldMoved;
 
-	if (Setting::debugPrint || true)	Print << U"end CellField::moveCells()";
 	updateJust10Times();
 }
 
 bool CellField::pushTopCell(const Cell& cell, int32 x)
 {
-	if (Field.at(0, x).getNumber() != (int32)CellType::Empty)
+	if (field.at(0, x).getType() != CellType::Empty)
 	{
 		return false;
 	}
 
-	Field.at(0, x) = cell;
+	field.at(0, x) = cell;
 
 	updateJust10Times();
 
@@ -266,11 +227,11 @@ bool CellField::pushTopCell(const Cell& cell, int32 x)
 int32 CellField::deleteCells(Grid<int> isDelete)
 {
 	int32 deleted = 0;
-	for (auto p : step(Field.size()))
+	for (auto p : step(size))
 	{
 		if (isDelete.at(p) != 0)
 		{
-			Field.at(p) = (int32)CellType::Empty;
+			field.at(p) = Cell(CellType::Empty);
 			deleted++;
 		}
 	}
@@ -282,9 +243,9 @@ int32 CellField::deleteCells(Grid<int> isDelete)
 
 void CellField::draw(Point fieldPos, Size cellSize, Color backcolor) const
 {
-	for (auto p : step(Field.size()))
+	for (auto p : step(size))
 	{
-		Cell cell = Field.at(p);
+		Cell cell = field.at(p);
 		Point pos = fieldPos + cellSize * p;
 
 		Rect(pos, cellSize).draw(backcolor);
@@ -293,28 +254,28 @@ void CellField::draw(Point fieldPos, Size cellSize, Color backcolor) const
 }
 
 void CellField::draw(Point fieldPos, Size cellSize,
-	std::function<Point(Point, int32)> posFunc,
-	std::function<Color(Point, int32)> colorFunc) const
+	std::function<Point(Point, CellType)> posFunc,
+	std::function<Color(Point, CellType)> colorFunc) const
 {
-	for (auto p : step(Field.size()))
+	for (auto p : step(size))
 	{
-		Cell cell = Field.at(p);
-		Point pos = fieldPos + posFunc(p, cell.getNumber());
+		Cell cell = field.at(p);
+		Point pos = fieldPos + posFunc(p, cell.getType());
 
-		cell.getTexture().resized(cellSize).draw(pos, colorFunc(p, cell.getNumber()));
+		cell.getTexture().resized(cellSize).draw(pos, colorFunc(p, cell.getType()));
 	}
 }
 
-CellField CellField::RandomField(Size size, int32 maxNumber, bool existsEmpty, bool existsObstruct)
+CellField CellField::RandomField(Size size, int32 maxNumber, bool hasEmpty, bool hasObstruct)
 {
-	CellField field(size);
+	CellField cellfield(size);
 
-	for (auto p : step(Size(0, 1), field.Field.size() - Size(0, 1)))
+	for (auto p : step(Size(0, 1), size - Size(0, 1)))
 	{
-		field.Field.at(p) = Cell::RandomCell(maxNumber, existsEmpty, existsObstruct);
+		cellfield.field.at(p) = Cell::RandomTypeCell(maxNumber, hasEmpty, hasObstruct);
 	}
 
-	field.updateJust10Times();
+	cellfield.updateJust10Times();
 
-	return field;
+	return cellfield;
 }

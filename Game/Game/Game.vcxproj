@@ -230,6 +230,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Common.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CellField.cpp" />

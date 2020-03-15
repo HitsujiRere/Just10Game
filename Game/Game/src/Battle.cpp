@@ -6,7 +6,7 @@ PlayerCount Battle::playerCnt = PlayerCount::By1;
 Battle::Battle(const InitData& init)
 	: IScene(init)
 {
-	getData().playTime++;
+	getData().play_time++;
 
 	if (playerCnt == PlayerCount::By1)
 	{
@@ -42,7 +42,7 @@ Battle::Battle(const InitData& init)
 
 void Battle::update()
 {
-	if (Setting::debugPrint)	Print << U"in Battle::update()";
+	if (Setting::debug_print)	Print << U"in Battle::update()";
 
 	// デバッグ用死亡
 	if (Key4.down())
@@ -61,8 +61,8 @@ void Battle::update()
 
 		if (playerCnt == PlayerCount::By2 && obstruct > 0)
 		{
-			if (Setting::debugPrint)	Print << U"send obstructs.";
-			playerDatas.at((i + 1) % 2).player.sendObstructs(obstruct, player.atkRate);
+			if (Setting::debug_print)	Print << U"send obstructs.";
+			playerDatas.at((i + 1) % 2).player.sendObstructs(obstruct * player.atkRate);
 		}
 
 		// 負けと表示する演出
@@ -89,12 +89,12 @@ void Battle::update()
 		changeScene(State::Title);
 	}
 
-	if (Setting::debugPrint)	Print << U"end Battle::update()";
+	if (Setting::debug_print)	Print << U"end Battle::update()";
 }
 
 void Battle::draw() const
 {
-	if (Setting::debugPrint)	Print << U"in Battle::draw()";
+	if (Setting::debug_print)	Print << U"in Battle::draw()";
 
 	Rect(0, (int32)(Scene::Height() * 0.7), Scene::Width(), (int32)(Scene::Height() * 0.3))
 		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
@@ -138,5 +138,5 @@ void Battle::draw() const
 			.drawAt(Scene::Center(), ColorF(0.0));
 	}
 
-	if (Setting::debugPrint)	Print << U"end Battle::draw()";
+	if (Setting::debug_print)	Print << U"end Battle::draw()";
 }

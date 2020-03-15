@@ -13,37 +13,50 @@
 class CellField
 {
 private:
+
+	// フィールドのサイズ
+	Size size;
+
 	// フィールド
-	Grid<Cell> Field;
+	Grid<Cell> field;
 
 	// Just10の要素の回数
-	Grid<int32> Just10Times;
+	Grid<int32> just10Times;
 
 	// フィールドを初期化する
-	void clearField(Size size);
+	void clearField();
 
 	// Just10Timesを更新する
 	void updateJust10Times();
-		
 
 public:
-	// 0*0のEmptyで初期化
+
+	// サイズが(0,0)のCellTypeがEmptyで初期化する
 	CellField();
 
-	// width*heightのEmptyで初期化
+	// サイズが(width,height)のCellTypeがEmptyで初期化
 	CellField(int32 width, int32 height);
 
-	// sizeのEmptyで初期化
+	// サイズのCellTypeがEmptyで初期化
 	CellField(Size size);
 
-	// Gridを取得する
-	const Grid<Cell>& getGrid() const;
+	// フィールドを取得する
+	inline const Grid<Cell>& getField() const
+	{
+		return field;
+	}
 
 	// フィールドのJust10の要素となっている回数のGridを返す
-	Grid<int32> getJust10Times() const;
+	inline const Grid<int32>& getJust10Times() const
+	{
+		return just10Times;
+	}
 
 	// フィールドのサイズを取得する
-	Size size() const;
+	inline Size getSize() const
+	{
+		return size;
+	}
 
 	// セルをセットする
 	void setCell(Cell& cell, int32 x, int32 y);
@@ -73,8 +86,8 @@ public:
 
 	// フィールドを描く
 	void draw(Point fieldPos, Size cellSize, 
-		std::function<Point(Point, int32)> posFunc,
-		std::function<Color(Point, int32)> colorFunc) const;
+		std::function<Point(Point, CellType)> posFunc,
+		std::function<Color(Point, CellType)> colorFunc) const;
 
 	// ランダムな数字のセルのフィールドを返す
 	// ただし最上部は空になる

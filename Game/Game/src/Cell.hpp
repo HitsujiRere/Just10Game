@@ -7,67 +7,110 @@
 
 #include <Siv3D.hpp> // OpenSiv3D v0.4.2
 
-// セルのタイプごとの数字
+// セルのタイプ
 enum class CellType
 {
-	Cell1 = 1,
-	Cell2,
-	Cell3,
-	Cell4,
-	Cell5,
-	Cell6,
-	Cell7,
-	Cell8,
-	Cell9,
-	Cell10,
-	// 空
-	Empty = 11,
-	// ジャマ
-	Obstruct = 12,
-	// No
-	No = 13,
+    // 数字が1のセル
+    Cell1 = 1,
+    // 数字が2のセル
+    Cell2,
+    // 数字が3のセル
+    Cell3,
+    // 数字が4のセル
+    Cell4,
+    // 数字が5のセル
+    Cell5,
+    // 数字が6のセル
+    Cell6,
+    // 数字が7のセル
+    Cell7,
+    // 数字が8のセル
+    Cell8,
+    // 数字が9のセル
+    Cell9,
+    // 数字が10のセル
+    Cell10,
+
+    // 空のセル
+    Empty = 11,
+    
+    // オジャマセル
+    Obstruct = 12,
+    
+    // 禁止セル
+    No = 13,
 };
 
-
-// セル（単位ブロック）
+// セル
 class Cell
 {
 private:
-	// セルの数字ごとのテクスチャ
-	static Array<Texture> Textures;
+    // セルのタイプごとのテクスチャ
+    static Array<Texture> typesTexture;
 
-	// セルのテクスチャをロードする
-	static void loadTextures();
+    // テクスチャをロードする
+    static void loadTypesTexture();
 
-	// セルの数字
-	int32 Number;
+    // セルのタイプ
+    CellType type;
 
 public:
-	// Emptyで初期化
-	// 初回はLoadTextures()を実行する
-	Cell();
+    // Emptyで初期化する
+    // 初回はloadTypesTexture()を実行する
+    Cell();
 
-	// numberで初期化
-	// 初回はLoadTextures()を実行する
-	Cell(int32 number);
+    // 指定したタイプで初期化する
+    // 初回はloadTypesTexture()を実行する
+    Cell(CellType _type);
 
-	// numberで初期化
-	// 初回はLoadTextures()を実行する
-	Cell(CellType number);
+    // セルのタイプを取得する
+    inline CellType getType() const
+    {
+        return type;
+    }
+    
+    // セルのタイプに対応したテクスチャのコピーを返す
+    // Texturesに存在しない場合は空のテクスチャを返す
+    const Texture getTexture() const
+    {
+        int32 number = static_cast<int32>(type);
 
-	// 数字を取得する
-	int32 getNumber() const;
+        if (number < typesTexture.size())
+        {
+            return typesTexture.at(number);
+        }
+        else
+        {
+            return Texture();
+        }
+    }
 
-	// 現在のセルのテクスチャのコピーを返す
-	// Texturesに存在しない場合は空のテクスチャを返す
-	Texture getTexture() const;
+    // ランダムなタイプのセルを返す
+    static Cell& RandomTypeCell(int32 maxTypeNumber = 9, bool hasEmpty = false, bool hasObstruct = false);
 
-	// ランダムな数字のセルを返す
-	static Cell RandomCell(int32 maxNumber = 9, bool existsEmpty = false, bool existsObstruct = false);
+    // セルのタイプごとのテクスチャを返す
+    static inline const Array<Texture>& getTypesTexture()
+    {
+        return typesTexture;
+    }
 
-	// セルの数字ごとのテクスチャを返す
-	static Array<Texture> getTextures();
-	static Texture getTexture(int32 num);
+    // 指定したタイプのテクスチャを返す
+    static inline const Texture getTexture(CellType type)
+    {
+        int32 number = static_cast<int32>(type);
 
-	operator String() const;
+        if (number < typesTexture.size())
+        {
+            return typesTexture.at(number);
+        }
+        else
+        {
+            return Texture();
+        }
+    }
+
+    inline operator String() const
+    {
+        return Format(static_cast<int32>(type));
+    }
 };

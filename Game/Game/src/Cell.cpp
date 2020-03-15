@@ -1,16 +1,16 @@
 #include "Cell.hpp"
 
 
-Array<Texture> Cell::Textures;
+Array<Texture> Cell::typesTexture;
 
-void Cell::loadTextures()
+void Cell::loadTypesTexture()
 {
 	const int32 xCnt = 4;
 	const int32 yCnt = 4;
 
 	try
 	{
-		Textures.resize(xCnt * yCnt);
+		typesTexture.resize(xCnt * yCnt);
 
 		const Image cellsImage(Resource(U"images/CellImages.png"));
 		const int32 width = cellsImage.width() / xCnt;
@@ -20,7 +20,7 @@ void Cell::loadTextures()
 		{
 			const Image cellImage = cellsImage.clipped(width * (i % xCnt), height * (i / xCnt), width, height);
 
-			Textures.at(i) = Texture(cellImage);
+			typesTexture.at(i) = Texture(cellImage);
 		}
 	}
 	catch (const std::exception & e)
@@ -31,86 +31,40 @@ void Cell::loadTextures()
 
 Cell::Cell()
 {
-	Number = (int32)CellType::Empty;
+	type = CellType::Empty;
 
-	if (Textures.size() == 0)
+	if (typesTexture.size() == 0)
 	{
-		loadTextures();
+		loadTypesTexture();
 	}
 }
 
-Cell::Cell(int32 number) : Number(number)
+Cell::Cell(CellType _type) : type(_type)
 {
-	if (Textures.size() == 0)
+	if (typesTexture.size() == 0)
 	{
-		loadTextures();
+		loadTypesTexture();
 	}
 }
 
-Cell::Cell(CellType number) : Number((int32)number)
+Cell& Cell::RandomTypeCell(int32 maxTypeNumber, bool hasEmpty, bool hasObstruct)
 {
-	if (Textures.size() == 0)
+	Array<CellType> all;
+	for (int32 i = 0; i < maxTypeNumber; ++i)
 	{
-		loadTextures();
-	}
-}
-
-int32 Cell::getNumber() const
-{
-	return Number;
-}
-
-Texture Cell::getTexture() const
-{
-	if (Number < Textures.size())
-	{
-		return Textures.at(Number);
-	}
-	else
-	{
-		return Texture();
-	}
-}
-
-Cell Cell::RandomCell(int32 maxNumber, bool existsEmpty, bool existsObstruct)
-{
-	int32 max = maxNumber;
-	if (existsEmpty)	max++;
-	if (existsObstruct)	max++;
-
-	int32 number = Random((int32)1, max);
-
-	if (number > maxNumber)
-	{
-		if (number == maxNumber + 1)
-		{
-			if (existsEmpty)
-				number = (int32)CellType::Empty;
-			else if (existsObstruct)
-				number = (int32)CellType::Obstruct;
-		}
-
-		if (number == maxNumber + 2)
-		{
-			if (existsObstruct)
-				number = (int32)CellType::Obstruct;
-		}
+		all.push_back(static_cast<CellType>(i));
 	}
 
-	return Cell(number);
-}
+	if (hasEmpty)
+	{
+		all.push_back(CellType::Empty);
+	}
+	if (hasObstruct)
+	{
+		all.push_back(CellType::Obstruct);
+	}
 
-Array<Texture> Cell::getTextures()
-{
-	return Textures;
-}
+	Cell cell(all.choice());
 
-Texture Cell::getTexture(int32 num)
-{
-	return Textures.at(num);
-}
-
-Cell::operator String() const
-{
-	return Format(Number);
+	return cell;
 }
