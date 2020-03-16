@@ -13,23 +13,23 @@ enum class CellType
 	// 数字が1のセル
 	Cell1 = 1,
 	// 数字が2のセル
-	Cell2,
+	Cell2 = 2,
 	// 数字が3のセル
-	Cell3,
+	Cell3 = 3,
 	// 数字が4のセル
-	Cell4,
+	Cell4 = 4,
 	// 数字が5のセル
-	Cell5,
+	Cell5 = 5,
 	// 数字が6のセル
-	Cell6,
+	Cell6 = 6,
 	// 数字が7のセル
-	Cell7,
+	Cell7 = 7,
 	// 数字が8のセル
-	Cell8,
+	Cell8 = 8,
 	// 数字が9のセル
-	Cell9,
+	Cell9 = 9,
 	// 数字が10のセル
-	Cell10,
+	Cell10 = 10,
 
 	// 空のセル
 	Empty = 11,

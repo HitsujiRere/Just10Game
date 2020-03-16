@@ -2,7 +2,7 @@
 
 ## LICENSE
 
-This software is released under the MIT License, see LICENSE.txt.
+This software is released under the CC BY 4.0 License, see LICENSE.txt.
 
 ## LIBRARY
 
