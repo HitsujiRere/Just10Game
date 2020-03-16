@@ -54,5 +54,5 @@ private:
 public:
 
 	// デバッグのプリントの可否
-	static bool debug_print;
+	static bool debugPrint;
 };

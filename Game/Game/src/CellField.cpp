@@ -1,21 +1,25 @@
 
-#include "CellField.hpp"
+# include "Common.hpp"
+# include "CellField.hpp"
 
 
 CellField::CellField()
 	: size(Size())
+	, drawsize(Size())
 {
 	clearField();
 }
 
-CellField::CellField(int32 width, int32 height)
-	: size(width, height)
+CellField::CellField(int32 drawWidth, int32 drawHeight)
+	: size(drawWidth, drawHeight * 2)
+	, drawsize(drawWidth, drawHeight)
 {
 	clearField();
 }
 
-CellField::CellField(Size _size)
-	: size(_size)
+CellField::CellField(Size _drawsize)
+	: size(_drawsize.x, _drawsize.y * 2)
+	, drawsize(_drawsize)
 {
 	clearField();
 }
@@ -46,13 +50,21 @@ void CellField::clearField()
 	updateJust10Times();
 }
 
+void CellField::clearBackField()
+{
+	for (auto p : step(drawsize, size - drawsize))
+	{
+		field.at(p) = Cell(CellType::Empty);
+	}
+}
+
 void CellField::updateJust10Times()
 {
 	// èâä˙âªÇ∑ÇÈ
 	just10Times = Grid<int32>(size);
 
 	// É~ÉmÇÃêîéöÇÃ2éüå≥ó›êœòa
-	Grid<int32> numCSum(size + Size(1, 1));
+	Grid<int32> numCSum(drawsize + Size(1, 1));
 
 	// minoCSumÇçÏê¨Ç∑ÇÈ
 	for (auto p : step(numCSum.size()))
@@ -60,19 +72,19 @@ void CellField::updateJust10Times()
 		int32 n = 0;
 		if (p.x > 0)
 		{
-			n += numCSum[p - Point(1, 0)];
+			n += numCSum.at(p - Point(1, 0));
 		}
 		if (p.y > 0)
 		{
-			n += numCSum[p - Point(0, 1)];
+			n += numCSum.at(p - Point(0, 1));
 		}
 		if (p.x > 0 && p.y > 0)
 		{
-			n -= numCSum[p - Point(1, 1)];
-			n += static_cast<int32>(field[p - Point(1, 1)].getType());
+			n -= numCSum.at(p - Point(1, 1));
+			n += static_cast<int32>(field.at(p - Point(1, 1)).getType());
 		}
 
-		numCSum[p] = n;
+		numCSum.at(p) = n;
 	}
 
 	// Just10ÇÃóvëfÇ∆Ç»Ç¡ÇƒÇ¢ÇÈâÒêîÇÃç∑ï™Çí≤Ç◊ÇÈ
@@ -121,36 +133,36 @@ void CellField::updateJust10Times()
 
 	// ó›êœÇ∑ÇÈ
 	// xï˚å¸Ç÷â¡éZ
-	for (auto p : step(size))
+	for (auto p : step(drawsize))
 	{
 		int32 n = 0;
 		if (p.x == 0)
 		{
-			n += just10Times[p];
+			n += just10Times.at(p);
 		}
 		else // p.x > 0
 		{
-			n += just10Times[p - Point(1, 0)];
-			n += just10Times[p];
+			n += just10Times.at(p - Point(1, 0));
+			n += just10Times.at(p);
 		}
 
-		just10Times[p] = n;
+		just10Times.at(p) = n;
 	}
 	// yï˚å¸Ç÷â¡éZ
-	for (auto p : step(size))
+	for (auto p : step(drawsize))
 	{
 		int32 n = 0;
 		if (p.y == 0)
 		{
-			n += just10Times[p];
+			n += just10Times.at(p);
 		}
 		else // p.y > 0
 		{
-			n += just10Times[p - Point(0, 1)];
-			n += just10Times[p];
+			n += just10Times.at(p - Point(0, 1));
+			n += just10Times.at(p);
 		}
 
-		just10Times[p] = n;
+		just10Times.at(p) = n;
 	}
 }
 
@@ -158,12 +170,13 @@ Grid<Point> CellField::getFallTo() const
 {
 	Grid<Point> FallTo(size);
 
-	for (auto x : step((int32)field.width()))
+	for (auto x : step(size.x))
 	{
-		int32 pushY = (int32)field.height() - (int32)1;
-		for (auto y : step(field.height() - 1, field.height(), -1))
+		int32 pushY = drawsize.y - 1;
+		for (auto y : step(size.y - 1, size.y, -1))
+			//for (auto y : Range(size.y - 1, 0, -1))
 		{
-			if (field.at(y, x).getType() != CellType::Empty)
+			if (y < drawsize.y && field.at(y, x).getType() != CellType::Empty)
 			{
 				FallTo.at(y, x) = Point(x, pushY);
 				pushY--;
@@ -182,12 +195,9 @@ Grid<Point> CellField::getFloatTo(Array<int32> floats) const
 {
 	Grid<Point> FloatTo(size);
 
-	for (auto x : step(size.x))
+	for (auto p : step(size))
 	{
-		for (auto y : step(size.y))
-		{
-			FloatTo.at(y, x) = y >= floats[x] ? Point(x, y - floats[x]) : Point(-1, -1);
-		}
+		FloatTo.at(p) = p.y >= floats.at(p.x) ? Point(p.x, p.y - floats.at(p.x)) : Point(-1, -1);
 	}
 
 	return FloatTo;
@@ -195,19 +205,30 @@ Grid<Point> CellField::getFloatTo(Array<int32> floats) const
 
 void CellField::moveCells(Grid<Point> moveTo)
 {
+	if (Setting::debugPrint)	Print << U"\t\t\t\tCellField::moveCells() begin";
+
 	Grid<Cell> fieldMoved(size);
+
+	if (Setting::debugPrint)	Print << U"\t\t\t\t\t- 1";
 
 	for (auto p : step(size))
 	{
 		if (moveTo.at(p).x >= 0 && moveTo.at(p).y >= 0)
 		{
 			fieldMoved.at(moveTo.at(p)) = field.at(p);
+			Print << U"{} : {} -> {}"_fmt(field.at(p), p, moveTo.at(p));
 		}
 	}
 
+	if (Setting::debugPrint)	Print << U"\t\t\t\t\t- 2";
+
 	field = fieldMoved;
 
+	if (Setting::debugPrint)	Print << U"\t\t\t\t\t- 3";
+
 	updateJust10Times();
+
+	if (Setting::debugPrint)	Print << U"\t\t\t\tCellField::moveCells() end";
 }
 
 bool CellField::pushTopCell(const Cell& cell, int32 x)
@@ -266,11 +287,11 @@ void CellField::draw(Point fieldPos, Size cellSize,
 	}
 }
 
-CellField CellField::RandomField(Size size, int32 maxNumber, bool hasEmpty, bool hasObstruct)
+CellField CellField::RandomField(Size drawsize, int32 maxNumber, bool hasEmpty, bool hasObstruct)
 {
-	CellField cellfield(size);
+	CellField cellfield(drawsize);
 
-	for (auto p : step(Size(0, 1), size - Size(0, 1)))
+	for (auto p : step(Size(0, 1), cellfield.getSize() - Size(0, 1)))
 	{
 		cellfield.field.at(p) = Cell::RandomTypeCell(maxNumber, hasEmpty, hasObstruct);
 	}

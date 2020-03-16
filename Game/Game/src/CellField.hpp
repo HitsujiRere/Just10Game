@@ -6,7 +6,7 @@
 #endif
 
 # include <Siv3D.hpp> // OpenSiv3D v0.4.2
-# include "Common.hpp"
+//# include "Common.hpp"
 # include "Cell.hpp"
 
 // セルを置くフィールド
@@ -14,8 +14,11 @@ class CellField
 {
 private:
 
-	// フィールドのサイズ
+	// フィールドの内部サイズ
 	Size size;
+
+	// フィールドの描画サイズ
+	Size drawsize;
 
 	// フィールド
 	Grid<Cell> field;
@@ -34,11 +37,11 @@ public:
 	// サイズが(0,0)のCellTypeがEmptyで初期化する
 	CellField();
 
-	// サイズが(width,height)のCellTypeがEmptyで初期化
-	CellField(int32 width, int32 height);
+	// サイズが(drawWidth,drawHeight)のCellTypeがEmptyで初期化
+	CellField(int32 drawWidth, int32 drawHeight);
 
 	// サイズのCellTypeがEmptyで初期化
-	CellField(Size size);
+	CellField(Size _drawsize);
 
 	// フィールドを取得する
 	inline const Grid<Cell>& getField() const
@@ -52,11 +55,20 @@ public:
 		return just10Times;
 	}
 
-	// フィールドのサイズを取得する
+	// フィールドの内部サイズを取得する
 	inline Size getSize() const
 	{
 		return size;
 	}
+
+	// フィールドの描画サイズを取得する
+	inline Size getDrawsize() const
+	{
+		return drawsize;
+	}
+
+	// drawsize外のバックフィールドを初期化する
+	void clearBackField();
 
 	// セルをセットする
 	void setCell(Cell& cell, int32 x, int32 y);
@@ -91,5 +103,5 @@ public:
 
 	// ランダムな数字のセルのフィールドを返す
 	// ただし最上部は空になる
-	static CellField RandomField(Size size = Size(0, 0), int32 maxNumber = 9, bool existsEmpty = false, bool existsObstruct = false);
+	static CellField RandomField(Size drawsize = Size(0, 0), int32 maxNumber = 9, bool hasEmpty = false, bool hasObstruct = false);
 };

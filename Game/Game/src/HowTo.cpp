@@ -43,12 +43,4 @@ void HowTo::draw() const
 	}
 
 	FontAsset(U"Desc")(desc).draw(Arg::topCenter(Scene::Center().x, 200), ColorF(0.25));
-	/*for (int32 i = 0; i < descs.size(); ++i)
-	{
-		FontAsset(U"Desc")(descs[i])
-			.draw(Arg::topCenter(Scene::Center().x, 200 + 30 * i), ColorF(0.25));
-	}*/
-
-	//Rect(0, (int32)(Scene::Height() * 0.7), Scene::Width(), (int32)(Scene::Height() * 0.3))
-		//.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
 }

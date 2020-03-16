@@ -3,8 +3,12 @@
 
 Player::Player(Array<int32> _dropCells1LoopNum)
 	: dropCells1LoopNum(_dropCells1LoopNum)
+	, field(Point(6, 12))
+	, just10times(field.getSize())
+	, fieldMoveTo(field.getSize())
+	, obstructsSentCntArray(field.getSize().x)
 {
-	for (auto i : step((int32)dropCells1LoopNum.size()))
+	for (int32 i : step(static_cast<int32>(dropCells1LoopNum.size())))
 	{
 		CellType type = static_cast<CellType>(i);
 		for (auto j : step(dropCells1LoopNum.at(i)))
@@ -21,7 +25,7 @@ Player& Player::operator=(const Player& another)
 	this->dropCells1LoopNum = another.dropCells1LoopNum;
 	this->dropCells1LoopCells = another.dropCells1LoopCells;
 	this->field = another.field;
-	this->deleteField = another.deleteField;
+	this->just10times = another.just10times;
 	this->fieldMoveTo = another.fieldMoveTo;
 	this->fieldColor = another.fieldColor;
 	this->dropCellTimer = another.dropCellTimer;
@@ -32,8 +36,8 @@ Player& Player::operator=(const Player& another)
 	this->canDrop = another.canDrop;
 	this->isDeletingTime = another.isDeletingTime;
 	this->deletingTimer = another.deletingTimer;
-	this->isFallingTime = another.isFallingTime;
-	this->fallingTimer = another.fallingTimer;
+	this->isMovingTime = another.isMovingTime;
+	this->movingTimer = another.movingTimer;
 	this->loseTimer = another.loseTimer;
 	this->score = another.score;
 	this->combo = another.combo;
@@ -44,30 +48,68 @@ Player& Player::operator=(const Player& another)
 
 int32 Player::update(PlayerKeySet keySet)
 {
+	if (Setting::debugPrint)	Print << U"\t\tPlayer::update() begin";
 	int32 ret = 0;
+
+	const Size size = field.getSize();
+	const Size drawsize = field.getDrawsize();
 
 	const double deltaTime = Scene::DeltaTime();
 
 	// 常に10個以上確保しておく（Next表示対策）
 	makeDropCells(10);
 
+	if (KeyTab.down())
+	{
+		updatedField();
+	}
+
+	if (Setting::debugPrint)	Print << U"\t\t\t- 1";
+
 	//Print << U"canDrop = {}"_fmt(canDrop);
 	// 操作可能
 	if (canOperate)
 	{
+		// オジャマをつくる
+		if (canDrop && obstructsSentSum > 0)
+		{
+			for (auto x : step(size.x))
+			{
+				for (auto y : step(drawsize.y, obstructsSentCntArray.at(x)))
+				{
+					Cell cell(CellType::Obstruct);
+					field.setCell(cell, x, y);
+				}
+			}
+
+			fieldMoveTo = field.getFloatTo(obstructsSentCntArray);
+
+			obstructsSentSum = 0;
+			for (auto x : step(drawsize.x))
+			{
+				obstructsSentCntArray.at(x) = 0;
+			}
+
+			// セル移動処理へ移行
+			canDrop = false;
+			isMovingTime = true;
+			//fieldMoveTo = field.getFallTo();
+		}
+
+		/**
 		// オジャマを落とす
 		if (canDrop && obstructsSentSum > 0)
 		{
 			fieldMoveTo = field.getFloatTo(obstructsSentCntArray);
 
-			for (auto p : step(fieldSize))
+			for (auto p : step(drawsize))
 			{
-				obstructsCntDrawField.at(p) = p.y >= fieldSize.y - obstructsSentCntArray[p.x]
+				obstructsCntDrawField.at(p) = p.y >= drawsize.y - obstructsSentCntArray.at(p.x)
 					? Cell(CellType::Obstruct) : Cell(CellType::Empty);
 			}
 
 			obstructsSentSum = 0;
-			for (auto x : step(fieldSize.x))
+			for (auto x : step(drawsize.x))
 			{
 				obstructsSentCntArray.at(x) = 0;
 			}
@@ -76,18 +118,19 @@ int32 Player::update(PlayerKeySet keySet)
 			canDrop = false;
 			isPushedTime = true;
 		}
+		/**/
 
 		// フィールドをランダムに変更する
 		if (canDrop && keySet.toRandom.down())
 		{
-			field = CellField::RandomField(fieldSize, (int32)dropCells1LoopNum.size() - 1, false, false);
+			field = CellField::RandomField(drawsize, static_cast<int32>(dropCells1LoopNum.size()) - 1, false, false);
 			updatedField();
 		}
 
 		// フィールドを無に変更する
 		if (canDrop && keySet.toEmpty.down())
 		{
-			field = CellField(fieldSize);
+			field = CellField(drawsize);
 			updatedField();
 		}
 
@@ -130,7 +173,7 @@ int32 Player::update(PlayerKeySet keySet)
 				dropCellTimer = 0.0;
 			}
 		}
-		if (keySet.moveR.pressed() && dropCellFieldX < fieldSize.x - 1)
+		if (keySet.moveR.pressed() && dropCellFieldX < drawsize.x - 1)
 		{
 			if (dropCellTimer > dropCellCoolTime)
 			{
@@ -150,12 +193,14 @@ int32 Player::update(PlayerKeySet keySet)
 
 			// 落下処理へ移行
 			canDrop = false;
-			isFallingTime = true;
+			isMovingTime = true;
 			fieldMoveTo = field.getFallTo();
 
 			dropCellStack.remove_at(0);
 		}
 	}
+
+	if (Setting::debugPrint)	Print << U"\t\t\t- 2";
 
 	// 演出処理
 	{
@@ -168,16 +213,20 @@ int32 Player::update(PlayerKeySet keySet)
 			{
 				// 有効Just10Timesの合計
 				int32 dc = 0;
-				for (auto p : step(fieldSize))
+				for (auto p : step(drawsize))
 				{
 					if (field.getField().at(p).getType() != CellType::Obstruct)
 					{
-						dc += deleteField.at(p);
+						dc += just10times.at(p);
 					}
 				}
 
-				field.deleteCells(deleteField);
-				if (Setting::debug_print)	Print << U"Delete {} Cells!"_fmt(dc);
+				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 0 - 1";
+
+				field.deleteCells(just10times);
+				if (Setting::debugPrint)	Print << U"Delete {} Cells!"_fmt(dc);
+
+				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 0 - 2";
 
 				// コンボ倍率においては要調整
 				int32 scoreAdd = scoreFunc(dc, combo);
@@ -188,25 +237,33 @@ int32 Player::update(PlayerKeySet keySet)
 				isDeletingTime = false;
 				deletingTimer = 0.0;
 
+				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 0 - 3";
+
 				// 落下処理へ移行
-				isFallingTime = true;
+				isMovingTime = true;
 				fieldMoveTo = field.getFallTo();
-				if (Setting::debug_print)	Print << U"Falling...";
+				if (Setting::debugPrint)	Print << U"Falling...";
 			}
 		}
 
-		// セルが落ちる演出
-		if (isFallingTime)
+		if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 1";
+
+		// セルが動く演出
+		if (isMovingTime)
 		{
-			fallingTimer += deltaTime;
+			movingTimer += deltaTime;
 
-			if (fallingTimer > fallingCoolTime)
+			if (movingTimer > movingCoolTime)
 			{
-				field.moveCells(fieldMoveTo);
-				if (Setting::debug_print)	Print << U"Falled Cells!";
+				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 1 - 1";
 
-				isFallingTime = false;
-				fallingTimer = 0.0;
+				field.moveCells(fieldMoveTo);
+				if (Setting::debugPrint)	Print << U"Falled Cells!";
+
+				isMovingTime = false;
+				movingTimer = 0.0;
+
+				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 1 - 2";
 
 				// 消えるものがないなら、動かせるようにする
 				if (!updatedField())
@@ -216,9 +273,18 @@ int32 Player::update(PlayerKeySet keySet)
 					ret = obstructsMaked;
 					obstructsMaked = 0;
 				}
+				else
+				{
+					canDrop = true;
+				}
+
+				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 1 - 3";
 			}
 		}
 
+		if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 2";
+
+		/**
 		// セルがオジャマに押され上がる演出
 		if (isPushedTime)
 		{
@@ -227,7 +293,7 @@ int32 Player::update(PlayerKeySet keySet)
 			if (pushedTimer > pushedCoolTime)
 			{
 				field.moveCells(fieldMoveTo);
-				for (auto p : step(fieldSize))
+				for (auto p : step(drawsize))
 				{
 					if (obstructsCntDrawField.at(p).getType() != CellType::Empty)
 					{
@@ -235,7 +301,6 @@ int32 Player::update(PlayerKeySet keySet)
 						obstructsCntDrawField.at(p) = Cell(CellType::Empty);
 					}
 				}
-				if (Setting::debug_print)	Print << U"for (auto p : step(fieldSize))";
 
 				isPushedTime = false;
 				pushedTimer = 0.0;
@@ -247,6 +312,7 @@ int32 Player::update(PlayerKeySet keySet)
 				}
 			}
 		}
+		/**/
 
 		// 負けと表示する演出
 		if (state == BattleState::lose)
@@ -255,76 +321,96 @@ int32 Player::update(PlayerKeySet keySet)
 		}
 	}
 
+	if (Setting::debugPrint)	Print << U"\t\tPlayer::update() end";
 	return ret;
 }
 
-void Player::draw(Point fieldPos, Size cellDrawSize) const
+void Player::draw(Point fieldPos, Size cellSize) const
 {
+	if (Setting::debugPrint)	Print << U"\t\tdraw() begin";
+
+	const Size drawsize = field.getDrawsize();
+
 	// Nextセルの描画
-	FontAsset(U"Text")(U"Next").drawAt(fieldPos + Vec2(fieldSize.x + 2, -0.5) * cellDrawSize);
-	getDropCellConst(1).getTexture().resized(cellDrawSize * 2).draw(fieldPos + Vec2(fieldSize.x + 1, 0) * cellDrawSize);
+	FontAsset(U"Text")(U"Next").drawAt(fieldPos + Vec2(drawsize.x + 2, -0.5) * cellSize);
+	getDropCellConst(1).getTexture().resized(cellSize * 2).draw(fieldPos + Vec2(drawsize.x + 1, 0) * cellSize);
 	for (auto i : step(2, 4))
 	{
-		getDropCellConst(i).getTexture().resized(cellDrawSize).draw(fieldPos + Vec2(fieldSize.x + 1, i) * cellDrawSize);
+		getDropCellConst(i).getTexture().resized(cellSize).draw(fieldPos + Vec2(drawsize.x + 1, i) * cellSize);
 	}
 
+	if (Setting::debugPrint)	Print << U"\t\t\t- 1";
+
 	// ホールドの表示
-	FontAsset(U"Text")(U"Hold").drawAt(fieldPos + Vec2(-2, -0.5) * cellDrawSize);
-	holdCell.getTexture().resized(cellDrawSize * 2).draw(fieldPos + Point(-3, 0) * cellDrawSize);
+	FontAsset(U"Text")(U"Hold").drawAt(fieldPos + Vec2(-2, -0.5) * cellSize);
+	holdCell.getTexture().resized(cellSize * 2).draw(fieldPos + Point(-3, 0) * cellSize);
+
+	if (Setting::debugPrint)	Print << U"\t\t\t- 2";
 
 	// フィールドの背景
-	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).draw(fieldColor);
+	Rect(fieldPos - cellSize * Size(0, 1) - Point(5, 5), (drawsize + Size(0, 1)) * cellSize + Point(10, 10)).draw(fieldColor);
 	// フィールドの枠
-	Rect(fieldPos - cellDrawSize * Size(0, 1) - Point(5, 5), (fieldSize + Size(0, 1)) * cellDrawSize + Point(10, 10)).drawFrame(10, ColorF(0.2));
+	Rect(fieldPos - cellSize * Size(0, 1) - Point(5, 5), (drawsize + Size(0, 1)) * cellSize + Point(10, 10)).drawFrame(10, ColorF(0.2));
+
+	if (Setting::debugPrint)	Print << U"\t\t\t- 3";
 
 	// Just10の回数の表示
 	if (KeyControl.pressed())
 	{
-		for (auto p : step(fieldSize))
+		for (auto p : step(drawsize))
 		{
-			Point pos = fieldPos + cellDrawSize * p + cellDrawSize / 2;
-			FontAsset(U"Text")(U"{}"_fmt(deleteField.at(p))).drawAt(pos, Palette::Black);
+			Point pos = fieldPos + cellSize * p + cellSize / 2;
+			FontAsset(U"Text")(U"{}"_fmt(just10times.at(p))).drawAt(pos, Palette::Black);
 		}
 	}
 	// フィールドの描画
 	else
 	{
-		for (int32 x : step(fieldSize.x))
+		for (int32 x : step(drawsize.x))
 		{
-			Point pos = fieldPos + Point(x, 0) * cellDrawSize;
+			Point pos = fieldPos + Point(x, 0) * cellSize;
 
-			Cell::getTexture(CellType::No).resized(cellDrawSize).draw(pos);
+			Cell::getTexture(CellType::No).resized(cellSize).draw(pos);
 		}
 
-		for (auto p : step(fieldSize))
+		if (Setting::debugPrint)	Print << U"\t\t\t- 3 - 1";
+
+		/**
+		if (isPushedTime)
 		{
-			if (obstructsCntDrawField.at(p).getType() != CellType::Empty)
+			for (auto p : step(drawsize))
 			{
-				Point pos = fieldPos + p * cellDrawSize;
-				Cell::getTexture(obstructsCntDrawField.at(p).getType()).resized(cellDrawSize).draw(pos);
+				if (obstructsCntDrawField.at(p).getType() != CellType::Empty)
+				{
+					Point pos = fieldPos + p * cellSize;
+					Cell::getTexture(obstructsCntDrawField.at(p).getType()).resized(cellSize).draw(pos);
+				}
 			}
 		}
+		/**/
 
-		field.draw(fieldPos, cellDrawSize,
+		if (Setting::debugPrint)	Print << U"\t\t\t- 3 - 2";
+
+		field.draw(fieldPos, cellSize,
 			[&](Point p, CellType) {
 				if (fieldMoveTo.at(p) == Point(-1, -1))
 				{
-					return (p * cellDrawSize);
+					return (p * cellSize);
 				}
 				else
 				{
 					const double e = EaseOutCubic(
-						isFallingTime ? fallingTimer / fallingCoolTime :
+						isMovingTime ? movingTimer / movingCoolTime :
 						isDeletingTime ? deletingTimer / deletingCoolTime :
 						0);
-					return (Vec2(p * cellDrawSize).lerp(Vec2(fieldMoveTo.at(p) * cellDrawSize), e)).asPoint();
+					return (Vec2(p * cellSize).lerp(Vec2(fieldMoveTo.at(p) * cellSize), e)).asPoint();
 				}
 			},
 			[&](Point p, CellType) {
-				if (deleteField.at(p))
+				if (just10times.at(p))
 				{
 					const double e = EaseOutCubic(deletingTimer / deletingCoolTime);
-					return Color(255, (int32)(255 * (1.0 - e)));
+					return Color(255, static_cast<int32>(255 * (1.0 - e)));
 				}
 				else
 				{
@@ -334,12 +420,16 @@ void Player::draw(Point fieldPos, Size cellDrawSize) const
 			);
 	}
 
+	if (Setting::debugPrint)	Print << U"\t\t\t- 4";
+
 	// 落とすセルの描画
 	{
-		const Point dropCellPos(fieldPos + Point(cellDrawSize.x * dropCellFieldX, -cellDrawSize.y));
+		const Point dropCellPos(fieldPos + Point(cellSize.x * dropCellFieldX, -cellSize.y));
 
-		getDropCellConst(0).getTexture().resized(cellDrawSize).draw(dropCellPos);
+		getDropCellConst(0).getTexture().resized(cellSize).draw(dropCellPos);
 	}
+
+	if (Setting::debugPrint)	Print << U"\t\tdraw() end";
 }
 
 void Player::makeDropCells(int32 min)
@@ -353,40 +443,41 @@ void Player::makeDropCells(int32 min)
 
 bool Player::updatedField()
 {
-	deleteField = field.getJust10Times();
+	const Size drawsize = field.getDrawsize();
+
+	just10times = field.getJust10Times();
 
 	// 消えるセルの周りにあるオジャマも消す
-	for (auto p : step(fieldSize))
+	for (auto p : step(drawsize))
 	{
 		if (field.getField().at(p).getType() == CellType::Obstruct)
 		{
 			for (auto i : step(1, 4, 2))
 			{
 				Point padd = Point(i / 3 - 1, i % 3 - 1);
-				if (0 <= p.x + padd.x && p.x + padd.x < fieldSize.x
-					&& 0 <= p.y + padd.y && p.y + padd.y < fieldSize.y
+				if (0 <= p.x + padd.x && p.x + padd.x < drawsize.x
+					&& 0 <= p.y + padd.y && p.y + padd.y < drawsize.y
 					&& field.getField().at(p + padd).getType() != CellType::Obstruct
-					&& deleteField.at(p + padd) > 0)
+					&& just10times.at(p + padd) > 0)
 				{
-					deleteField.at(p) = 1;
+					just10times.at(p) = 1;
 				}
 			}
 		}
 	}
 
-
 	// Just10で消えるものがあるなら、消える時間にする
-	if (deleteField.any([](int32 n) { return n != 0; }))
+	if (just10times.any([](int32 n) { return n != 0; }))
 	{
 		canDrop = false;
 		isDeletingTime = true;
-		if (Setting::debug_print)	Print << U"Deleting...";
+		if (Setting::debugPrint)	Print << U"Deleting...";
 
 		return true;
 	}
 
 	// 一番上のyにセルがあるなら、負け
-	for (auto x : step(field.getSize().x))
+	for (auto x : step(drawsize.x))
 	{
 		if (field.getField().at(0, x).getType() != CellType::Empty)
 		{
@@ -401,25 +492,36 @@ bool Player::updatedField()
 
 void Player::sendObstructs(double sent_obstructs)
 {
+	if (Setting::debugPrint)	Print << U"\t\tsendObstructs() begin";
+
+	const Size size = field.getDrawsize();
+
 	int32 obstructs = static_cast<int32>(ceil(sent_obstructs / defRate));
 
+	if (Setting::debugPrint)	Print << U"\t\t- 1";
+
 	obstructsSentSum += obstructs;
-	for (auto i : step(fieldSize.x))
+	for (auto i : step(size.x))
 	{
-		obstructsSentCntArray.at(i) += obstructs / fieldSize.x;
+		obstructsSentCntArray.at(i) += obstructs / size.x;
 	}
 
-	obstructs %= fieldSize.x;
+	if (Setting::debugPrint)	Print << U"\t\t- 2";
 
-	Array<int32> put(fieldSize.x, 0);
-	for (auto i : step(fieldSize.x))
+	obstructs %= size.x;
+
+	Array<int32> put(size.x, 0);
+	for (auto i : step(size.x))
 	{
 		put.at(i) = i;
 	}
 
+	if (Setting::debugPrint)	Print << U"\t\t- 3";
+
 	for (auto i : put.choice(obstructs))
 	{
-		if (Setting::debug_print)	Print << U"i = {}"_fmt(i);
 		++obstructsSentCntArray.at(i);
 	}
+
+	if (Setting::debugPrint)	Print << U"\t\tsendObstructs() end";
 }

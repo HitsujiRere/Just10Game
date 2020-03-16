@@ -42,7 +42,19 @@ Battle::Battle(const InitData& init)
 
 void Battle::update()
 {
-	if (Setting::debug_print)	Print << U"in Battle::update()";
+	if (Setting::debugPrint)	Print << U"Battle::update begin";
+
+	// タイトルへ戻る
+	if (backKeys.down())
+	{
+		int32 hightScore = getData().highScore;
+		for (auto& playerData : playerDatas)
+		{
+			hightScore = Max(hightScore, playerData.player.score);
+		}
+		getData().highScore = hightScore;
+		changeScene(State::Title);
+	}
 
 	// デバッグ用死亡
 	if (Key4.down())
@@ -52,18 +64,25 @@ void Battle::update()
 
 	const double deltaTime = Scene::DeltaTime();
 
-	for (auto i : step((int32)playerCnt))
+	for (auto i : step(static_cast<int32>(playerCnt)))
 	{
 		auto& playerData = playerDatas.at(i);
 		auto& player = playerData.player;
 
+		if (Setting::debugPrint)	Print << U"\tplayer {} call update() before"_fmt(i);
 		int32 obstruct = player.update(playerData.keySet);
+		if (Setting::debugPrint)	Print << U"\tplayer {} call update() after"_fmt(i);
 
 		if (playerCnt == PlayerCount::By2 && obstruct > 0)
 		{
-			if (Setting::debug_print)	Print << U"send obstructs.";
+			if (Setting::debugPrint)	Print << U"\t- 0 - 1";
+			if (Setting::debugPrint)	Print << U"send obstructs.";
+			if (Setting::debugPrint)	Print << U"\t- 0 - 2";
 			playerDatas.at((i + 1) % 2).player.sendObstructs(obstruct * player.atkRate);
+			if (Setting::debugPrint)	Print << U"\t- 0 - 3";
 		}
+
+		if (Setting::debugPrint)	Print << U"\t- 1";
 
 		// 負けと表示する演出
 		if (player.state == BattleState::lose)
@@ -76,59 +95,65 @@ void Battle::update()
 				changeScene(State::Title);
 			}
 		}
+
+		if (Setting::debugPrint)	Print << U"\t- 2";
 	}
 
-	if (backKeys.down())
-	{
-		int32 hightScore = getData().highScore;
-		for (auto& playerData : playerDatas)
-		{
-			hightScore = Max(hightScore, playerData.player.score);
-		}
-		getData().highScore = hightScore;
-		changeScene(State::Title);
-	}
-
-	if (Setting::debug_print)	Print << U"end Battle::update()";
+	if (Setting::debugPrint)	Print << U"Battle::update end";
 }
 
 void Battle::draw() const
 {
-	if (Setting::debug_print)	Print << U"in Battle::draw()";
+	if (Setting::debugPrint)	Print << U"Battle::draw begin";
 
-	Rect(0, (int32)(Scene::Height() * 0.7), Scene::Width(), (int32)(Scene::Height() * 0.3))
+	Rect(0, static_cast<int32>(Scene::Height() * 0.7), Scene::Width(), static_cast<int32>(Scene::Height() * 0.3))
 		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
 
+	int32 i = -1;
 	for (auto& playerData : playerDatas)
 	{
+		++i;
 		auto& player = playerData.player;
+		const Size drawsize = player.field.getDrawsize();
 
+		if (Setting::debugPrint)	Print << U"\tplayer {} call draw() before"_fmt(i);
 		player.draw(playerData.fieldPos, cellSize);
+		if (Setting::debugPrint)	Print << U"\tplayer {} call draw() after"_fmt(i);
+
+		if (Setting::debugPrint)	Print << U"\t- 1";
 
 		// スコア
 		FontAsset(U"Text")(U"Score:{}"_fmt(player.score))
-			.drawAt(playerData.fieldPos.movedBy(player.fieldSize.x * cellSize.x / 2, player.fieldSize.y * cellSize.y + 30), ColorF(0.25));
+			.drawAt(playerData.fieldPos.movedBy(drawsize.x * cellSize.x / 2, drawsize.y * cellSize.y + 30), ColorF(0.25));
+
+		if (Setting::debugPrint)	Print << U"\t- 2";
+
 		// コンボ
 		FontAsset(U"Text")(U"Combo:{}"_fmt(player.combo))
-			.drawAt(playerData.fieldPos.movedBy(player.fieldSize.x * cellSize.x / 2, player.fieldSize.y * cellSize.y + 75), ColorF(0.25));
+			.drawAt(playerData.fieldPos.movedBy(drawsize.x * cellSize.x / 2, drawsize.y * cellSize.y + 75), ColorF(0.25));
 
-		FontAsset(U"Text")(U"obstructsMaked:{}"_fmt(player.obstructsMaked))
-			.drawAt(playerData.fieldPos.movedBy(player.fieldSize.x * cellSize.x / 2, player.fieldSize.y + 60), ColorF(0.25));
-		FontAsset(U"Text")(U"obstructsSentSum:{}"_fmt(player.obstructsSentSum))
-			.drawAt(playerData.fieldPos.movedBy(player.fieldSize.x * cellSize.x / 2, player.fieldSize.y + 105), ColorF(0.25));
+		if (Setting::debugPrint)	Print << U"\t- 3";
+
+		FontAsset(U"Text")(U"Maked:{}"_fmt(player.obstructsMaked))
+			.drawAt(playerData.fieldPos.movedBy(drawsize.x * cellSize.x / 2, 100), ColorF(0.25));
+		FontAsset(U"Text")(U"SentSum:{}"_fmt(player.obstructsSentSum))
+			.drawAt(playerData.fieldPos.movedBy(drawsize.x * cellSize.x / 2, 145), ColorF(0.25));
+
 
 		// 負けの知らせ
 		if (playerData.player.state != BattleState::playing)
 		{
 			const double e = EaseOutBounce(player.loseTimer / player.loseCoolTime <= 1.0 ? player.loseTimer / player.loseCoolTime : 1.0);
-			const Vec2 to(playerData.fieldPos + player.fieldSize * cellSize / 2.0);
-			const Vec2 pos(Vec2(playerData.fieldPos.x + player.fieldSize.x * cellSize.x / 2.0, -100).lerp(to, e));
+			const Vec2 to(playerData.fieldPos + drawsize * cellSize / 2.0);
+			const Vec2 pos(Vec2(playerData.fieldPos.x + drawsize.x * cellSize.x / 2.0, -100).lerp(to, e));
 			String text = U"";
 			if (player.state == BattleState::win)	text = U"Win";
 			if (player.state == BattleState::tie)	text = U"Tie";
 			if (player.state == BattleState::lose)	text = U"Lose";
 			FontAsset(U"Header")(text).drawAt(pos, Palette::Black);
 		}
+
+		if (Setting::debugPrint)	Print << U"\t- 4";
 	}
 
 	// タイトルに戻るカウントダウン
@@ -138,5 +163,5 @@ void Battle::draw() const
 			.drawAt(Scene::Center(), ColorF(0.0));
 	}
 
-	if (Setting::debug_print)	Print << U"end Battle::draw()";
+	if (Setting::debugPrint)	Print << U"Battle::draw end";
 }
