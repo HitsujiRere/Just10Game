@@ -134,11 +134,12 @@ void Battle::draw() const
 
 		if (Setting::debugPrint)	Print << U"\t- 3";
 
+		/**
 		FontAsset(U"Text")(U"Maked:{}"_fmt(player.obstructsMaked))
 			.drawAt(playerData.fieldPos.movedBy(drawsize.x * cellSize.x / 2, 100), ColorF(0.25));
 		FontAsset(U"Text")(U"SentSum:{}"_fmt(player.obstructsSentSum))
 			.drawAt(playerData.fieldPos.movedBy(drawsize.x * cellSize.x / 2, 145), ColorF(0.25));
-
+		/**/
 
 		// •‰‚¯‚Ì’m‚ç‚¹
 		if (playerData.player.state != BattleState::playing)

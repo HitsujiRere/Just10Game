@@ -96,30 +96,6 @@ int32 Player::update(PlayerKeySet keySet)
 			//fieldMoveTo = field.getFallTo();
 		}
 
-		/**
-		// オジャマを落とす
-		if (canDrop && obstructsSentSum > 0)
-		{
-			fieldMoveTo = field.getFloatTo(obstructsSentCntArray);
-
-			for (auto p : step(drawsize))
-			{
-				obstructsCntDrawField.at(p) = p.y >= drawsize.y - obstructsSentCntArray.at(p.x)
-					? Cell(CellType::Obstruct) : Cell(CellType::Empty);
-			}
-
-			obstructsSentSum = 0;
-			for (auto x : step(drawsize.x))
-			{
-				obstructsSentCntArray.at(x) = 0;
-			}
-
-			// セル押上処理へ移行
-			canDrop = false;
-			isPushedTime = true;
-		}
-		/**/
-
 		// フィールドをランダムに変更する
 		if (canDrop && keySet.toRandom.down())
 		{
@@ -273,52 +249,18 @@ int32 Player::update(PlayerKeySet keySet)
 					ret = obstructsMaked;
 					obstructsMaked = 0;
 				}
-				else
-				{
-					canDrop = true;
-				}
 
 				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 1 - 3";
+			}
+
+			// 負けと表示する演出
+			if (state == BattleState::lose)
+			{
+				loseTimer += deltaTime;
 			}
 		}
 
 		if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 2";
-
-		/**
-		// セルがオジャマに押され上がる演出
-		if (isPushedTime)
-		{
-			pushedTimer += deltaTime;
-
-			if (pushedTimer > pushedCoolTime)
-			{
-				field.moveCells(fieldMoveTo);
-				for (auto p : step(drawsize))
-				{
-					if (obstructsCntDrawField.at(p).getType() != CellType::Empty)
-					{
-						field.setCell(obstructsCntDrawField.at(p), p);
-						obstructsCntDrawField.at(p) = Cell(CellType::Empty);
-					}
-				}
-
-				isPushedTime = false;
-				pushedTimer = 0.0;
-
-				// 消えるものがないなら、動かせるようにする
-				if (!updatedField())
-				{
-					canDrop = true;
-				}
-			}
-		}
-		/**/
-
-		// 負けと表示する演出
-		if (state == BattleState::lose)
-		{
-			loseTimer += deltaTime;
-		}
 	}
 
 	if (Setting::debugPrint)	Print << U"\t\tPlayer::update() end";
