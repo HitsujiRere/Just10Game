@@ -57,7 +57,7 @@ void Battle::update()
 	}
 
 	// デバッグ用死亡
-	if (Key4.down())
+	if (KeyF3.down())
 	{
 		playerDatas.at(0).player.state = BattleState::lose;
 	}
@@ -129,8 +129,11 @@ void Battle::draw() const
 		if (Setting::debugPrint)	Print << U"\t- 2";
 
 		// コンボ
-		FontAsset(U"Text")(U"Combo:{}"_fmt(player.combo))
-			.drawAt(playerData.fieldPos.movedBy(drawsize.x * cellSize.x / 2, drawsize.y * cellSize.y + 75), ColorF(0.25));
+		if (player.combo > 0)
+		{
+			FontAsset(U"Combo")(U"{}"_fmt(player.combo))
+				.drawAt(playerData.fieldPos.movedBy(drawsize * cellSize / 2), ColorF(0.25, 0.75));
+		}
 
 		if (Setting::debugPrint)	Print << U"\t- 3";
 

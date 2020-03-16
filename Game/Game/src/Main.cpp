@@ -47,6 +47,7 @@ void Main()
 	FontAsset::Register(U"Header", 100, Typeface::Bold);
 	FontAsset::Register(U"Text", 45, Typeface::Regular);
 	FontAsset::Register(U"Desc", 30, Typeface::Regular);
+	FontAsset::Register(U"Combo", 200, Typeface::Heavy);
 
 	// 同じ形式かどうかはloadVersionで判定
 	constexpr int32 load_version = 1;
@@ -77,14 +78,14 @@ void Main()
 		.add<Battle>(State::Battle)
 		.setFadeColor(ColorF(1.0));
 
-	bool isRun = true;
+	bool callUpdate = true;
 	while (System::Update())
 	{
 		try
 		{
 			if (KeyF2.down())
 			{
-				isRun ^= true;
+				callUpdate ^= true;
 			}
 
 			// 画面サイズ変更
@@ -102,17 +103,16 @@ void Main()
 				Scene::Resize(windowSizes.at(0));
 			}
 
-			if (isRun && !manager.update())
+			if (callUpdate && !manager.update())
 			{
 				break;
 			}
-
 		}
 		catch (std::exception & e)
 		{
 			Print << Unicode::Widen(e.what()) << U" in 'while (System::Update())'.";
 
-			isRun = false;
+			callUpdate = false;
 		}
 	}
 

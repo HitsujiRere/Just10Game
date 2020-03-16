@@ -274,7 +274,7 @@ void Player::draw(Point fieldPos, Size cellSize) const
 	const Size drawsize = field.getDrawsize();
 
 	// Nextセルの描画
-	FontAsset(U"Text")(U"Next").drawAt(fieldPos + Vec2(drawsize.x + 2, -0.5) * cellSize);
+	FontAsset(U"Text")(U"Next").drawAt(fieldPos + Vec2(drawsize.x + 2, -0.5) * cellSize, ColorF(0.2));
 	getDropCellConst(1).getTexture().resized(cellSize * 2).draw(fieldPos + Vec2(drawsize.x + 1, 0) * cellSize);
 	for (auto i : step(2, 4))
 	{
@@ -284,15 +284,18 @@ void Player::draw(Point fieldPos, Size cellSize) const
 	if (Setting::debugPrint)	Print << U"\t\t\t- 1";
 
 	// ホールドの表示
-	FontAsset(U"Text")(U"Hold").drawAt(fieldPos + Vec2(-2, -0.5) * cellSize);
+	FontAsset(U"Text")(U"Hold").drawAt(fieldPos + Vec2(-2, -0.5) * cellSize, ColorF(0.2));
+	Rect(fieldPos + Point(-3, 0) * cellSize, cellSize * 2).drawFrame(0, 10, ColorF(0.2));
 	holdCell.getTexture().resized(cellSize * 2).draw(fieldPos + Point(-3, 0) * cellSize);
 
 	if (Setting::debugPrint)	Print << U"\t\t\t- 2";
 
 	// フィールドの背景
-	Rect(fieldPos - cellSize * Size(0, 1) - Point(5, 5), (drawsize + Size(0, 1)) * cellSize + Point(10, 10)).draw(fieldColor);
+	//Rect(fieldPos - cellSize * Size(0, 1) - Point(5, 5), (drawsize + Size(0, 1)) * cellSize + Point(10, 10)).draw(fieldColor);
+	Rect(fieldPos - cellSize * Size(0, 1), (drawsize + Size(0, 1)) * cellSize).draw(fieldColor);
 	// フィールドの枠
-	Rect(fieldPos - cellSize * Size(0, 1) - Point(5, 5), (drawsize + Size(0, 1)) * cellSize + Point(10, 10)).drawFrame(10, ColorF(0.2));
+	//Rect(fieldPos - cellSize * Size(0, 1) - Point(5, 5), (drawsize + Size(0, 1)) * cellSize + Point(10, 10)).drawFrame(10, ColorF(0.2));
+	Rect(fieldPos - cellSize * Size(0, 1), (drawsize + Size(0, 1)) * cellSize).drawFrame(0, 10, ColorF(0.2));
 
 	if (Setting::debugPrint)	Print << U"\t\t\t- 3";
 

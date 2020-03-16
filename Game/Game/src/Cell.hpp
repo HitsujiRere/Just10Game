@@ -89,7 +89,7 @@ public:
 	static Cell& RandomTypeCell(int32 maxTypeNumber = 9, bool hasEmpty = false, bool hasObstruct = false);
 
 	// セルのタイプごとのテクスチャを返す
-	static inline const Array<Texture>& getTypesTexture()
+	static inline const Array<Texture>& getTextures()
 	{
 		return typesTexture;
 	}
