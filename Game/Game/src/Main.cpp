@@ -44,7 +44,7 @@ void Main()
 	FontAsset::Register(U"Version", 60, Typeface::Black);
 	FontAsset::Register(U"Menu", 30, Typeface::Regular);
 	FontAsset::Register(U"Score", 36, Typeface::Bold);
-	FontAsset::Register(U"Header", 100, Typeface::Bold);
+	FontAsset::Register(U"Header", 150, Typeface::Heavy);
 	FontAsset::Register(U"Text", 45, Typeface::Regular);
 	FontAsset::Register(U"Desc", 30, Typeface::Regular);
 	FontAsset::Register(U"Combo", 200, Typeface::Heavy);

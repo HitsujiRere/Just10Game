@@ -22,26 +22,45 @@ Player::Player(Array<int32> _dropCells1LoopNum)
 
 Player& Player::operator=(const Player& another)
 {
-	this->dropCells1LoopNum = another.dropCells1LoopNum;
 	this->dropCells1LoopCells = another.dropCells1LoopCells;
+	this->dropCellStack = another.dropCellStack;
+
 	this->field = another.field;
 	this->just10times = another.just10times;
 	this->fieldMoveTo = another.fieldMoveTo;
+
 	this->fieldColor = another.fieldColor;
+
 	this->dropCellTimer = another.dropCellTimer;
 	this->dropCellFieldX = another.dropCellFieldX;
 	this->dropCells1LoopNum = another.dropCells1LoopNum;
+
 	this->holdCell = another.holdCell;
+
 	this->canOperate = another.canOperate;
 	this->canDrop = another.canDrop;
+
 	this->isDeletingTime = another.isDeletingTime;
 	this->deletingTimer = another.deletingTimer;
+
 	this->isMovingTime = another.isMovingTime;
 	this->movingTimer = another.movingTimer;
-	this->loseTimer = another.loseTimer;
-	this->score = another.score;
-	this->combo = another.combo;
+
+	this->stateTimer = another.stateTimer;
+
 	this->state = another.state;
+
+	this->score = another.score;
+	this->scoreFunc = another.scoreFunc;
+	this->combo = another.combo;
+	this->sendObstructTimer = another.sendObstructTimer;
+
+	this->obstructsMaked = another.obstructsMaked;
+	this->obstructsSentSum = another.obstructsSentSum;
+	this->obstructsSentCntArray = another.obstructsSentCntArray;
+
+	this->atkRate = another.atkRate;
+	this->defRate = another.defRate;
 
 	return *this;
 }
@@ -252,13 +271,14 @@ int32 Player::update(PlayerKeySet keySet)
 
 				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 1 - 3";
 			}
-
-			// 負けと表示する演出
-			if (state == BattleState::lose)
-			{
-				loseTimer += deltaTime;
-			}
 		}
+
+		// 負けと表示する演出
+		if (state != BattleState::playing)
+		{
+			stateTimer += deltaTime;
+		}
+
 
 		if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 2";
 	}

@@ -49,10 +49,10 @@ public:
 	// フィールド（背景）の色
 	Color fieldColor = ColorF(0.8);
 
-	// 落とすセルの移動時間
-	const double dropCellCoolTime = 0.1;
 	// 落とすセルの移動残り時間
 	double dropCellTimer = 0.1;
+	// 落とすセルの移動時間
+	const double dropCellCoolTime = 0.1;
 	// 落とすフィールドのx
 	int32 dropCellFieldX = 0;
 	// 落とすセルの1ループのNumberの数
@@ -84,9 +84,12 @@ public:
 	const double movingCoolTime = 0.5;
 
 	// 負け演出残り時間
-	double loseTimer = 0.0;
+	double stateTimer = 0.0;
 	// 負け演出最大時間
-	const double loseCoolTime = 2.0;
+	const double stateCoolTime = 2.0;
+
+	// 勝敗
+	BattleState state = BattleState::playing;
 
 	// スコア
 	int32 score = 0;
@@ -95,6 +98,10 @@ public:
 		= [](int32 d, int32 c) {return static_cast<int32>(ceil(d * (c / 2.0 + 1.0))); };
 	// コンボ回数
 	int32 combo = 0;
+	// オジャマを送る残り時間
+	double sendObstructTimer = 0.0;
+	// オジャマを送る待機時間
+	const double sendObstructCoolTime = 4.0;
 
 	// 作ったオジャマ
 	int32 obstructsMaked = 0;
@@ -107,9 +114,6 @@ public:
 	double atkRate = 1.0;
 	// 与えられるダメージ割合
 	double defRate = 1.0;
-
-	// 勝敗
-	BattleState state = BattleState::playing;
 
 	// 落とすセルを作成する
 	void makeDropCells(int32 min);

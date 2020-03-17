@@ -90,6 +90,11 @@ void Battle::update()
 			isFinished = true;
 			backTimer += deltaTime;
 
+			if (playerCnt == PlayerCount::By2)
+			{
+				playerDatas.at((i + 1) % 2).player.state = BattleState::win;
+			}
+
 			if (backTimer > backTime || backKeys.down())
 			{
 				changeScene(State::Title);
@@ -147,14 +152,16 @@ void Battle::draw() const
 		// •‰‚¯‚Ì’m‚ç‚¹
 		if (playerData.player.state != BattleState::playing)
 		{
-			const double e = EaseOutBounce(player.loseTimer / player.loseCoolTime <= 1.0 ? player.loseTimer / player.loseCoolTime : 1.0);
+			const double e = EaseOutBounce(Min(player.stateTimer / player.stateCoolTime, 1.0));
 			const Vec2 to(playerData.fieldPos + drawsize * cellSize / 2.0);
-			const Vec2 pos(Vec2(playerData.fieldPos.x + drawsize.x * cellSize.x / 2.0, -100).lerp(to, e));
-			String text = U"";
-			if (player.state == BattleState::win)	text = U"Win";
-			if (player.state == BattleState::tie)	text = U"Tie";
-			if (player.state == BattleState::lose)	text = U"Lose";
-			FontAsset(U"Header")(text).drawAt(pos, Palette::Black);
+			const Vec2 pos(Vec2(to.x, -100).lerp(to, e));
+			const String text
+				= player.state == BattleState::win ? U"Win"
+				: player.state == BattleState::tie ? U"Tie"
+				: player.state == BattleState::lose ? U"Lose"
+				: U"----";
+			FontAsset(U"Header")(text).drawAt(pos, ColorF(0.2));
+			//FontAsset(U"Header")(text).drawAt(to, ColorF(0.2));
 		}
 
 		if (Setting::debugPrint)	Print << U"\t- 4";
