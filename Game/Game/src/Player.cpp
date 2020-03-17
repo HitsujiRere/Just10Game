@@ -53,11 +53,13 @@ Player& Player::operator=(const Player& another)
 	this->score = another.score;
 	this->scoreFunc = another.scoreFunc;
 	this->combo = another.combo;
-	this->sendObstructTimer = another.sendObstructTimer;
 
-	this->obstructsMaked = another.obstructsMaked;
+	this->obstructsMakedCnt = another.obstructsMakedCnt;
 	this->obstructsSentSum = another.obstructsSentSum;
 	this->obstructsSentCntArray = another.obstructsSentCntArray;
+
+	this->sendingObstructCnt = another.sendingObstructCnt;
+	this->sendingObstructTimer = another.sendingObstructTimer;
 
 	this->atkRate = another.atkRate;
 	this->defRate = another.defRate;
@@ -65,10 +67,9 @@ Player& Player::operator=(const Player& another)
 	return *this;
 }
 
-int32 Player::update(PlayerKeySet keySet)
+void Player::update(PlayerKeySet keySet)
 {
 	if (Setting::debugPrint)	Print << U"\t\tPlayer::update() begin";
-	int32 ret = 0;
 
 	const Size size = field.getSize();
 	const Size drawsize = field.getDrawsize();
@@ -89,30 +90,10 @@ int32 Player::update(PlayerKeySet keySet)
 	// 操作可能
 	if (canOperate)
 	{
-		// オジャマをつくる
-		if (canDrop && obstructsSentSum > 0)
+		// オジャマを生成する
+		if (canDrop)
 		{
-			for (auto x : step(size.x))
-			{
-				for (auto y : step(drawsize.y, obstructsSentCntArray.at(x)))
-				{
-					Cell cell(CellType::Obstruct);
-					field.setCell(cell, x, y);
-				}
-			}
-
-			fieldMoveTo = field.getFloatTo(obstructsSentCntArray);
-
-			obstructsSentSum = 0;
-			for (auto x : step(drawsize.x))
-			{
-				obstructsSentCntArray.at(x) = 0;
-			}
-
-			// セル移動処理へ移行
-			canDrop = false;
-			isMovingTime = true;
-			//fieldMoveTo = field.getFallTo();
+			makeObstruct();
 		}
 
 		// フィールドをランダムに変更する
@@ -226,7 +207,7 @@ int32 Player::update(PlayerKeySet keySet)
 				// コンボ倍率においては要調整
 				int32 scoreAdd = scoreFunc(dc, combo);
 				score += scoreAdd;
-				obstructsMaked += scoreAdd;
+				obstructsMakedCnt += scoreAdd;
 				combo++;
 
 				isDeletingTime = false;
@@ -265,11 +246,31 @@ int32 Player::update(PlayerKeySet keySet)
 				{
 					canDrop = true;
 					combo = 0;
-					ret = obstructsMaked;
-					obstructsMaked = 0;
+					//ret = obstructsMaked;
+					sendingObstructCnt += obstructsMakedCnt;
+					obstructsMakedCnt = 0;
 				}
 
 				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 1 - 3";
+			}
+		}
+
+		// オジャマを送る演出
+		if (sendingObstructCnt > 0)
+		{
+			sendingObstructTimer += deltaTime;
+
+			if (isSendObstruct)
+			{
+				isSendObstruct = false;
+				sendingObstructCnt = 0;
+				sendingObstructTimer = 0.0;
+			}
+
+			if (sendingObstructTimer > sendingObstructCoolTime)
+			{
+				isSendObstruct = true;
+				sendingObstructTimer = 0.0;
 			}
 		}
 
@@ -279,12 +280,10 @@ int32 Player::update(PlayerKeySet keySet)
 			stateTimer += deltaTime;
 		}
 
-
 		if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 2";
 	}
 
 	if (Setting::debugPrint)	Print << U"\t\tPlayer::update() end";
-	return ret;
 }
 
 void Player::draw(Point fieldPos, Size cellSize) const
@@ -295,10 +294,10 @@ void Player::draw(Point fieldPos, Size cellSize) const
 
 	// Nextセルの描画
 	FontAsset(U"Text")(U"Next").drawAt(fieldPos + Vec2(drawsize.x + 2, -0.5) * cellSize, ColorF(0.2));
-	getDropCellConst(1).getTexture().resized(cellSize * 2).draw(fieldPos + Vec2(drawsize.x + 1, 0) * cellSize);
+	getDropCellNotAdd(1).getTexture().resized(cellSize * 2).draw(fieldPos + Vec2(drawsize.x + 1, 0) * cellSize);
 	for (auto i : step(2, 4))
 	{
-		getDropCellConst(i).getTexture().resized(cellSize).draw(fieldPos + Vec2(drawsize.x + 1, i) * cellSize);
+		getDropCellNotAdd(i).getTexture().resized(cellSize).draw(fieldPos + Vec2(drawsize.x + 1, i) * cellSize);
 	}
 
 	if (Setting::debugPrint)	Print << U"\t\t\t- 1";
@@ -391,7 +390,7 @@ void Player::draw(Point fieldPos, Size cellSize) const
 	{
 		const Point dropCellPos(fieldPos + Point(cellSize.x * dropCellFieldX, -cellSize.y));
 
-		getDropCellConst(0).getTexture().resized(cellSize).draw(dropCellPos);
+		getDropCellNotAdd(0).getTexture().resized(cellSize).draw(dropCellPos);
 	}
 
 	if (Setting::debugPrint)	Print << U"\t\tdraw() end";
@@ -455,7 +454,7 @@ bool Player::updatedField()
 	return false;
 }
 
-void Player::sendObstructs(double sent_obstructs)
+void Player::sentObstructs(double sent_obstructs)
 {
 	if (Setting::debugPrint)	Print << U"\t\tsendObstructs() begin";
 
@@ -489,4 +488,34 @@ void Player::sendObstructs(double sent_obstructs)
 	}
 
 	if (Setting::debugPrint)	Print << U"\t\tsendObstructs() end";
+}
+
+void Player::makeObstruct()
+{
+	const auto size = field.getSize();
+	const auto drawsize = field.getDrawsize();
+
+	if (obstructsSentSum > 0)
+	{
+		for (auto x : step(size.x))
+		{
+			for (auto y : step(drawsize.y, obstructsSentCntArray.at(x)))
+			{
+				Cell cell(CellType::Obstruct);
+				field.setCell(cell, x, y);
+			}
+		}
+
+		fieldMoveTo = field.getFloatTo(obstructsSentCntArray);
+
+		obstructsSentSum = 0;
+		for (auto x : step(drawsize.x))
+		{
+			obstructsSentCntArray.at(x) = 0;
+		}
+
+		// セル移動処理へ移行
+		canDrop = false;
+		isMovingTime = true;
+	}
 }

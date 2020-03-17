@@ -32,6 +32,21 @@ private:
 	// 返り値は消えるものがあるかどうか
 	bool updatedField();
 
+	// 落とすセルを作成する
+	void makeDropCells(int32 min);
+
+	// 落とすセルを取得する
+	// numがdropCellStackのサイズを超えていたら追加する
+	inline const Cell& getDropCell(int32 num)
+	{
+		makeDropCells(num);
+
+		return dropCellStack.at(num);
+	}
+
+	// オジャマを生成する
+	void makeObstruct();
+
 public:
 	Player(Array<int32> _dropCells1LoopNum = { 0, 1, 1, 1, 1, 1 });
 	//Player(const Player& another);
@@ -98,47 +113,39 @@ public:
 		= [](int32 d, int32 c) {return static_cast<int32>(ceil(d * (c / 2.0 + 1.0))); };
 	// コンボ回数
 	int32 combo = 0;
-	// オジャマを送る残り時間
-	double sendObstructTimer = 0.0;
-	// オジャマを送る待機時間
-	const double sendObstructCoolTime = 4.0;
 
-	// 作ったオジャマ
-	int32 obstructsMaked = 0;
 	// 保留中の受けたオジャマの数
 	int32 obstructsSentSum = 0;
 	// 保留中の受けたオジャマの列別数
 	Array<int32> obstructsSentCntArray;
+
+	// 作ったオジャマ
+	int32 obstructsMakedCnt = 0;
+	// 送っているオジャマの数
+	int32 sendingObstructCnt = 0;
+	// オジャマを送る残り時間
+	double sendingObstructTimer = 0.0;
+	// オジャマを送る待機時間
+	const double sendingObstructCoolTime = 3.0;
+	// オジャマを送るかどうか
+	bool isSendObstruct = false;
 
 	// 与えるダメージ割合
 	double atkRate = 1.0;
 	// 与えられるダメージ割合
 	double defRate = 1.0;
 
-	// 落とすセルを作成する
-	void makeDropCells(int32 min);
-
 	// 落とすセルを取得する
-	// numがdropCellStackのサイズを超えていたら追加する
-	inline const Cell& getDropCell(int32 num)
-	{
-		makeDropCells(num);
-
-		return dropCellStack.at(num);
-	}
-
-	// 落とすセルを取得する
-	inline const Cell& getDropCellConst(int32 num) const
+	inline const Cell& getDropCellNotAdd(int32 num) const
 	{
 		return dropCellStack.at(num);
 	}
 
 	// 更新する
-	// 返り値は作成したオジャマ
-	int32 update(PlayerKeySet keySet);
+	void update(PlayerKeySet keySet);
 
 	void draw(Point fieldPos, Size cellDrawSize) const;
 
 	// オジャマを送る
-	void sendObstructs(double sent_obstructs);
+	void sentObstructs(double sent_obstructs);
 };

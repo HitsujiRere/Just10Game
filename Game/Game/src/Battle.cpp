@@ -70,15 +70,15 @@ void Battle::update()
 		auto& player = playerData.player;
 
 		if (Setting::debugPrint)	Print << U"\tplayer {} call update() before"_fmt(i);
-		int32 obstruct = player.update(playerData.keySet);
+		player.update(playerData.keySet);
 		if (Setting::debugPrint)	Print << U"\tplayer {} call update() after"_fmt(i);
 
-		if (playerCnt == PlayerCount::By2 && obstruct > 0)
+		if (playerCnt == PlayerCount::By2 && player.isSendObstruct)
 		{
 			if (Setting::debugPrint)	Print << U"\t- 0 - 1";
 			if (Setting::debugPrint)	Print << U"send obstructs.";
 			if (Setting::debugPrint)	Print << U"\t- 0 - 2";
-			playerDatas.at((i + 1) % 2).player.sendObstructs(obstruct * player.atkRate);
+			playerDatas.at((i + 1) % 2).player.sentObstructs(player.sendingObstructCnt * player.atkRate);
 			if (Setting::debugPrint)	Print << U"\t- 0 - 3";
 		}
 
@@ -114,10 +114,9 @@ void Battle::draw() const
 	Rect(0, static_cast<int32>(Scene::Height() * 0.7), Scene::Width(), static_cast<int32>(Scene::Height() * 0.3))
 		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
 
-	int32 i = -1;
-	for (auto& playerData : playerDatas)
+	for (auto i : step(static_cast<int32>(playerCnt)))
 	{
-		++i;
+		auto& playerData = playerDatas.at(i);
 		auto& player = playerData.player;
 		const Size drawsize = player.field.getDrawsize();
 
@@ -136,8 +135,16 @@ void Battle::draw() const
 		// コンボ
 		if (player.combo > 0)
 		{
-			FontAsset(U"Combo")(U"{}"_fmt(player.combo))
-				.drawAt(playerData.fieldPos.movedBy(drawsize * cellSize / 2), ColorF(0.25, 0.75));
+			FontAsset(U"Combo")(U"{}"_fmt(player.combo)).drawAt(playerData.fieldPos + drawsize * cellSize / 2, ColorF(0.25, 0.75));
+		}
+
+		// 送るオジャマ
+		if (player.sendingObstructCnt > 0)
+		{
+			const double e = EaseInCirc(Min(player.sendingObstructTimer / player.sendingObstructCoolTime, 1.0));
+			const Vec2 from(playerData.fieldPos + drawsize * cellSize / 2);
+			const Vec2 to(playerDatas.at((i + 1) % 2).fieldPos + drawsize * cellSize / 2);
+			FontAsset(U"Combo")(U"{}"_fmt(player.sendingObstructCnt)).drawAt(from.lerp(to, e), ColorF(0.25, 0.75));
 		}
 
 		if (Setting::debugPrint)	Print << U"\t- 3";
@@ -154,13 +161,13 @@ void Battle::draw() const
 		{
 			const double e = EaseOutBounce(Min(player.stateTimer / player.stateCoolTime, 1.0));
 			const Vec2 to(playerData.fieldPos + drawsize * cellSize / 2.0);
-			const Vec2 pos(Vec2(to.x, -100).lerp(to, e));
+			const Vec2 from(to.x, -100);
 			const String text
 				= player.state == BattleState::win ? U"Win"
 				: player.state == BattleState::tie ? U"Tie"
 				: player.state == BattleState::lose ? U"Lose"
 				: U"----";
-			FontAsset(U"Header")(text).drawAt(pos, ColorF(0.2));
+			FontAsset(U"Header")(text).drawAt(from.lerp(to, e), ColorF(0.2));
 			//FontAsset(U"Header")(text).drawAt(to, ColorF(0.2));
 		}
 
