@@ -139,7 +139,7 @@ void Battle::draw() const
 		// ÉXÉRÉA
 		{
 			const Point pos(fieldCenter.x, playerData.fieldPos.y + drawsize.y * cellSize.y + 50);
-			FontAsset(U"Text")(U"Score:{}"_fmt(player.score)).drawAt(pos.movedBy(2, 2), ColorF(0.0, 0.4));
+			FontAsset(U"Text")(U"Score:{}"_fmt(player.score)).drawAt(pos.movedBy(2, 3), ColorF(0.0, 0.4));
 			FontAsset(U"Text")(U"Score:{}"_fmt(player.score)).drawAt(pos, ColorF(0.25));
 		}
 
@@ -158,7 +158,7 @@ void Battle::draw() const
 			const double e = EaseInExpo(Min(player.sendingObstructTimer / player.sendingObstructCoolTime, 1.0));
 			const Vec2 from(fieldCenter.x, playerData.fieldPos.y + -cellSize.y * 2);
 			const Vec2 to(anotherPlayerData.fieldPos.movedBy(anotherPlayerData.player.field.getDrawsize().x * cellSize.x / 2, -cellSize.y * 2));
-			//FontAsset(U"Obstruct")(U"{}"_fmt(player.sendingObstructCnt)).drawAt(from.lerp(to, e).moveBy(3, 5), ColorF(0.0, 0.4));
+			FontAsset(U"Obstruct")(U"{}"_fmt(player.sendingObstructCnt)).drawAt(from.lerp(to, e).moveBy(3, 5), ColorF(0.0, 0.4));
 			FontAsset(U"Obstruct")(U"{}"_fmt(player.sendingObstructCnt)).drawAt(from.lerp(to, e), ColorF(0.2));
 		}
 
