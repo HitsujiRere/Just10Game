@@ -15,7 +15,10 @@ Battle::Battle(const InitData& init)
 		const KeyGroup moveR = (KeyD | KeyRight);
 		const KeyGroup drop = (KeyS | KeyDown);
 		const KeyGroup hold = (KeyW | KeyUp);
-		playerDatas << PlayerData(player, PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 3)));
+		playerDatas << PlayerData(player,
+			PlayerKeySet(moveL, moveR, drop, hold),
+			Point(cellSize * Size(4, 3)),
+			FieldDrawMode::Left);
 	}
 
 	if (playerCnt == PlayerCount::By2)
@@ -26,7 +29,10 @@ Battle::Battle(const InitData& init)
 			const KeyGroup moveR = (KeyD | Key());
 			const KeyGroup drop = (KeyS | Key());
 			const KeyGroup hold = (KeyW | Key());
-			playerDatas << PlayerData(player, PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 3)));
+			playerDatas << PlayerData(player,
+				PlayerKeySet(moveL, moveR, drop, hold),
+				Point(cellSize * Size(4, 3)),
+				FieldDrawMode::Left);
 		}
 		{
 			auto player = Player();
@@ -35,7 +41,10 @@ Battle::Battle(const InitData& init)
 			const KeyGroup moveR = (KeyRight | Key());
 			const KeyGroup drop = (KeyDown | Key());
 			const KeyGroup hold = (KeyUp | Key());
-			playerDatas << PlayerData(player, PlayerKeySet(moveL, moveR, drop, hold), Point(cellSize * Size(4, 3)).movedBy(Scene::Center().x, 0));
+			playerDatas << PlayerData(player,
+				PlayerKeySet(moveL, moveR, drop, hold),
+				Point(cellSize * Size(4, 3)).movedBy(Scene::Center().x, 0),
+				FieldDrawMode::Right);
 		}
 	}
 }
@@ -116,35 +125,41 @@ void Battle::draw() const
 
 	for (auto i : step(static_cast<int32>(playerCnt)))
 	{
-		auto& playerData = playerDatas.at(i);
-		auto& player = playerData.player;
+		const auto& playerData = playerDatas.at(i);
+		const auto& player = playerData.player;
 		const Size drawsize = player.field.getDrawsize();
+		const Point fieldCenter = playerData.fieldPos + drawsize * cellSize / 2;
 
 		if (Setting::debugPrint)	Print << U"\tplayer {} call draw() before"_fmt(i);
-		player.draw(playerData.fieldPos, cellSize);
+		player.draw(playerData.fieldPos, cellSize, playerData.drawMode);
 		if (Setting::debugPrint)	Print << U"\tplayer {} call draw() after"_fmt(i);
 
 		if (Setting::debugPrint)	Print << U"\t- 1";
 
 		// スコア
-		FontAsset(U"Text")(U"Score:{}"_fmt(player.score))
-			.drawAt(playerData.fieldPos.movedBy(drawsize.x * cellSize.x / 2, drawsize.y * cellSize.y + 30), ColorF(0.25));
+		{
+			const Point pos(fieldCenter.x, playerData.fieldPos.y + drawsize.y * cellSize.y + 50);
+			FontAsset(U"Text")(U"Score:{}"_fmt(player.score)).drawAt(pos.movedBy(2, 2), ColorF(0.0, 0.4));
+			FontAsset(U"Text")(U"Score:{}"_fmt(player.score)).drawAt(pos, ColorF(0.25));
+		}
 
 		if (Setting::debugPrint)	Print << U"\t- 2";
 
 		// コンボ
 		if (player.combo > 0)
 		{
-			FontAsset(U"Combo")(U"{}"_fmt(player.combo)).drawAt(playerData.fieldPos + drawsize * cellSize / 2, ColorF(0.25, 0.75));
+			FontAsset(U"Combo")(U"{}"_fmt(player.combo)).drawAt(fieldCenter, ColorF(0.25, 0.75));
 		}
 
 		// 送るオジャマ
 		if (player.sendingObstructCnt > 0)
 		{
-			const double e = EaseInCirc(Min(player.sendingObstructTimer / player.sendingObstructCoolTime, 1.0));
-			const Vec2 from(playerData.fieldPos + drawsize * cellSize / 2);
-			const Vec2 to(playerDatas.at((i + 1) % 2).fieldPos + drawsize * cellSize / 2);
-			FontAsset(U"Combo")(U"{}"_fmt(player.sendingObstructCnt)).drawAt(from.lerp(to, e), ColorF(0.25, 0.75));
+			const auto& anotherPlayerData = playerDatas.at((i + 1) % 2);
+			const double e = EaseInExpo(Min(player.sendingObstructTimer / player.sendingObstructCoolTime, 1.0));
+			const Vec2 from(fieldCenter.x, playerData.fieldPos.y + -cellSize.y * 2);
+			const Vec2 to(anotherPlayerData.fieldPos.movedBy(anotherPlayerData.player.field.getDrawsize().x * cellSize.x / 2, -cellSize.y * 2));
+			//FontAsset(U"Obstruct")(U"{}"_fmt(player.sendingObstructCnt)).drawAt(from.lerp(to, e).moveBy(3, 5), ColorF(0.0, 0.4));
+			FontAsset(U"Obstruct")(U"{}"_fmt(player.sendingObstructCnt)).drawAt(from.lerp(to, e), ColorF(0.2));
 		}
 
 		if (Setting::debugPrint)	Print << U"\t- 3";
@@ -160,8 +175,8 @@ void Battle::draw() const
 		if (playerData.player.state != BattleState::playing)
 		{
 			const double e = EaseOutBounce(Min(player.stateTimer / player.stateCoolTime, 1.0));
-			const Vec2 to(playerData.fieldPos + drawsize * cellSize / 2.0);
-			const Vec2 from(to.x, -100);
+			const Vec2 to(fieldCenter);
+			const Vec2 from(fieldCenter.x, -100);
 			const String text
 				= player.state == BattleState::win ? U"Win"
 				: player.state == BattleState::tie ? U"Tie"

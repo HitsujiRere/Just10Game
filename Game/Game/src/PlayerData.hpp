@@ -12,10 +12,11 @@ public:
 	Player player;
 	PlayerKeySet keySet;
 	Point fieldPos;
+	FieldDrawMode drawMode;
 
 	PlayerData();
 
-	PlayerData(Player _player, PlayerKeySet _keySet, Point _fieldPos);
+	PlayerData(Player _player, PlayerKeySet _keySet, Point _fieldPos, FieldDrawMode _drawMode);
 
 	PlayerData(const PlayerData& another);
 

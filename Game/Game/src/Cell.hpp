@@ -39,6 +39,9 @@ enum class CellType
 	
 	// ‹ÖŽ~ƒZƒ‹
 	No = 13,
+
+	// –³Œø‚ÌƒZƒ‹
+	None = 14,
 };
 
 // ƒZƒ‹

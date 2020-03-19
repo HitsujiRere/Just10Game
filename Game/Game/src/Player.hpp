@@ -19,6 +19,18 @@ enum class BattleState
 	tie,
 };
 
+
+// フィールド描写のモード
+enum class FieldDrawMode
+{
+	// ホールドセルが左、Nextが右
+	Left = 0,
+
+	// ホールドセルが右、Nextが左
+	Right = 1,
+};
+
+
 // プレイヤー
 class Player
 {
@@ -144,7 +156,7 @@ public:
 	// 更新する
 	void update(PlayerKeySet keySet);
 
-	void draw(Point fieldPos, Size cellDrawSize) const;
+	void draw(Point fieldPos, Size cellDrawSize, FieldDrawMode drawMode) const;
 
 	// オジャマを送る
 	void sentObstructs(double sent_obstructs);

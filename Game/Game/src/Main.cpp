@@ -48,6 +48,7 @@ void Main()
 	FontAsset::Register(U"Text", 45, Typeface::Regular);
 	FontAsset::Register(U"Desc", 30, Typeface::Regular);
 	FontAsset::Register(U"Combo", 200, Typeface::Heavy);
+	FontAsset::Register(U"Obstruct", 100, Typeface::Heavy);
 
 	// 同じ形式かどうかはloadVersionで判定
 	constexpr int32 load_version = 1;

@@ -286,35 +286,56 @@ void Player::update(PlayerKeySet keySet)
 	if (Setting::debugPrint)	Print << U"\t\tPlayer::update() end";
 }
 
-void Player::draw(Point fieldPos, Size cellSize) const
+void Player::draw(Point fieldPos, Size cellSize, FieldDrawMode drawMode) const
 {
 	if (Setting::debugPrint)	Print << U"\t\tdraw() begin";
 
 	const Size drawsize = field.getDrawsize();
 
+	const Point textMoved = (Vec2(0, -1.5) * cellSize).asPoint();
+
 	// Nextセルの描画
-	FontAsset(U"Text")(U"Next").drawAt(fieldPos + Vec2(drawsize.x + 2, -0.5) * cellSize, ColorF(0.2));
-	getDropCellNotAdd(1).getTexture().resized(cellSize * 2).draw(fieldPos + Vec2(drawsize.x + 1, 0) * cellSize);
-	for (auto i : step(2, 4))
 	{
-		getDropCellNotAdd(i).getTexture().resized(cellSize).draw(fieldPos + Vec2(drawsize.x + 1, i) * cellSize);
+		const Point nextPos =
+			drawMode == FieldDrawMode::Left ? fieldPos + Point(-2, 1) * cellSize :
+			drawMode == FieldDrawMode::Right ? fieldPos + Point(drawsize.x + 2, 1) * cellSize :
+			Point();
+		const Point nextPosDiff =
+			drawMode == FieldDrawMode::Left ? (Vec2(0.5, 0.5) * cellSize).asPoint() :
+			drawMode == FieldDrawMode::Right ? (Vec2(-0.5, 0.5) * cellSize).asPoint() :
+			Point();
+		FontAsset(U"Text")(U"Next").drawAt(nextPos.movedBy(textMoved), ColorF(0.2));
+		Rect(Arg::center(nextPos), cellSize * 2).drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4));
+		for (auto i : step(1, 4))
+		{
+			Rect(Arg::center(nextPos + nextPosDiff + Point(0, i * cellSize.y)), cellSize).drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4));
+		}
+		getDropCellNotAdd(1).getTexture().resized(cellSize * 2).drawAt(nextPos);
+		for (auto i : step(1, 4))
+		{
+			getDropCellNotAdd(i).getTexture().resized(cellSize).drawAt(nextPos + nextPosDiff + Point(0, i * cellSize.y));
+		}
 	}
 
-	if (Setting::debugPrint)	Print << U"\t\t\t- 1";
-
 	// ホールドの表示
-	FontAsset(U"Text")(U"Hold").drawAt(fieldPos + Vec2(-2, -0.5) * cellSize, ColorF(0.2));
-	Rect(fieldPos + Point(-3, 0) * cellSize, cellSize * 2).drawFrame(0, 10, ColorF(0.2));
-	holdCell.getTexture().resized(cellSize * 2).draw(fieldPos + Point(-3, 0) * cellSize);
+	{
+		const Point holdPos =
+			drawMode == FieldDrawMode::Left ? fieldPos + Point(drawsize.x + 2, 1) * cellSize :
+			drawMode == FieldDrawMode::Right ? fieldPos + Point(-2, 1) * cellSize :
+			Point();
+		const Texture hold = holdCell.getType() == CellType::Empty ? Cell::getTexture(CellType::None) : holdCell.getTexture();
+		FontAsset(U"Text")(U"Hold").drawAt(holdPos.movedBy(textMoved), ColorF(0.2));
+		Rect(Arg::center(holdPos), cellSize * 2).drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4));
+		hold.resized(cellSize * 2).drawAt(holdPos);
+	}
 
 	if (Setting::debugPrint)	Print << U"\t\t\t- 2";
 
-	// フィールドの背景
-	//Rect(fieldPos - cellSize * Size(0, 1) - Point(5, 5), (drawsize + Size(0, 1)) * cellSize + Point(10, 10)).draw(fieldColor);
-	Rect(fieldPos - cellSize * Size(0, 1), (drawsize + Size(0, 1)) * cellSize).draw(fieldColor);
-	// フィールドの枠
-	//Rect(fieldPos - cellSize * Size(0, 1) - Point(5, 5), (drawsize + Size(0, 1)) * cellSize + Point(10, 10)).drawFrame(10, ColorF(0.2));
-	Rect(fieldPos - cellSize * Size(0, 1), (drawsize + Size(0, 1)) * cellSize).drawFrame(0, 10, ColorF(0.2));
+	// フィールドの背景と枠
+	Rect(fieldPos - cellSize * Size(0, 1), (drawsize + Size(0, 1)) * cellSize)
+		.drawShadow(Vec2(9, 15), 10.0, 10.0, ColorF(0.0, 0.4))
+		.draw(fieldColor)
+		.drawFrame(0.0, 10.0, ColorF(0.2));
 
 	if (Setting::debugPrint)	Print << U"\t\t\t- 3";
 
@@ -338,20 +359,6 @@ void Player::draw(Point fieldPos, Size cellSize) const
 		}
 
 		if (Setting::debugPrint)	Print << U"\t\t\t- 3 - 1";
-
-		/**
-		if (isPushedTime)
-		{
-			for (auto p : step(drawsize))
-			{
-				if (obstructsCntDrawField.at(p).getType() != CellType::Empty)
-				{
-					Point pos = fieldPos + p * cellSize;
-					Cell::getTexture(obstructsCntDrawField.at(p).getType()).resized(cellSize).draw(pos);
-				}
-			}
-		}
-		/**/
 
 		if (Setting::debugPrint)	Print << U"\t\t\t- 3 - 2";
 
