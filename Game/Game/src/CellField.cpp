@@ -67,24 +67,11 @@ void CellField::updateJust10Times()
 	Grid<int32> numCSum(drawsize + Size(1, 1));
 
 	// minoCSum‚ğì¬‚·‚é
-	for (auto p : step(numCSum.size()))
+	for (auto p : step(Point(1, 1), numCSum.size() - Point(1, 1)))
 	{
-		int32 n = 0;
-		if (p.x > 0)
-		{
-			n += numCSum.at(p - Point(1, 0));
-		}
-		if (p.y > 0)
-		{
-			n += numCSum.at(p - Point(0, 1));
-		}
-		if (p.x > 0 && p.y > 0)
-		{
-			n -= numCSum.at(p - Point(1, 1));
-			n += static_cast<int32>(field.at(p - Point(1, 1)).getType());
-		}
-
-		numCSum.at(p) = n;
+		numCSum.at(p) = numCSum.at(p - Point(1, 0)) + numCSum.at(p - Point(0, 1))
+			- numCSum.at(p - Point(1, 1))
+			+ static_cast<int32>(field.at(p - Point(1, 1)).getType());
 	}
 
 	// Just10‚Ì—v‘f‚Æ‚È‚Á‚Ä‚¢‚é‰ñ”‚Ì·•ª‚ğ’²‚×‚é
@@ -100,10 +87,8 @@ void CellField::updateJust10Times()
 				endy < numCSum.height())
 			{
 				//Print << U"( {} ~ {} , {} ~ {} )"_fmt(beginx, endx, beginy, endy);
-				int32 sum = numCSum.at(endy, endx)
-					- numCSum.at(beginy, endx)
-					- numCSum.at(endy, beginx)
-					+ numCSum.at(beginy, beginx);
+				int32 sum = numCSum.at(endy, endx) - numCSum.at(beginy, endx)
+					- numCSum.at(endy, beginx) + numCSum.at(beginy, beginx);
 				//Print << U"sum:" << sum;
 				if (sum > 10)
 				{
@@ -121,6 +106,7 @@ void CellField::updateJust10Times()
 						endy < just10Times.height())
 						just10Times.at(endy, endx)++;
 
+					beginx++;
 					endy++;
 				}
 				else // sum < 0
@@ -133,36 +119,14 @@ void CellField::updateJust10Times()
 
 	// —İÏ‚·‚é
 	// x•ûŒü‚Ö‰ÁZ
-	for (auto p : step(drawsize))
+	for (auto p : step(Point(1, 0), drawsize - Point(1, 0)))
 	{
-		int32 n = 0;
-		if (p.x == 0)
-		{
-			n += just10Times.at(p);
-		}
-		else // p.x > 0
-		{
-			n += just10Times.at(p - Point(1, 0));
-			n += just10Times.at(p);
-		}
-
-		just10Times.at(p) = n;
+		just10Times.at(p) += just10Times.at(p - Point(1, 0));
 	}
 	// y•ûŒü‚Ö‰ÁZ
-	for (auto p : step(drawsize))
+	for (auto p : step(Point(0, 1), drawsize - Point(0, 1)))
 	{
-		int32 n = 0;
-		if (p.y == 0)
-		{
-			n += just10Times.at(p);
-		}
-		else // p.y > 0
-		{
-			n += just10Times.at(p - Point(0, 1));
-			n += just10Times.at(p);
-		}
-
-		just10Times.at(p) = n;
+		just10Times.at(p) += just10Times.at(p - Point(0, 1));
 	}
 }
 
