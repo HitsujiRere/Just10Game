@@ -76,6 +76,7 @@ void Main()
 	manager
 		.add<Title>(State::Title)
 		.add<HowTo>(State::HowTo)
+		.add<Battle>(State::BattleSet)
 		.add<Battle>(State::Battle)
 		.setFadeColor(ColorF(1.0));
 

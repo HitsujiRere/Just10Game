@@ -27,7 +27,7 @@ void Title::update()
 		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
 
 		Battle::playerCnt = PlayerCount::By1;
-		changeScene(State::Battle);
+		changeScene(State::BattleSet);
 	}
 
 	if (m_battleButton.leftClicked())
@@ -36,7 +36,7 @@ void Title::update()
 		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
 
 		Battle::playerCnt = PlayerCount::By2;
-		changeScene(State::Battle);
+		changeScene(State::BattleSet);
 	}
 
 	if (m_howtoButton.leftClicked())

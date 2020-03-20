@@ -19,8 +19,11 @@ enum class State
 	// 遊び方
 	HowTo,
 
+	// プレイ設定
+	BattleSet,
+
 	// プレイ
-	Battle
+	Battle,
 };
 
 // ゲームデータ
