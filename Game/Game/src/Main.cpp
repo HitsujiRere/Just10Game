@@ -12,6 +12,7 @@
 # include "Common.hpp"
 # include "Title.hpp"
 # include "HowTo.hpp"
+# include "BattleSet.hpp"
 # include "Battle.hpp"
 
 void Main()
@@ -76,7 +77,7 @@ void Main()
 	manager
 		.add<Title>(State::Title)
 		.add<HowTo>(State::HowTo)
-		.add<Battle>(State::BattleSet)
+		.add<BattleSet>(State::BattleSet)
 		.add<Battle>(State::Battle)
 		.setFadeColor(ColorF(1.0));
 

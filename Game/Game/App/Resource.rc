@@ -60,6 +60,7 @@ Resource(engine/soundfont/GMGSx.sf2.zstdcmp)
 
 Resource(images/CellImages.png)
 Resource(texts/HowTo_desc.txt)
+Resource(charData.ini)
 
 
 /* 
