@@ -138,7 +138,7 @@ public:
 	// オジャマを送る残り時間
 	double sendingObstructTimer = 0.0;
 	// オジャマを送る待機時間
-	const double sendingObstructCoolTime = 3.0;
+	const double sendingObstructCoolTime = 5.0;
 	// オジャマを送るかどうか
 	bool isSendObstruct = false;
 

@@ -301,18 +301,18 @@ void Player::draw(Point fieldPos, Size cellSize, FieldDrawMode drawMode) const
 			drawMode == FieldDrawMode::Right ? fieldPos + Point(drawsize.x + 2, 1) * cellSize :
 			Point();
 		const Point nextPosDiff =
-			drawMode == FieldDrawMode::Left ? (Vec2(0.5, 0.5) * cellSize).asPoint() :
-			drawMode == FieldDrawMode::Right ? (Vec2(-0.5, 0.5) * cellSize).asPoint() :
+			drawMode == FieldDrawMode::Left ? (Vec2(0.5, -0.5) * cellSize).asPoint() :
+			drawMode == FieldDrawMode::Right ? (Vec2(-0.5, -0.5) * cellSize).asPoint() :
 			Point();
 		FontAsset(U"Text")(U"Next").drawAt(nextPos.movedBy(textMoved).movedBy(2, 3), ColorF(0.0, 0.4));
 		FontAsset(U"Text")(U"Next").drawAt(nextPos.movedBy(textMoved), ColorF(0.2));
 		Rect(Arg::center(nextPos), cellSize * 2).drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4));
-		for (auto i : step(1, 4))
+		for (auto i : step(2, 4))
 		{
 			Rect(Arg::center(nextPos + nextPosDiff + i * Point(0, cellSize.y + 4)), cellSize).drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4));
 		}
 		getDropCellNotAdd(1).getTexture().resized(cellSize * 2).drawAt(nextPos);
-		for (auto i : step(1, 4))
+		for (auto i : step(2, 4))
 		{
 			getDropCellNotAdd(i).getTexture().resized(cellSize).drawAt(nextPos + nextPosDiff + i * Point(0, cellSize.y + 4));
 		}

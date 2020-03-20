@@ -150,7 +150,7 @@ void Battle::draw() const
 		{
 			FontAsset(U"Combo")(U"{}"_fmt(player.combo)).drawAt(fieldCenter, ColorF(0.25, 0.75));
 		}
-
+ 
 		// ‘—‚éƒIƒWƒƒƒ}
 		if (player.sendingObstructCnt > 0)
 		{
