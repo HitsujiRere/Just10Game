@@ -231,6 +231,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BattleSet.cpp" />
+    <ClCompile Include="src\Character.cpp" />
     <ClCompile Include="src\Common.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Cell.cpp" />
@@ -244,6 +245,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BattleSet.hpp" />
+    <ClInclude Include="src\Character.hpp" />
     <ClInclude Include="src\Player.hpp" />
     <ClInclude Include="src\Cell.hpp" />
     <ClInclude Include="src\CellField.hpp" />

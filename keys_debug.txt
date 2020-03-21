@@ -1,2 +1,3 @@
 F2:manager.update()を呼び出す切替え
-F3:1人目を死亡させる
+F3:debugPrintを切り替える
+F6:1人目を死亡させる

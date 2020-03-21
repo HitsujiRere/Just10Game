@@ -26,6 +26,16 @@ enum class State
 	Battle,
 };
 
+// バトルのプレイヤーの人数
+enum class PlayerCount
+{
+	// 1人であそぶ
+	By1 = 1,
+
+	// 2人でたたかう
+	By2 = 2,
+};
+
 // ゲームデータ
 struct GameData
 {
@@ -34,28 +44,20 @@ struct GameData
 
 	// プレイ回数
 	int32 play_time = 0;
+
+	// デバッグのプリントの可否
+	bool debugPrint = false;
+
+	// プレイヤーの人数
+	PlayerCount playerCnt;
+
+	// ゲームデータを指定ファイルからロードする
+	// 返り値は、最新バージョンのGameDataがあったかどうか
+	bool loadGameData(String path);
+
+	// ゲームデータを指定ファイルにセーブする
+	void saveGameData(String path) const;
 };
 
 // シーン管理クラス
 using MyApp = SceneManager<State, GameData>;
-
-// a/bを切り上げしたものを返す
-template<class T>
-T divup(T a, T b)
-{
-	if (a % b == 0) { return a / b; }
-	return a / b + (T)1;
-}
-
-// ゲーム設定
-class Setting
-{
-private:
-
-	Setting() { }
-
-public:
-
-	// デバッグのプリントの可否
-	static bool debugPrint;
-};

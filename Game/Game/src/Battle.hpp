@@ -8,16 +8,6 @@
 # include "PlayerKeySet.hpp"
 # include "PlayerData.hpp"
 
-// バトルのプレイヤーの人数
-enum class PlayerCount
-{
-	// 1人であそぶ
-	By1 = 1,
-
-	// 2人でたたかう
-	By2 = 2,
-};
-
 // ゲームシーン
 class Battle : public MyApp::Scene
 {
@@ -28,7 +18,7 @@ private:
 	const Size cellSize = Size(64, 64);
 
 	// プレイヤーと、それぞれの操作キー
-	Array<PlayerData> playerDatas = Array<PlayerData>();
+	Array<PlayerData> playerDatas;
 
 	// 終了したかどうか
 	bool isFinished = false;
@@ -39,9 +29,6 @@ private:
 	double backTime = 10.0;
 
 public:
-
-	// バトルの種類
-	static PlayerCount playerCnt;
 
 	Battle(const InitData& init);
 

@@ -19,7 +19,7 @@ HowTo::HowTo(const InitData& init)
 	}
 	else
 	{
-		desc = U"Cannot read 'HowTo_desc.txt'!";
+		Print <<  U"Cannot read Resource('HowTo_desc.txt')!";
 		//descs.push_back(U"Cannot read 'HowTo_desc.txt'!");
 	}
 }

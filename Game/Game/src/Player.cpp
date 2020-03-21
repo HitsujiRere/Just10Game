@@ -69,8 +69,6 @@ Player& Player::operator=(const Player& another)
 
 void Player::update(PlayerKeySet keySet)
 {
-	if (Setting::debugPrint)	Print << U"\t\tPlayer::update() begin";
-
 	const Size size = field.getSize();
 	const Size drawsize = field.getDrawsize();
 
@@ -84,9 +82,6 @@ void Player::update(PlayerKeySet keySet)
 		updatedField();
 	}
 
-	if (Setting::debugPrint)	Print << U"\t\t\t- 1";
-
-	//Print << U"canDrop = {}"_fmt(canDrop);
 	// 操作可能
 	if (canOperate)
 	{
@@ -176,8 +171,6 @@ void Player::update(PlayerKeySet keySet)
 		}
 	}
 
-	if (Setting::debugPrint)	Print << U"\t\t\t- 2";
-
 	// 演出処理
 	{
 		// セルが消える演出
@@ -197,12 +190,7 @@ void Player::update(PlayerKeySet keySet)
 					}
 				}
 
-				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 0 - 1";
-
 				field.deleteCells(just10times);
-				if (Setting::debugPrint)	Print << U"Delete {} Cells!"_fmt(dc);
-
-				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 0 - 2";
 
 				// コンボ倍率においては要調整
 				int32 scoreAdd = scoreFunc(dc, combo);
@@ -213,16 +201,11 @@ void Player::update(PlayerKeySet keySet)
 				isDeletingTime = false;
 				deletingTimer = 0.0;
 
-				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 0 - 3";
-
 				// 落下処理へ移行
 				isMovingTime = true;
 				fieldMoveTo = field.getFallTo();
-				if (Setting::debugPrint)	Print << U"Falling...";
 			}
 		}
-
-		if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 1";
 
 		// セルが動く演出
 		if (isMovingTime)
@@ -231,15 +214,9 @@ void Player::update(PlayerKeySet keySet)
 
 			if (movingTimer > movingCoolTime)
 			{
-				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 1 - 1";
-
 				field.moveCells(fieldMoveTo);
-				if (Setting::debugPrint)	Print << U"Falled Cells!";
-
 				isMovingTime = false;
 				movingTimer = 0.0;
-
-				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 1 - 2";
 
 				// 消えるものがないなら、動かせるようにする
 				if (!updatedField())
@@ -250,8 +227,6 @@ void Player::update(PlayerKeySet keySet)
 					sendingObstructCnt += obstructsMakedCnt;
 					obstructsMakedCnt = 0;
 				}
-
-				if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 1 - 3";
 			}
 		}
 
@@ -279,17 +254,11 @@ void Player::update(PlayerKeySet keySet)
 		{
 			stateTimer += deltaTime;
 		}
-
-		if (Setting::debugPrint)	Print << U"\t\t\t- 2 - 2";
 	}
-
-	if (Setting::debugPrint)	Print << U"\t\tPlayer::update() end";
 }
 
 void Player::draw(Point fieldPos, Size cellSize, FieldDrawMode drawMode) const
 {
-	if (Setting::debugPrint)	Print << U"\t\tdraw() begin";
-
 	const Size drawsize = field.getDrawsize();
 
 	const Point textMoved = (Vec2(0, -1.5) * cellSize).asPoint();
@@ -331,15 +300,11 @@ void Player::draw(Point fieldPos, Size cellSize, FieldDrawMode drawMode) const
 		hold.resized(cellSize * 2).drawAt(holdPos);
 	}
 
-	if (Setting::debugPrint)	Print << U"\t\t\t- 2";
-
 	// フィールドの背景と枠
 	Rect(fieldPos - cellSize * Size(0, 1), (drawsize + Size(0, 1)) * cellSize)
 		.drawShadow(Vec2(9, 15), 10.0, 10.0, ColorF(0.0, 0.4))
 		.draw(fieldColor)
 		.drawFrame(0.0, 10.0, ColorF(0.2));
-
-	if (Setting::debugPrint)	Print << U"\t\t\t- 3";
 
 	// Just10の回数の表示
 	if (KeyControl.pressed())
@@ -359,10 +324,6 @@ void Player::draw(Point fieldPos, Size cellSize, FieldDrawMode drawMode) const
 
 			Cell::getTexture(CellType::No).resized(cellSize).draw(pos);
 		}
-
-		if (Setting::debugPrint)	Print << U"\t\t\t- 3 - 1";
-
-		if (Setting::debugPrint)	Print << U"\t\t\t- 3 - 2";
 
 		field.draw(fieldPos, cellSize,
 			[&](Point p, CellType) {
@@ -393,16 +354,12 @@ void Player::draw(Point fieldPos, Size cellSize, FieldDrawMode drawMode) const
 			);
 	}
 
-	if (Setting::debugPrint)	Print << U"\t\t\t- 4";
-
 	// 落とすセルの描画
 	{
 		const Point dropCellPos(fieldPos + Point(cellSize.x * dropCellFieldX, -cellSize.y));
 
 		getDropCellNotAdd(0).getTexture().resized(cellSize).draw(dropCellPos);
 	}
-
-	if (Setting::debugPrint)	Print << U"\t\tdraw() end";
 }
 
 void Player::makeDropCells(int32 min)
@@ -444,7 +401,6 @@ bool Player::updatedField()
 	{
 		canDrop = false;
 		isDeletingTime = true;
-		if (Setting::debugPrint)	Print << U"Deleting...";
 
 		return true;
 	}
@@ -465,21 +421,15 @@ bool Player::updatedField()
 
 void Player::sentObstructs(double sent_obstructs)
 {
-	if (Setting::debugPrint)	Print << U"\t\tsendObstructs() begin";
-
 	const Size size = field.getDrawsize();
 
 	int32 obstructs = static_cast<int32>(ceil(sent_obstructs / defRate));
-
-	if (Setting::debugPrint)	Print << U"\t\t- 1";
 
 	obstructsSentSum += obstructs;
 	for (auto i : step(size.x))
 	{
 		obstructsSentCntArray.at(i) += obstructs / size.x;
 	}
-
-	if (Setting::debugPrint)	Print << U"\t\t- 2";
 
 	obstructs %= size.x;
 
@@ -489,14 +439,10 @@ void Player::sentObstructs(double sent_obstructs)
 		put.at(i) = i;
 	}
 
-	if (Setting::debugPrint)	Print << U"\t\t- 3";
-
 	for (auto i : put.choice(obstructs))
 	{
 		++obstructsSentCntArray.at(i);
 	}
-
-	if (Setting::debugPrint)	Print << U"\t\tsendObstructs() end";
 }
 
 void Player::makeObstruct()

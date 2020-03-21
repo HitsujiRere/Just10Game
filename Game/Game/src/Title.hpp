@@ -2,7 +2,6 @@
 # pragma once
 
 # include "Common.hpp"
-# include "Battle.hpp"
 
 // タイトルシーン
 class Title : public MyApp::Scene

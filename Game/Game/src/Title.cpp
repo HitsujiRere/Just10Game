@@ -26,7 +26,7 @@ void Title::update()
 		// ESCキーで終了しない
 		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
 
-		Battle::playerCnt = PlayerCount::By1;
+		getData().playerCnt = PlayerCount::By1;
 		changeScene(State::BattleSet);
 	}
 
@@ -35,7 +35,7 @@ void Title::update()
 		// ESCキーで終了しない
 		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
 
-		Battle::playerCnt = PlayerCount::By2;
+		getData().playerCnt = PlayerCount::By2;
 		changeScene(State::BattleSet);
 	}
 

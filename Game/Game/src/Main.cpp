@@ -17,8 +17,6 @@
 
 void Main()
 {
-	Setting::debugPrint = false;
-
 	// タイトルを設定
 	Window::SetTitle(U"Just10Game Ver {}.{}.{}"_fmt(Version.x, Version.y, Version.z));
 	// ウィンドウサイズ
@@ -54,26 +52,11 @@ void Main()
 	// 同じ形式かどうかはloadVersionで判定
 	constexpr int32 load_version = 1;
 	// GameDataをロード
-	std::shared_ptr<GameData> load_data(new GameData());
-	{
-		BinaryReader reader(U"GameData.bin");
-		if (reader)
-		{
-			int32 readedLoadVer;
-			reader.read(readedLoadVer);
-			if (readedLoadVer == load_version)
-			{
-				reader.read(*load_data);
-			}
-			else
-			{
-				if (Setting::debugPrint)	Print << U"Cannot read 'GameData.bin'!";
-			}
-		}
-	}
+	std::shared_ptr<GameData> gamedataPtr(new GameData());
+	bool isSaveGameData = gamedataPtr->loadGameData(U"GameData.bin");
 
 	// シーンと遷移時の色を設定
-	MyApp manager(load_data);
+	MyApp manager(gamedataPtr);
 	manager
 		.add<Title>(State::Title)
 		.add<HowTo>(State::HowTo)
@@ -89,6 +72,11 @@ void Main()
 			if (KeyF2.down())
 			{
 				callUpdate ^= true;
+			}
+
+			if (KeyF3.down())
+			{
+				gamedataPtr->debugPrint ^= true;
 			}
 
 			// 画面サイズ変更
@@ -111,21 +99,16 @@ void Main()
 				break;
 			}
 		}
-		catch (std::exception & e)
+		catch (const Error & e)
 		{
-			Print << Unicode::Widen(e.what()) << U" in 'while (System::Update())'.";
-
+			Print << e.what() << U" in 'while (System::Update())'.";
 			callUpdate = false;
 		}
 	}
 
 	// GameDataを保存
+	if (isSaveGameData)
 	{
-		BinaryWriter writter(U"GameData.bin");
-		if (writter)
-		{
-			writter.write(load_version);
-			writter.write(*manager.get());
-		}
+		gamedataPtr->saveGameData(U"GameData.bin");
 	}
 }

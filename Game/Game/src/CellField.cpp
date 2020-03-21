@@ -169,11 +169,7 @@ Grid<Point> CellField::getFloatTo(Array<int32> floats) const
 
 void CellField::moveCells(Grid<Point> moveTo)
 {
-	if (Setting::debugPrint)	Print << U"\t\t\t\tCellField::moveCells() begin";
-
 	Grid<Cell> fieldMoved(size);
-
-	if (Setting::debugPrint)	Print << U"\t\t\t\t\t- 1";
 
 	for (auto p : step(size))
 	{
@@ -184,15 +180,9 @@ void CellField::moveCells(Grid<Point> moveTo)
 		}
 	}
 
-	if (Setting::debugPrint)	Print << U"\t\t\t\t\t- 2";
-
 	field = fieldMoved;
 
-	if (Setting::debugPrint)	Print << U"\t\t\t\t\t- 3";
-
 	updateJust10Times();
-
-	if (Setting::debugPrint)	Print << U"\t\t\t\tCellField::moveCells() end";
 }
 
 bool CellField::pushTopCell(const Cell& cell, int32 x)

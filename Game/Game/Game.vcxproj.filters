@@ -395,6 +395,9 @@
     <ClCompile Include="src\BattleSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Character.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Title.hpp">
@@ -425,6 +428,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\BattleSet.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Character.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,14 +1,12 @@
 
 # include "Battle.hpp"
 
-PlayerCount Battle::playerCnt = PlayerCount::By1;
-
 Battle::Battle(const InitData& init)
 	: IScene(init)
 {
 	getData().play_time++;
 
-	if (playerCnt == PlayerCount::By1)
+	if (getData().playerCnt == PlayerCount::By1)
 	{
 		auto player = Player();
 		const KeyGroup moveL = (KeyA | KeyLeft);
@@ -21,7 +19,7 @@ Battle::Battle(const InitData& init)
 			FieldDrawMode::Left);
 	}
 
-	if (playerCnt == PlayerCount::By2)
+	if (getData().playerCnt == PlayerCount::By2)
 	{
 		{
 			auto player = Player();
@@ -51,8 +49,6 @@ Battle::Battle(const InitData& init)
 
 void Battle::update()
 {
-	if (Setting::debugPrint)	Print << U"Battle::update begin";
-
 	// タイトルへ戻る
 	if (backKeys.down())
 	{
@@ -66,32 +62,24 @@ void Battle::update()
 	}
 
 	// デバッグ用死亡
-	if (KeyF3.down())
+	if (KeyF6.down())
 	{
 		playerDatas.at(0).player.state = BattleState::lose;
 	}
 
 	const double deltaTime = Scene::DeltaTime();
 
-	for (auto i : step(static_cast<int32>(playerCnt)))
+	for (auto i : step(static_cast<int32>(getData().playerCnt)))
 	{
 		auto& playerData = playerDatas.at(i);
 		auto& player = playerData.player;
 
-		if (Setting::debugPrint)	Print << U"\tplayer {} call update() before"_fmt(i);
 		player.update(playerData.keySet);
-		if (Setting::debugPrint)	Print << U"\tplayer {} call update() after"_fmt(i);
 
-		if (playerCnt == PlayerCount::By2 && player.isSendObstruct)
+		if (getData().playerCnt == PlayerCount::By2 && player.isSendObstruct)
 		{
-			if (Setting::debugPrint)	Print << U"\t- 0 - 1";
-			if (Setting::debugPrint)	Print << U"send obstructs.";
-			if (Setting::debugPrint)	Print << U"\t- 0 - 2";
 			playerDatas.at((i + 1) % 2).player.sentObstructs(player.sendingObstructCnt * player.atkRate);
-			if (Setting::debugPrint)	Print << U"\t- 0 - 3";
 		}
-
-		if (Setting::debugPrint)	Print << U"\t- 1";
 
 		// 負けと表示する演出
 		if (player.state == BattleState::lose)
@@ -99,7 +87,7 @@ void Battle::update()
 			isFinished = true;
 			backTimer += deltaTime;
 
-			if (playerCnt == PlayerCount::By2)
+			if (getData().playerCnt == PlayerCount::By2)
 			{
 				playerDatas.at((i + 1) % 2).player.state = BattleState::win;
 			}
@@ -109,32 +97,22 @@ void Battle::update()
 				changeScene(State::Title);
 			}
 		}
-
-		if (Setting::debugPrint)	Print << U"\t- 2";
 	}
-
-	if (Setting::debugPrint)	Print << U"Battle::update end";
 }
 
 void Battle::draw() const
 {
-	if (Setting::debugPrint)	Print << U"Battle::draw begin";
-
 	Rect(0, static_cast<int32>(Scene::Height() * 0.7), Scene::Width(), static_cast<int32>(Scene::Height() * 0.3))
 		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
 
-	for (auto i : step(static_cast<int32>(playerCnt)))
+	for (auto i : step(static_cast<int32>(getData().playerCnt)))
 	{
 		const auto& playerData = playerDatas.at(i);
 		const auto& player = playerData.player;
 		const Size drawsize = player.field.getDrawsize();
 		const Point fieldCenter = playerData.fieldPos + drawsize * cellSize / 2;
 
-		if (Setting::debugPrint)	Print << U"\tplayer {} call draw() before"_fmt(i);
 		player.draw(playerData.fieldPos, cellSize, playerData.drawMode);
-		if (Setting::debugPrint)	Print << U"\tplayer {} call draw() after"_fmt(i);
-
-		if (Setting::debugPrint)	Print << U"\t- 1";
 
 		// スコア
 		{
@@ -142,8 +120,6 @@ void Battle::draw() const
 			FontAsset(U"Text")(U"Score:{}"_fmt(player.score)).drawAt(pos.movedBy(2, 3), ColorF(0.0, 0.4));
 			FontAsset(U"Text")(U"Score:{}"_fmt(player.score)).drawAt(pos, ColorF(0.25));
 		}
-
-		if (Setting::debugPrint)	Print << U"\t- 2";
 
 		// コンボ
 		if (player.combo > 0)
@@ -161,8 +137,6 @@ void Battle::draw() const
 			FontAsset(U"Obstruct")(U"{}"_fmt(player.sendingObstructCnt)).drawAt(from.lerp(to, e).moveBy(3, 5), ColorF(0.0, 0.4));
 			FontAsset(U"Obstruct")(U"{}"_fmt(player.sendingObstructCnt)).drawAt(from.lerp(to, e), ColorF(0.2));
 		}
-
-		if (Setting::debugPrint)	Print << U"\t- 3";
 
 		/**
 		FontAsset(U"Text")(U"Maked:{}"_fmt(player.obstructsMaked))
@@ -185,8 +159,6 @@ void Battle::draw() const
 			FontAsset(U"Header")(text).drawAt(from.lerp(to, e), ColorF(0.2));
 			//FontAsset(U"Header")(text).drawAt(to, ColorF(0.2));
 		}
-
-		if (Setting::debugPrint)	Print << U"\t- 4";
 	}
 
 	// タイトルに戻るカウントダウン
@@ -195,6 +167,4 @@ void Battle::draw() const
 		FontAsset(U"Text")(U"タイトルへ戻るまで{:.0f}s"_fmt(Max(backTime - backTimer, 0.0)))
 			.drawAt(Scene::Center(), ColorF(0.0));
 	}
-
-	if (Setting::debugPrint)	Print << U"Battle::draw end";
 }

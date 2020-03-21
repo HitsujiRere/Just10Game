@@ -23,9 +23,9 @@ void Cell::loadTypesTexture()
 			typesTexture.at(i) = Texture(cellImage);
 		}
 	}
-	catch (const std::exception & e)
+	catch (const Error & e)
 	{
-		Print << Unicode::Widen(e.what());
+		Print << e.what();
 	}
 }
 
@@ -33,7 +33,7 @@ Cell::Cell()
 {
 	type = CellType::Empty;
 
-	if (typesTexture.size() == 0)
+	if (typesTexture.isEmpty())
 	{
 		loadTypesTexture();
 	}
@@ -47,7 +47,7 @@ Cell::Cell(CellType _type) : type(_type)
 	}
 }
 
-Cell& Cell::RandomTypeCell(int32 maxTypeNumber, bool hasEmpty, bool hasObstruct)
+Cell Cell::RandomTypeCell(int32 maxTypeNumber, bool hasEmpty, bool hasObstruct)
 {
 	Array<CellType> all;
 	for (int32 i = 0; i < maxTypeNumber; ++i)

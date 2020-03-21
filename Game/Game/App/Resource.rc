@@ -58,9 +58,14 @@ Resource(engine/soundfont/GMGSx.sf2.zstdcmp)
 //////////////////////////////////////////////////////
 
 
+Resource(charDataResource.ini)
 Resource(images/CellImages.png)
 Resource(texts/HowTo_desc.txt)
-Resource(charData.ini)
+Resource(images/hitsuji.png)
+Resource(images/ika.png)
+Resource(images/kame.png)
+Resource(images/kurage.png)
+Resource(images/saboten.png)
 
 
 /* 
