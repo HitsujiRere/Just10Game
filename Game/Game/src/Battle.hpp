@@ -18,7 +18,7 @@ private:
 	const Size cellSize = Size(64, 64);
 
 	// プレイヤーと、それぞれの操作キー
-	Array<PlayerData> playerDatas;
+	static Array<PlayerData> playerDatas;
 
 	// 終了したかどうか
 	bool isFinished = false;

@@ -28,7 +28,7 @@ public:
 		if (characters.isEmpty())
 		{
 			loadCharacters(U"charDataResource.ini", true);
-			//loadCharacters(U"charData.ini");
+			loadCharacters(U"charData.ini");
 
 			// 空の場合は、ディフォルトくんを追加する
 			if (characters.isEmpty())

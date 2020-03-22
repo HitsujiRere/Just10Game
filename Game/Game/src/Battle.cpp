@@ -1,6 +1,8 @@
 
 # include "Battle.hpp"
 
+Array<PlayerData> Battle::playerDatas;
+
 Battle::Battle(const InitData& init)
 	: IScene(init)
 {
