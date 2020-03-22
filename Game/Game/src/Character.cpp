@@ -10,7 +10,7 @@ Character::Character()
 {
 }
 
-void Character::loadCharacters(String path, bool IsResourcePath)
+void Character::loadCharactersFromPath(String path, bool IsResourcePath)
 {
 	const INIData ini(IsResourcePath ? Resource(path) : path);
 
@@ -46,5 +46,17 @@ void Character::loadCharacters(String path, bool IsResourcePath)
 		{
 			Print << e.what();
 		}
+	}
+}
+
+void Character::loadCharacters()
+{
+	loadCharactersFromPath(U"charDataResource.ini", true);
+	loadCharactersFromPath(U"charData.ini");
+
+	// 空の場合は、ディフォルトくんを追加する
+	if (characters.isEmpty())
+	{
+		characters << Character();
 	}
 }

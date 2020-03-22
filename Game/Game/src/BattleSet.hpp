@@ -2,6 +2,7 @@
 # pragma once
 
 # include "Common.hpp"
+# include "Battle.hpp"
 # include "Character.hpp"
 
 // バトル前設定

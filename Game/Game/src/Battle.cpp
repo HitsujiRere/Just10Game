@@ -15,10 +15,10 @@ Battle::Battle(const InitData& init)
 		const KeyGroup moveR = (KeyD | KeyRight);
 		const KeyGroup drop = (KeyS | KeyDown);
 		const KeyGroup hold = (KeyW | KeyUp);
-		playerDatas << PlayerData(player,
-			PlayerKeySet(moveL, moveR, drop, hold),
-			Point(cellSize * Size(4, 3)),
-			FieldDrawMode::Left);
+		playerDatas.at(0).player = player;
+		playerDatas.at(0).keySet = PlayerKeySet(moveL, moveR, drop, hold);
+		playerDatas.at(0).fieldPos = Point(cellSize * Size(4, 3));
+		playerDatas.at(0).drawMode = FieldDrawMode::Left;
 	}
 
 	if (getData().playerCnt == PlayerCount::By2)
@@ -29,10 +29,10 @@ Battle::Battle(const InitData& init)
 			const KeyGroup moveR = (KeyD | Key());
 			const KeyGroup drop = (KeyS | Key());
 			const KeyGroup hold = (KeyW | Key());
-			playerDatas << PlayerData(player,
-				PlayerKeySet(moveL, moveR, drop, hold),
-				Point(cellSize * Size(4, 3)),
-				FieldDrawMode::Left);
+			playerDatas.at(0).player = player;
+			playerDatas.at(0).keySet = PlayerKeySet(moveL, moveR, drop, hold);
+			playerDatas.at(0).fieldPos = Point(cellSize * Size(4, 3));
+			playerDatas.at(0).drawMode = FieldDrawMode::Left;
 		}
 		{
 			auto player = Player();
@@ -41,10 +41,10 @@ Battle::Battle(const InitData& init)
 			const KeyGroup moveR = (KeyRight | Key());
 			const KeyGroup drop = (KeyDown | Key());
 			const KeyGroup hold = (KeyUp | Key());
-			playerDatas << PlayerData(player,
-				PlayerKeySet(moveL, moveR, drop, hold),
-				Point(cellSize * Size(4, 3)).movedBy(Scene::Center().x, 0),
-				FieldDrawMode::Right);
+			playerDatas.at(1).player = player;
+			playerDatas.at(1).keySet = PlayerKeySet(moveL, moveR, drop, hold);
+			playerDatas.at(1).fieldPos = Point(cellSize * Size(4, 3)).movedBy(Scene::Center().x, 0);
+			playerDatas.at(1).drawMode = FieldDrawMode::Right;
 		}
 	}
 }

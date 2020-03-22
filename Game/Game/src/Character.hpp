@@ -12,7 +12,7 @@ private:
 	static Array<Character> characters;
 
 	// charactersを指定パスからロードする
-	static void loadCharacters(String path, bool IsResourcePath = false);
+	static void loadCharactersFromPath(String path, bool IsResourcePath = false);
 
 public:
 	int32 number;
@@ -27,16 +27,12 @@ public:
 	{
 		if (characters.isEmpty())
 		{
-			loadCharacters(U"charDataResource.ini", true);
-			loadCharacters(U"charData.ini");
-
-			// 空の場合は、ディフォルトくんを追加する
-			if (characters.isEmpty())
-			{
-				characters << Character();
-			}
+			loadCharacters();
 		}
 
 		return characters;
 	}
+
+	// charactersをロードする
+	static void loadCharacters();
 };

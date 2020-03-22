@@ -14,11 +14,7 @@ class Battle : public MyApp::Scene
 private:
 
 	// セルの表示用大きさ
-	//const Size cellDrawSize = Size(40, 40);
 	const Size cellSize = Size(64, 64);
-
-	// プレイヤーと、それぞれの操作キー
-	static Array<PlayerData> playerDatas;
 
 	// 終了したかどうか
 	bool isFinished = false;
@@ -29,6 +25,9 @@ private:
 	double backTime = 10.0;
 
 public:
+
+	// プレイヤーと、それぞれの操作キー
+	static Array<PlayerData> playerDatas;
 
 	Battle(const InitData& init);
 

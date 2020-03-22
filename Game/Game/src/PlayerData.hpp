@@ -4,6 +4,7 @@
 # include <Siv3D.hpp>
 # include "Player.hpp"
 # include "PlayerKeySet.hpp"
+# include "Character.hpp"
 
 // プレイヤーのデータ
 class PlayerData
@@ -13,10 +14,9 @@ public:
 	PlayerKeySet keySet;
 	Point fieldPos;
 	FieldDrawMode drawMode;
+	Character character;
 
 	PlayerData();
-
-	PlayerData(Player _player, PlayerKeySet _keySet, Point _fieldPos, FieldDrawMode _drawMode);
 
 	PlayerData(const PlayerData& another);
 
