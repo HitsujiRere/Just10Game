@@ -11,7 +11,7 @@ class BattleSet : public MyApp::Scene
 private:
 
 	// キャラクター選択のスライダー
-	double charactersSlider = 0.0;
+	Array<int32> charactersChoiseNum;
 
 public:
 

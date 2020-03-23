@@ -15,10 +15,17 @@ private:
 	static void loadCharactersFromPath(String path, bool IsResourcePath = false);
 
 public:
+
+	// キャラクター番号
 	int32 number;
+	// 名前
 	String name;
-	Texture texture;
+	// 説明
 	String desc;
+	// テクスチャー
+	Texture texture;
+	// 落とすセルの1ループ
+	Array<int32> dropCells1LoopNum;
 
 	Character();
 

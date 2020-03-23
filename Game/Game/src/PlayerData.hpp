@@ -14,7 +14,7 @@ public:
 	PlayerKeySet keySet;
 	Point fieldPos;
 	FieldDrawMode drawMode;
-	Character character;
+	int32 characterNum;
 
 	PlayerData();
 

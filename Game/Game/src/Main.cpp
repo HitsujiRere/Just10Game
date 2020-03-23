@@ -48,6 +48,8 @@ void Main()
 	FontAsset::Register(U"Desc", 30, Typeface::Regular);
 	FontAsset::Register(U"Combo", 200, Typeface::Heavy);
 	FontAsset::Register(U"Obstruct", 100, Typeface::Heavy);
+	FontAsset::Register(U"Desc", 40, Typeface::Regular);
+	FontAsset::Register(U"Name", 60, Typeface::Regular);
 
 	// 同じ形式かどうかはloadVersionで判定
 	constexpr int32 load_version = 1;
@@ -97,6 +99,16 @@ void Main()
 			if (callUpdate && !manager.update())
 			{
 				break;
+			}
+
+			if (gamedataPtr->debugPrint)
+			{
+				for (auto i : step(1, 7))
+				{
+					const auto p = Scene::Size() * i / 8;
+					Line(p.x, 0.0, p.x, Scene::Size().y).draw(Palette::Red);
+					Line(0.0, p.y, Scene::Size().x, p.y).draw(Palette::Red);
+				}
 			}
 		}
 		catch (const Error & e)

@@ -30,11 +30,12 @@ void Character::loadCharactersFromPath(String path, bool IsResourcePath)
 			if (character.number < 0)	continue;
 
 			character.name = ini[U"{}.name"_fmt(section.section)];
-			character.desc = ini[U"{}.desc "_fmt(section.section)];
+			character.desc = ini[U"{}.desc"_fmt(section.section)].replaced(U"\\n", U"\n");
 			auto isResourceImgTxt = ini[U"{}.isResourceImage"_fmt(section.section)];
 			auto isResourceImg = isResourceImgTxt.isEmpty() ? false : Parse<bool>(isResourceImgTxt);
 			auto imgPath = ini[U"{}.image"_fmt(section.section)];
 			character.texture = Texture(isResourceImg ? Resource(imgPath) : imgPath);
+			character.dropCells1LoopNum = ini[U"{}.1loop"_fmt(section.section)].split(U',').map(Parse<int32>);
 
 			if (character.number >= characters.size())
 			{
