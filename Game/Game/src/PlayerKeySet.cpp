@@ -5,27 +5,20 @@ PlayerKeySet::PlayerKeySet()
 {
 }
 
-PlayerKeySet::PlayerKeySet(KeyGroup _moveL, KeyGroup _moveR, KeyGroup _drop, KeyGroup _hold,
-	KeyGroup _changeCell, KeyGroup _toRandom, KeyGroup _toEmpty)
-	: moveL(_moveL)
-	, moveR(_moveR)
-	, drop(_drop)
-	, hold(_hold)
-	, changeCell(_changeCell)
-	, toRandom(_toRandom)
-	, toEmpty(_toEmpty)
+PlayerKeySet::PlayerKeySet(KeyGroup _KeysLeft, KeyGroup _KeysRight, KeyGroup _KeysDown, KeyGroup _KeysUp)
+	: KeysLeft(_KeysLeft)
+	, KeysRight(_KeysRight)
+	, KeysDown(_KeysDown)
+	, KeysUp(_KeysUp)
 {
 }
 
 PlayerKeySet& PlayerKeySet::operator=(const PlayerKeySet& another)
 {
-	this->moveL = another.moveL;
-	this->moveR = another.moveR;
-	this->drop = another.drop;
-	this->hold = another.hold;
-	this->changeCell = another.changeCell;
-	this->toRandom = another.toRandom;
-	this->toEmpty = another.toEmpty;
+	this->KeysLeft = another.KeysLeft;
+	this->KeysRight = another.KeysRight;
+	this->KeysDown = another.KeysDown;
+	this->KeysUp = another.KeysUp;
 
 	return *this;
 }

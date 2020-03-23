@@ -51,7 +51,7 @@ void Main()
 	FontAsset::Register(U"Name", 60, Typeface::Regular);
 
 	// 使用するテクスチャーアセット
-	TextureAsset::Register(U"check-square", Icon(0xf14a, 400));
+	TextureAsset::Register(U"check-square", Icon(0xf14a, 500));
 
 	// 同じ形式かどうかはloadVersionで判定
 	constexpr int32 load_version = 1;

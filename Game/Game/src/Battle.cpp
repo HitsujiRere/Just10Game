@@ -39,7 +39,7 @@ Battle::Battle(const InitData& init)
 void Battle::update()
 {
 	// タイトルへ戻る
-	if (backKeys.down())
+	if (KeysBack.down())
 	{
 		int32 hightScore = getData().highScore;
 		for (auto& playerData : playerDatas)
@@ -84,7 +84,7 @@ void Battle::update()
 				anotherplayerData.player.state = BattleState::win;
 			}
 
-			if (backTimer > backTime || backKeys.down())
+			if (backTimer > backTime || KeysBack.down())
 			{
 				changeScene(State::Title);
 			}
@@ -157,6 +157,6 @@ void Battle::draw() const
 	if (isFinished)
 	{
 		FontAsset(U"Text")(U"タイトルへ戻るまで{:.0f}s"_fmt(Max(backTime - backTimer, 0.0)))
-			.drawAt(Scene::Center(), ColorF(0.0));
+			.drawAt(Scene::Center(), ColorF(0.2));
 	}
 }

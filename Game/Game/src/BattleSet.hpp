@@ -16,6 +16,11 @@ private:
 	// キャラクター選択を確定したかどうか
 	Array<bool> charactersChoiseEnd;
 
+	// 開始待機残り時間
+	double startTimer = 0.0;
+	// 開始待機時間
+	const double startCoolTime = 3.0;
+
 public:
 
 	BattleSet(const InitData& init);

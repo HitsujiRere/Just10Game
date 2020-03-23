@@ -26,7 +26,7 @@ HowTo::HowTo(const InitData& init)
 
 void HowTo::update()
 {
-	if (backKeys.down())
+	if (KeysBack.down())
 	{
 		changeScene(State::Title);
 	}

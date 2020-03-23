@@ -6,8 +6,9 @@ BattleSet::BattleSet(const InitData& init)
 {
 	//const Array<Character>& characters = Character::getCharacters();
 	auto& playerDatas = Battle::playerDatas;
+	int32 playerCnt = static_cast<int32>(getData().playerCnt);
 
-	playerDatas.resize(static_cast<int32>(getData().playerCnt));
+	playerDatas.resize(playerCnt);
 
 	if (getData().playerCnt == PlayerCount::By1)
 	{
@@ -36,22 +37,23 @@ BattleSet::BattleSet(const InitData& init)
 		}
 	}
 
-	charactersChoiseNum.resize(static_cast<int32>(getData().playerCnt));
-	for (auto i : step(static_cast<int32>(getData().playerCnt)))
+	charactersChoiseNum.resize(playerCnt);
+	for (auto i : step(playerCnt))
 	{
 		charactersChoiseNum.at(i) = playerDatas.at(i).characterNum;
 	}
 
-	charactersChoiseEnd.resize(static_cast<int32>(getData().playerCnt));
+	charactersChoiseEnd.resize(playerCnt);
 }
 
 void BattleSet::update()
 {
+	const double deltaTime = Scene::DeltaTime();
 	const Array<Character>& characters = Character::getCharacters();
 	const int32& playerCnt = static_cast<int32>(getData().playerCnt);
 
 	// タイトルへ戻る
-	if (backKeys.down())
+	if (KeysBack.down())
 	{
 		changeScene(State::Title);
 	}
@@ -64,19 +66,38 @@ void BattleSet::update()
 	for (auto playerNum : step(playerCnt))
 	{
 		auto& playerData = Battle::playerDatas.at(playerNum);
-		const auto& keySet = playerData.keySet;
+		const auto& keySets = playerData.keySet;
 
-		if (keySet.moveL.down() && charactersChoiseNum.at(playerNum) > 0)
+		if (keySets.KeysLeft.down() && charactersChoiseNum.at(playerNum) > 0)
 		{
 			charactersChoiseNum.at(playerNum)--;
 			playerData.characterNum = charactersChoiseNum.at(playerNum);
 		}
 
-		if (keySet.moveR.down() && charactersChoiseNum.at(playerNum) < characters.size() - 1)
+		if (keySets.KeysRight.down() && charactersChoiseNum.at(playerNum) < characters.size() - 1)
 		{
 			charactersChoiseNum.at(playerNum)++;
 			playerData.characterNum = charactersChoiseNum.at(playerNum);
 		}
+
+		if (keySets.KeysDown.down())
+		{
+			charactersChoiseEnd.at(playerNum) ^= true;
+		}
+	}
+
+	if (charactersChoiseEnd.all())
+	{
+		startTimer += deltaTime;
+
+		if (startTimer >= startCoolTime)
+		{
+			changeScene(State::Battle);
+		}
+	}
+	else
+	{
+		startTimer = 0.0;
 	}
 }
 
@@ -156,6 +177,14 @@ void BattleSet::draw() const
 		FontAsset(U"Desc")(U"ATK = {:.0f}%   DEF = {:.0f}%"_fmt(character.atkRate * 100, character.defRate * 100))
 			.draw(imgPos.movedBy(0, imgSize.y + 24 + 40), ColorF(0.2));
 
-		TextureAsset(U"check-square").drawAt(pos + size / 2, ColorF(0.2));
+		if (charactersChoiseEnd.at(playerNum))
+		{
+			TextureAsset(U"check-square").drawAt(pos + size / 2, ColorF(0.2));
+		}
+	}
+
+	if (startTimer > 0)
+	{
+		FontAsset(U"Header")(U"スタートまで{:.1f}秒"_fmt(Max(startCoolTime - startTimer, 0.0))).drawAt(Scene::Center().movedBy(0, -256), ColorF(0.2));
 	}
 }

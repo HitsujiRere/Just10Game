@@ -87,7 +87,7 @@ void Player::update(PlayerKeySet keySet)
 		}
 
 		// セルをホールドする
-		if (keySet.hold.down())
+		if (keySet.KeysUp.down())
 		{
 			if (holdCell.getType() == CellType::Empty)
 			{
@@ -103,11 +103,11 @@ void Player::update(PlayerKeySet keySet)
 		}
 
 		// 落とすセルを移動する
-		if (keySet.moveL.pressed() || keySet.moveR.pressed())
+		if (keySet.KeysLeft.pressed() || keySet.KeysRight.pressed())
 		{
 			dropCellTimer += deltaTime;
 		}
-		if (keySet.moveL.pressed() && dropCellFieldX > 0)
+		if (keySet.KeysLeft.pressed() && dropCellFieldX > 0)
 		{
 			if (dropCellTimer > dropCellCoolTime)
 			{
@@ -115,7 +115,7 @@ void Player::update(PlayerKeySet keySet)
 				dropCellTimer = 0.0;
 			}
 		}
-		if (keySet.moveR.pressed() && dropCellFieldX < drawsize.x - 1)
+		if (keySet.KeysRight.pressed() && dropCellFieldX < drawsize.x - 1)
 		{
 			if (dropCellTimer > dropCellCoolTime)
 			{
@@ -123,13 +123,13 @@ void Player::update(PlayerKeySet keySet)
 				dropCellTimer = 0.0;
 			}
 		}
-		if (keySet.moveL.up() || keySet.moveR.up())
+		if (keySet.KeysLeft.up() || keySet.KeysRight.up())
 		{
 			dropCellTimer = dropCellCoolTime;
 		}
 
 		//セルを落下させる
-		if (canDrop && keySet.drop.pressed())
+		if (canDrop && keySet.KeysDown.pressed())
 		{
 			field.pushTopCell(getDropCell(0), dropCellFieldX);
 

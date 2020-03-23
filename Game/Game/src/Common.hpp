@@ -8,7 +8,7 @@
 const Vector3D<int32> Version(0, 4, 0);
 
 // 戻るキー
-const KeyGroup backKeys(KeyEscape, KeyX, KeyDelete, KeyBackspace);
+const KeyGroup KeysBack(KeyEscape, KeyX, KeyDelete, KeyBackspace);
 
 // シーンの名前
 enum class State
