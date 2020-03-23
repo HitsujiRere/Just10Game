@@ -48,8 +48,10 @@ void Main()
 	FontAsset::Register(U"Desc", 30, Typeface::Regular);
 	FontAsset::Register(U"Combo", 200, Typeface::Heavy);
 	FontAsset::Register(U"Obstruct", 100, Typeface::Heavy);
-	FontAsset::Register(U"Desc", 40, Typeface::Regular);
 	FontAsset::Register(U"Name", 60, Typeface::Regular);
+
+	// 使用するテクスチャーアセット
+	TextureAsset::Register(U"check-square", Icon(0xf14a, 400));
 
 	// 同じ形式かどうかはloadVersionで判定
 	constexpr int32 load_version = 1;

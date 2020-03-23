@@ -1,9 +1,8 @@
 
 #include "Player.hpp"
 
-Player::Player(Array<int32> _dropCells1LoopNum)
-	: dropCells1LoopNum(_dropCells1LoopNum)
-	, field(Point(6, 12))
+Player::Player(Array<int32> dropCells1LoopNum)
+	: field(Point(6, 12))
 	, just10times(field.getSize())
 	, fieldMoveTo(field.getSize())
 	, obstructsSentCntArray(field.getSize().x)
@@ -33,7 +32,6 @@ Player& Player::operator=(const Player& another)
 
 	this->dropCellTimer = another.dropCellTimer;
 	this->dropCellFieldX = another.dropCellFieldX;
-	this->dropCells1LoopNum = another.dropCells1LoopNum;
 
 	this->holdCell = another.holdCell;
 
@@ -60,9 +58,6 @@ Player& Player::operator=(const Player& another)
 
 	this->sendingObstructCnt = another.sendingObstructCnt;
 	this->sendingObstructTimer = another.sendingObstructTimer;
-
-	this->atkRate = another.atkRate;
-	this->defRate = another.defRate;
 
 	return *this;
 }
@@ -91,20 +86,6 @@ void Player::update(PlayerKeySet keySet)
 			makeObstruct();
 		}
 
-		// フィールドをランダムに変更する
-		if (canDrop && keySet.toRandom.down())
-		{
-			field = CellField::RandomField(drawsize, static_cast<int32>(dropCells1LoopNum.size()) - 1, false, false);
-			updatedField();
-		}
-
-		// フィールドを無に変更する
-		if (canDrop && keySet.toEmpty.down())
-		{
-			field = CellField(drawsize);
-			updatedField();
-		}
-
 		// セルをホールドする
 		if (keySet.hold.down())
 		{
@@ -119,16 +100,6 @@ void Player::update(PlayerKeySet keySet)
 				holdCell = dropCellStack.at(0);
 				dropCellStack.at(0) = tmp;
 			}
-		}
-
-		// 落とすセルを変更する
-		if (keySet.changeCell.down())
-		{
-			// 1 ~ cellMaxNumberで1周させる
-			int32 nextNumber = static_cast<int32>(getDropCell(0).getType()) + 1;
-			if (nextNumber >= dropCells1LoopNum.size())
-				nextNumber = 1;
-			dropCellStack.at(0) = Cell(static_cast<CellType>(nextNumber));
 		}
 
 		// 落とすセルを移動する
@@ -423,7 +394,7 @@ void Player::sentObstructs(double sent_obstructs)
 {
 	const Size size = field.getDrawsize();
 
-	int32 obstructs = static_cast<int32>(ceil(sent_obstructs / defRate));
+	int32 obstructs = static_cast<int32>(ceil(sent_obstructs));
 
 	obstructsSentSum += obstructs;
 	for (auto i : step(size.x))

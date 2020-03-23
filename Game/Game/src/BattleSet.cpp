@@ -4,7 +4,7 @@
 BattleSet::BattleSet(const InitData& init)
 	: IScene(init)
 {
-	const Array<Character>& characters = Character::getCharacters();
+	//const Array<Character>& characters = Character::getCharacters();
 	auto& playerDatas = Battle::playerDatas;
 
 	playerDatas.resize(static_cast<int32>(getData().playerCnt));
@@ -41,6 +41,8 @@ BattleSet::BattleSet(const InitData& init)
 	{
 		charactersChoiseNum.at(i) = playerDatas.at(i).characterNum;
 	}
+
+	charactersChoiseEnd.resize(static_cast<int32>(getData().playerCnt));
 }
 
 void BattleSet::update()
@@ -139,7 +141,7 @@ void BattleSet::draw() const
 
 		FontAsset(U"Desc")(character.desc).draw(descRect, ColorF(0.2));
 
-		String dropCells1LoopTxt = U"1Loopのセル : ";
+		String dropCells1LoopTxt = U"1ループのセル : ";
 		const int32 sum = character.dropCells1LoopNum.sum();
 		for (auto i : step(character.dropCells1LoopNum.size()))
 		{
@@ -149,6 +151,11 @@ void BattleSet::draw() const
 				dropCells1LoopTxt += U"{}={:.0f}%  "_fmt(i, 100.0 * num / sum);
 			}
 		}
-		FontAsset(U"Desc")(dropCells1LoopTxt).draw(imgPos.movedBy(0, imgSize.y + 16), ColorF(0.2));
+		FontAsset(U"Desc")(dropCells1LoopTxt).draw(imgPos.movedBy(0, imgSize.y + 24), ColorF(0.2));
+
+		FontAsset(U"Desc")(U"ATK = {:.0f}%   DEF = {:.0f}%"_fmt(character.atkRate * 100, character.defRate * 100))
+			.draw(imgPos.movedBy(0, imgSize.y + 24 + 40), ColorF(0.2));
+
+		TextureAsset(U"check-square").drawAt(pos + size / 2, ColorF(0.2));
 	}
 }

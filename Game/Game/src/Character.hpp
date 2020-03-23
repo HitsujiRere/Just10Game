@@ -26,6 +26,10 @@ public:
 	Texture texture;
 	// 落とすセルの1ループ
 	Array<int32> dropCells1LoopNum;
+	// 与えるダメージ割合
+	double atkRate;
+	// 与えられるダメージ割合
+	double defRate;
 
 	Character();
 

@@ -13,6 +13,9 @@ private:
 	// キャラクター選択のスライダー
 	Array<int32> charactersChoiseNum;
 
+	// キャラクター選択を確定したかどうか
+	Array<bool> charactersChoiseEnd;
+
 public:
 
 	BattleSet(const InitData& init);

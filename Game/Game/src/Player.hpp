@@ -82,11 +82,6 @@ public:
 	const double dropCellCoolTime = 0.1;
 	// 落とすフィールドのx
 	int32 dropCellFieldX = 0;
-	// 落とすセルの1ループのNumberの数
-	Array<int32> dropCells1LoopNum = Array<int32>
-	{
-		0, 1, 1, 1, 1, 1,
-	};
 
 	// ホールドセル
 	Cell holdCell = Cell(CellType::Empty);
@@ -141,11 +136,6 @@ public:
 	const double sendingObstructCoolTime = 5.0;
 	// オジャマを送るかどうか
 	bool isSendObstruct = false;
-
-	// 与えるダメージ割合
-	double atkRate = 1.0;
-	// 与えられるダメージ割合
-	double defRate = 1.0;
 
 	// 落とすセルを取得する
 	inline const Cell& getDropCellNotAdd(int32 num) const

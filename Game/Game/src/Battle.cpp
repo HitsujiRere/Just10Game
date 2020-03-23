@@ -62,12 +62,15 @@ void Battle::update()
 	{
 		auto& playerData = playerDatas.at(i);
 		auto& player = playerData.player;
+		auto& characters = Character::getCharacters();
+		auto& character = characters.at(playerData.characterNum);
+		auto& anotherplayerData = playerDatas.at((i + 1) % 2);
 
 		player.update(playerData.keySet);
 
 		if (getData().playerCnt == PlayerCount::By2 && player.isSendObstruct)
 		{
-			playerDatas.at((i + 1) % 2).player.sentObstructs(player.sendingObstructCnt * player.atkRate);
+			anotherplayerData.player.sentObstructs(player.sendingObstructCnt * character.atkRate / characters.at(anotherplayerData.characterNum).defRate);
 		}
 
 		// •‰‚¯‚Æ•\Ž¦‚·‚é‰‰o
@@ -78,7 +81,7 @@ void Battle::update()
 
 			if (getData().playerCnt == PlayerCount::By2)
 			{
-				playerDatas.at((i + 1) % 2).player.state = BattleState::win;
+				anotherplayerData.player.state = BattleState::win;
 			}
 
 			if (backTimer > backTime || backKeys.down())

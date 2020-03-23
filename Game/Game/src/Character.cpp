@@ -7,6 +7,8 @@ Character::Character()
 	, name(U"デフォルトくん")
 	, desc(U"ディフォルトです。")
 	, texture(Texture())
+	, atkRate(1.0)
+	, defRate(1.0)
 {
 }
 
@@ -36,6 +38,8 @@ void Character::loadCharactersFromPath(String path, bool IsResourcePath)
 			auto imgPath = ini[U"{}.image"_fmt(section.section)];
 			character.texture = Texture(isResourceImg ? Resource(imgPath) : imgPath);
 			character.dropCells1LoopNum = ini[U"{}.1loop"_fmt(section.section)].split(U',').map(Parse<int32>);
+			character.atkRate = Parse<double>(ini[U"{}.atk"_fmt(section.section)]);
+			character.defRate = Parse<double>(ini[U"{}.def"_fmt(section.section)]);
 
 			if (character.number >= characters.size())
 			{
