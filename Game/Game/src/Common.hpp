@@ -5,7 +5,7 @@
 
 
 // バージョン
-const Vector3D<int32> Version(0, 4, 0);
+const Vector3D<int32> Version(0, 5, 0);
 
 // 戻るキー
 const KeyGroup KeysBack(KeyEscape, KeyX, KeyDelete, KeyBackspace);
