@@ -56,8 +56,8 @@ void Character::loadCharactersFromPath(String path, bool IsResourcePath)
 
 void Character::loadCharacters()
 {
-	loadCharactersFromPath(U"texts/charDataResource.ini", true);
-	loadCharactersFromPath(U"charData.ini");
+	loadCharactersFromPath(U"Text/charDataResource.ini", true);
+	loadCharactersFromPath(U"data/charData.ini");
 
 	// 空の場合は、ディフォルトくんを追加する
 	if (characters.isEmpty())

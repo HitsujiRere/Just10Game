@@ -59,15 +59,15 @@ Resource(engine/soundfont/GMGSx.sf2.zstdcmp)
 
 
 Resource(Font/Black_Ops_One/BlackOpsOne-Regular.ttf)
-Resource(texts/charDataResource.ini)
-Resource(images/CellImages.png)
-Resource(texts/HowTo_desc.txt)
-Resource(texts/HowTo_Play.txt)
-Resource(images/hitsuji.png)
-Resource(images/ika.png)
-Resource(images/kame.png)
-Resource(images/kurage.png)
-Resource(images/saboten.png)
+Resource(Text/charDataResource.ini)
+Resource(Image/CellImages.png)
+Resource(Text/HowTo_desc.txt)
+Resource(Text/HowTo_Play.txt)
+Resource(Image/hitsuji.png)
+Resource(Image/ika.png)
+Resource(Image/kame.png)
+Resource(Image/kurage.png)
+Resource(Image/saboten.png)
 
 
 /* 

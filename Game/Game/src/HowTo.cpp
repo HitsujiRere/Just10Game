@@ -4,7 +4,7 @@
 HowTo::HowTo(const InitData& init)
 	: IScene(init)
 {
-	TextReader reader(Resource(U"texts/HowTo_desc.txt"));
+	TextReader reader(Resource(U"Text/HowTo_desc.txt"));
 	if (reader)
 	{
 		desc = U"";
@@ -19,7 +19,7 @@ HowTo::HowTo(const InitData& init)
 	}
 	else
 	{
-		Print <<  U"Cannot read Resource('HowTo_desc.txt')!";
+		Print <<  U"Cannot read Resource('Text/HowTo_desc.txt')!";
 		//descs.push_back(U"Cannot read 'HowTo_desc.txt'!");
 	}
 

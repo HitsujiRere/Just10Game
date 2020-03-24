@@ -176,7 +176,6 @@ void CellField::moveCells(Grid<Point> moveTo)
 		if (moveTo.at(p).x >= 0 && moveTo.at(p).y >= 0)
 		{
 			fieldMoved.at(moveTo.at(p)) = field.at(p);
-			//Print << U"{} : {} -> {}"_fmt(field.at(p), p, moveTo.at(p));
 		}
 	}
 

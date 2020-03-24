@@ -1,6 +1,6 @@
 ﻿
 //
-// Just10Game  ver 0.5.1
+// Just10Game  ver 0.5.2
 // made by HitsujiRere
 //
 
@@ -123,6 +123,6 @@ void Main()
 	// GameDataを保存
 	if (isSaveGameData)
 	{
-		gamedataPtr->saveGameData(U"GameData.bin");
+		gamedataPtr->saveGameData(U"data/GameData.bin");
 	}
 }

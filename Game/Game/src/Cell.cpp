@@ -12,7 +12,7 @@ void Cell::loadTypesTexture()
 	{
 		typesTexture.resize(xCnt * yCnt);
 
-		const Image cellsImage(Resource(U"images/CellImages.png"));
+		const Image cellsImage(Resource(U"Image/CellImages.png"));
 		const int32 width = cellsImage.width() / xCnt;
 		const int32 height = cellsImage.width() / yCnt;
 
