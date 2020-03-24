@@ -46,7 +46,7 @@ BattleSet::BattleSet(const InitData& init)
 	charactersChoiseEnd.resize(playerCnt);
 
 	{
-		TextReader reader(Resource(U"Texr/HowTo_Play.txt"));
+		TextReader reader(Resource(U"Text/HowTo_Play.txt"));
 
 		if (reader)
 		{

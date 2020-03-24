@@ -62,7 +62,7 @@ void Title::draw() const
 		const String titleTextFront = U"Just ";
 		const String titleTextBack = U" Game";
 		const Vec2 titlePos(Scene::Center().x, 200);
-		const int32 fontsize = FontAsset(U"Title").height() * 0.7;
+		const int32 fontsize = static_cast<int32>(FontAsset(U"Title").height() * 0.7);
 
 		//FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(10, 16), ColorF(0.0, 0.14));
 		//FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(10, 14), ColorF(0.0, 0.14));
