@@ -59,14 +59,34 @@ void Title::draw() const
 		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
 
 	{
-		const String titleText = U"Just 10 Game";
-		const Vec2 titlePos(Scene::Center().x, 150);
-		FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(10, 16), ColorF(0.0, 0.14));
-		FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(10, 14), ColorF(0.0, 0.14));
-		FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(8, 16), ColorF(0.0, 0.14));
-		FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(8, 14), ColorF(0.0, 0.14));
-		const Rect titleArea = FontAsset(U"Title")(titleText).drawAt(titlePos, ColorF(0.2));
-		FontAsset(U"Version")(U"Ver {}.{}.{}"_fmt(Version.x, Version.y, Version.z)).draw(Arg::topRight(titlePos.movedBy(titleArea.size.x / 2, 120)), ColorF(0.2));
+		const String titleTextFront = U"Just ";
+		const String titleTextBack = U" Game";
+		const Vec2 titlePos(Scene::Center().x, 200);
+		const int32 fontsize = FontAsset(U"Title").height() * 0.7;
+
+		//FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(10, 16), ColorF(0.0, 0.14));
+		//FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(10, 14), ColorF(0.0, 0.14));
+		//FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(8, 16), ColorF(0.0, 0.14));
+		//FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(8, 14), ColorF(0.0, 0.14));
+		//FontAsset(U"Title")(titleText).drawAt(titlePos.movedBy(6, 10), ColorF(0.0, 0.4));
+
+		FontAsset(U"Title")(titleTextFront)
+			.drawAt(titlePos.movedBy(-FontAsset(U"Title")(titleTextFront).region().w / 2 - fontsize / 2, 0).movedBy(6, 10), ColorF(0.0, 0.4));
+		{
+			const ScopedColorMul2D state(ColorF(0.0, 0.4));
+			Cell::getTexture(CellType::Title10).resized(fontsize).drawAt(titlePos.movedBy(6, 10));
+		}
+		FontAsset(U"Title")(titleTextBack)
+			.drawAt(titlePos.movedBy(FontAsset(U"Title")(titleTextBack).region().w / 2 + fontsize / 2, 0).movedBy(6, 10), ColorF(0.0, 0.4));
+
+		FontAsset(U"Title")(titleTextFront)
+			.drawAt(titlePos.movedBy(-FontAsset(U"Title")(titleTextFront).region().w / 2 - fontsize / 2, 0), ColorF(0.2));
+		Cell::getTexture(CellType::Title10).resized(fontsize).drawAt(titlePos);
+		FontAsset(U"Title")(titleTextBack)
+			.drawAt(titlePos.movedBy(FontAsset(U"Title")(titleTextBack).region().w / 2 + fontsize / 2, 0), ColorF(0.2));
+
+		FontAsset(U"Version")(U"Ver {}.{}.{}"_fmt(Version.x, Version.y, Version.z))
+			.draw(Arg::topRight(titlePos.movedBy(FontAsset(U"Title")(titleTextBack).region().w + fontsize / 2, fontsize / 2)), ColorF(0.2));
 	}
 
 	m_placticeButton

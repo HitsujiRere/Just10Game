@@ -21,6 +21,8 @@ private:
 	// 開始待機時間
 	const double startCoolTime = 3.0;
 
+	Array<String> playDescs;
+
 public:
 
 	BattleSet(const InitData& init);

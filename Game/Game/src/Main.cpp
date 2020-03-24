@@ -39,7 +39,7 @@ void Main()
 	Scene::SetBackground(ColorF(1.0));
 
 	// 使用するフォントアセットを登録
-	FontAsset::Register(U"Title", 200, U"example/font/AnnyantRoman/AnnyantRoman.ttf");
+	FontAsset::Register(U"Title", 200, Resource(U"Font/Black_Ops_One/BlackOpsOne-Regular.ttf"));
 	FontAsset::Register(U"Version", 60, Typeface::Black);
 	FontAsset::Register(U"Menu", 30, Typeface::Regular);
 	FontAsset::Register(U"Score", 36, Typeface::Bold);

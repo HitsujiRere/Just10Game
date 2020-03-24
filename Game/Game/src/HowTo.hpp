@@ -8,9 +8,14 @@ class HowTo : public MyApp::Scene
 {
 private:
 
+	// É^ÉCÉgÉã
+	const String headerText = U"How To Play";
+
 	// ê‡ñæ
 	String desc;
-	//Array<String> descs = Array<String>();
+
+	Rect backButton;
+	Transition backTransition = Transition(0.4s, 0.2s);
 
 public:
 

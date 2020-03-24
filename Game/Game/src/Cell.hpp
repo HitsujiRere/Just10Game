@@ -40,8 +40,11 @@ enum class CellType
 	// 禁止セル
 	No = 13,
 
+	// タイトル用の数字の10のセル
+	Title10 = 14,
+
 	// 無効のセル
-	None = 14,
+	None = 15,
 };
 
 // セル
@@ -94,6 +97,11 @@ public:
 	// セルのタイプごとのテクスチャを返す
 	static inline const Array<Texture>& getTextures()
 	{
+		if (typesTexture.isEmpty())
+		{
+			loadTypesTexture();
+		}
+
 		return typesTexture;
 	}
 
@@ -101,6 +109,11 @@ public:
 	static inline const Texture getTexture(CellType type)
 	{
 		int32 number = static_cast<int32>(type);
+
+		if (typesTexture.isEmpty())
+		{
+			loadTypesTexture();
+		}
 
 		if (number < typesTexture.size())
 		{

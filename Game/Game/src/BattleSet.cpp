@@ -44,7 +44,32 @@ BattleSet::BattleSet(const InitData& init)
 	}
 
 	charactersChoiseEnd.resize(playerCnt);
-}
+
+	{
+		TextReader reader(Resource(U"texts/HowTo_Play.txt"));
+
+		if (reader)
+		{
+			playDescs.resize(1);
+
+			int32 i = 0;
+			String line;
+
+			while (reader.readLine(line))
+			{
+				if (line.isEmpty())
+				{
+					++i;
+					playDescs.push_back(U"");
+				}
+				else
+				{
+					playDescs.at(i) += line + U"\n";
+				}
+			}
+		}
+	}
+	}
 
 void BattleSet::update()
 {
@@ -180,6 +205,12 @@ void BattleSet::draw() const
 		if (charactersChoiseEnd.at(playerNum))
 		{
 			TextureAsset(U"check-square").drawAt(pos + size / 2, ColorF(0.2));
+		}
+
+		if (playerCnt + playerNum - 1 < playDescs.size())
+		{
+			FontAsset(U"Desc")(playDescs.at(playerCnt + playerNum - 1))
+				.draw(imgPos.movedBy(0, imgSize.y + 24 + 40 * 3), ColorF(0.2));
 		}
 	}
 
