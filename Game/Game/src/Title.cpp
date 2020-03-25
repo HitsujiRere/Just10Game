@@ -10,18 +10,18 @@ Title::Title(const InitData& init)
 
 void Title::update()
 {
-	m_placticeTransition.update(m_placticeButton.mouseOver());
-	m_battleTransition.update(m_battleButton.mouseOver());
-	m_howtoTransition.update(m_howtoButton.mouseOver());
-	m_exitTransition.update(m_exitButton.mouseOver());
+	placticeTransition.update(placticeButton.mouseOver());
+	battleTransition.update(battleButton.mouseOver());
+	howtoTransition.update(howtoButton.mouseOver());
+	exitTransition.update(exitButton.mouseOver());
 
-	if (m_placticeButton.mouseOver() || m_battleButton.mouseOver()
-		|| m_howtoButton.mouseOver() || m_exitButton.mouseOver())
+	if (placticeButton.mouseOver() || battleButton.mouseOver()
+		|| howtoButton.mouseOver() || exitButton.mouseOver())
 	{
 		Cursor::RequestStyle(CursorStyle::Hand);
 	}
 
-	if (m_placticeButton.leftClicked())
+	if (placticeButton.leftClicked())
 	{
 		// ESCキーで終了しない
 		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
@@ -30,7 +30,7 @@ void Title::update()
 		changeScene(State::BattleSet);
 	}
 
-	if (m_battleButton.leftClicked())
+	if (battleButton.leftClicked())
 	{
 		// ESCキーで終了しない
 		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
@@ -39,7 +39,7 @@ void Title::update()
 		changeScene(State::BattleSet);
 	}
 
-	if (m_howtoButton.leftClicked())
+	if (howtoButton.leftClicked())
 	{
 		// ESCキーで終了しない
 		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
@@ -47,7 +47,7 @@ void Title::update()
 		changeScene(State::HowTo);
 	}
 
-	if (m_exitButton.leftClicked())
+	if (exitButton.leftClicked())
 	{
 		System::Exit();
 	}
@@ -72,16 +72,23 @@ void Title::draw() const
 
 		FontAsset(U"Title")(titleTextFront)
 			.drawAt(titlePos.movedBy(-FontAsset(U"Title")(titleTextFront).region().w / 2 - fontsize / 2, 0).movedBy(6, 10), ColorF(0.0, 0.4));
+		/**/
 		{
 			const ScopedColorMul2D state(ColorF(0.0, 0.4));
-			Cell::getTexture(CellType::Title10).resized(fontsize).drawAt(titlePos.movedBy(6, 10));
+			//Cell::getTexture(CellType::Title10).resized(fontsize).drawAt(titlePos.movedBy(6, 10));
+			Cell::getTexture(CellType::Title10).resized(fontsize).drawAt(titlePos.movedBy(0, Periodic::Jump0_1(2s) * -64).movedBy(6, 10));
 		}
+		/**/
 		FontAsset(U"Title")(titleTextBack)
 			.drawAt(titlePos.movedBy(FontAsset(U"Title")(titleTextBack).region().w / 2 + fontsize / 2, 0).movedBy(6, 10), ColorF(0.0, 0.4));
 
 		FontAsset(U"Title")(titleTextFront)
 			.drawAt(titlePos.movedBy(-FontAsset(U"Title")(titleTextFront).region().w / 2 - fontsize / 2, 0), ColorF(0.2));
-		Cell::getTexture(CellType::Title10).resized(fontsize).drawAt(titlePos);
+		{
+			const ScopedColorAdd2D state(ColorF(0.2));
+			//Cell::getTexture(CellType::Cell10).resized(fontsize).drawAt(titlePos);
+			Cell::getTexture(CellType::Cell10).resized(fontsize).drawAt(titlePos.movedBy(0, Periodic::Jump0_1(2s) * -64));
+		}
 		FontAsset(U"Title")(titleTextBack)
 			.drawAt(titlePos.movedBy(FontAsset(U"Title")(titleTextBack).region().w / 2 + fontsize / 2, 0), ColorF(0.2));
 
@@ -89,31 +96,31 @@ void Title::draw() const
 			.draw(Arg::topRight(titlePos.movedBy(FontAsset(U"Title")(titleTextBack).region().w + fontsize / 2, fontsize / 2)), ColorF(0.2));
 	}
 
-	m_placticeButton
+	placticeButton
 		.drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4))
 		.draw(ColorF(1.0))
-		.draw(ColorF(0.8, m_placticeTransition.value()))
+		.draw(ColorF(0.8, placticeTransition.value()))
 		.drawFrame(2, ColorF(0.2));
-	m_battleButton
+	battleButton
 		.drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4))
 		.draw(ColorF(1.0))
-		.draw(ColorF(0.8, m_battleTransition.value()))
+		.draw(ColorF(0.8, battleTransition.value()))
 		.drawFrame(2, ColorF(0.2));
-	m_howtoButton
+	howtoButton
 		.drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4))
 		.draw(ColorF(1.0))
-		.draw(ColorF(0.8, m_howtoTransition.value()))
+		.draw(ColorF(0.8, howtoTransition.value()))
 		.drawFrame(2, ColorF(0.2));
-	m_exitButton
+	exitButton
 		.drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4))
 		.draw(ColorF(1.0))
-		.draw(ColorF(0.8, m_exitTransition.value()))
+		.draw(ColorF(0.8, exitTransition.value()))
 		.drawFrame(2, ColorF(0.2));
 
-	FontAsset(U"Menu")(U"1人で あそぶ").drawAt(m_placticeButton.center(), ColorF(0.25));
-	FontAsset(U"Menu")(U"2人で たたかう").drawAt(m_battleButton.center(), ColorF(0.25));
-	FontAsset(U"Menu")(U"あそびかた").drawAt(m_howtoButton.center(), ColorF(0.25));
-	FontAsset(U"Menu")(U"おわる").drawAt(m_exitButton.center(), ColorF(0.25));
+	FontAsset(U"Menu")(U"1人で あそぶ").drawAt(placticeButton.center(), ColorF(0.25));
+	FontAsset(U"Menu")(U"2人で たたかう").drawAt(battleButton.center(), ColorF(0.25));
+	FontAsset(U"Menu")(U"あそびかた").drawAt(howtoButton.center(), ColorF(0.25));
+	FontAsset(U"Menu")(U"おわる").drawAt(exitButton.center(), ColorF(0.25));
 
 	FontAsset(U"Score")(U"High Score : {}"_fmt(getData().highScore)).draw(Arg::leftCenter(Scene::Center().movedBy(170, 0)), ColorF(0.25));
 	FontAsset(U"Score")(U"Play Time : {}"_fmt(getData().play_time)).draw(Arg::leftCenter(Scene::Center().movedBy(170, 100)), ColorF(0.25));

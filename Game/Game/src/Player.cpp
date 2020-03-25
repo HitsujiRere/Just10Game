@@ -231,8 +231,8 @@ void Player::update(PlayerKeySet keySet)
 void Player::draw(Point fieldPos, Size cellSize, FieldDrawMode drawMode) const
 {
 	const Size drawsize = field.getDrawsize();
-
 	const Point textMoved = (Vec2(0, -1.5) * cellSize).asPoint();
+	const Point fieldCenter = fieldPos + drawsize * cellSize / 2;
 
 	// Nextセルの描画
 	{
@@ -277,59 +277,76 @@ void Player::draw(Point fieldPos, Size cellSize, FieldDrawMode drawMode) const
 		.draw(fieldColor)
 		.drawFrame(0.0, 10.0, ColorF(0.2));
 
-	// Just10の回数の表示
-	if (KeyControl.pressed())
+	// 禁止場所の表示
+	for (int32 x : step(drawsize.x))
 	{
-		for (auto p : step(drawsize))
-		{
-			Point pos = fieldPos + cellSize * p + cellSize / 2;
-			FontAsset(U"Text")(U"{}"_fmt(just10times.at(p))).drawAt(pos, Palette::Black);
-		}
+		Point pos = fieldPos + Point(x, 0) * cellSize;
+
+		Cell::getTexture(CellType::No).resized(cellSize).draw(pos);
 	}
-	// フィールドの描画
-	else
-	{
-		for (int32 x : step(drawsize.x))
-		{
-			Point pos = fieldPos + Point(x, 0) * cellSize;
 
-			Cell::getTexture(CellType::No).resized(cellSize).draw(pos);
-		}
-
-		field.draw(fieldPos, cellSize,
-			[&](Point p, CellType) {
-				if (fieldMoveTo.at(p) == Point(-1, -1))
-				{
-					return (p * cellSize);
-				}
-				else
-				{
-					const double e = EaseOutCubic(
-						isMovingTime ? movingTimer / movingCoolTime :
-						isDeletingTime ? deletingTimer / deletingCoolTime :
-						0);
-					return (Vec2(p * cellSize).lerp(Vec2(fieldMoveTo.at(p) * cellSize), e)).asPoint();
-				}
-			},
-			[&](Point p, CellType) {
-				if (just10times.at(p))
-				{
-					const double e = EaseOutCubic(deletingTimer / deletingCoolTime);
-					return Color(255, static_cast<int32>(255 * (1.0 - e)));
-				}
-				else
-				{
-					return Color(255);
-				}
+	// セルの表示
+	field.draw(fieldPos, cellSize,
+		[&](Point p, CellType) {
+			if (fieldMoveTo.at(p) == Point(-1, -1))
+			{
+				return (p * cellSize);
 			}
-			);
-	}
+			else
+			{
+				const double e = EaseOutCubic(
+					isMovingTime ? movingTimer / movingCoolTime :
+					isDeletingTime ? deletingTimer / deletingCoolTime :
+					0);
+				return (Vec2(p * cellSize).lerp(Vec2(fieldMoveTo.at(p) * cellSize), e)).asPoint();
+			}
+		},
+		[&](Point p, CellType) {
+			if (just10times.at(p))
+			{
+				const double e = EaseOutCubic(deletingTimer / deletingCoolTime);
+				return Color(255, static_cast<int32>(255 * (1.0 - e)));
+			}
+			else
+			{
+				return Color(255);
+			}
+		}
+		);
 
 	// 落とすセルの描画
 	{
 		const Point dropCellPos(fieldPos + Point(cellSize.x * dropCellFieldX, -cellSize.y));
 
 		getDropCellNotAdd(0).getTexture().resized(cellSize).draw(dropCellPos);
+	}
+
+	// スコア
+	{
+		const Point pos(fieldCenter.x, fieldPos.y + drawsize.y * cellSize.y + 50);
+		FontAsset(U"Text")(U"Score:{}"_fmt(score)).drawAt(pos.movedBy(2, 3), ColorF(0.0, 0.4));
+		FontAsset(U"Text")(U"Score:{}"_fmt(score)).drawAt(pos, ColorF(0.25));
+	}
+
+	// コンボ
+	if (combo > 0)
+	{
+		FontAsset(U"Combo")(U"{}"_fmt(combo)).drawAt(fieldCenter, ColorF(0.25, 0.75));
+	}
+
+	// 負けの知らせ
+	if (state != BattleState::playing)
+	{
+		const double e = EaseOutBounce(Min(stateTimer / stateCoolTime, 1.0));
+		const Vec2 to(fieldCenter);
+		const Vec2 from(fieldCenter.x, -100);
+		const String text
+			= state == BattleState::win ? U"Win"
+			: state == BattleState::tie ? U"Tie"
+			: state == BattleState::lose ? U"Lose"
+			: U"----";
+		FontAsset(U"Header")(text).drawAt(from.lerp(to, e), ColorF(0.2));
+		//FontAsset(U"Header")(text).drawAt(to, ColorF(0.2));
 	}
 }
 

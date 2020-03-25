@@ -69,7 +69,7 @@ BattleSet::BattleSet(const InitData& init)
 			}
 		}
 	}
-	}
+}
 
 void BattleSet::update()
 {
@@ -151,14 +151,21 @@ void BattleSet::draw() const
 			if (0 <= charaNum && charaNum < characters.size())
 			{
 				const Vec2 choiseSize(128, 128);
-				const Vec2 choisePos(size.x / 2.0 - choiseSize.x / 2.0 + i * (choiseSize.x + 36) + pos.x, 64 + 32);
+				const Vec2 choisePos(size.x / 2.0 - choiseSize.x / 2.0 + i * (choiseSize.x + 36) + pos.x, 128);
 
 				Rect(Arg::center(choisePos.asPoint()), choiseSize.asPoint())
 					.drawShadow(Vec2(9, 15), 10.0, 10.0, ColorF(0.0, 0.4))
 					.draw(ColorF(1.0))
 					.drawFrame(0.0, 4.0, ColorF(0.2));
 
-				characters.at(charaNum).texture.resized(choiseSize).drawAt(choisePos);
+				if (i == 0)
+				{
+					characters.at(charaNum).texture.resized(choiseSize).drawAt(choisePos.movedBy(0, Periodic::Jump0_1(2s) * -64));
+				}
+				else
+				{
+					characters.at(charaNum).texture.resized(choiseSize).drawAt(choisePos);
+				}
 
 				if (i == 0)
 				{

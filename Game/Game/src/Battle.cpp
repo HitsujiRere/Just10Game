@@ -38,8 +38,15 @@ Battle::Battle(const InitData& init)
 
 void Battle::update()
 {
+	titleTransition.update(titleButton.mouseOver());
+
+	if (titleButton.mouseOver())
+	{
+		Cursor::RequestStyle(CursorStyle::Hand);
+	}
+
 	// タイトルへ戻る
-	if (KeysBack.down())
+	if (KeysBack.down() || titleButton.leftClicked())
 	{
 		int32 hightScore = getData().highScore;
 		for (auto& playerData : playerDatas)
@@ -105,19 +112,6 @@ void Battle::draw() const
 		const Point fieldCenter = playerData.fieldPos + drawsize * cellSize / 2;
 
 		player.draw(playerData.fieldPos, cellSize, playerData.drawMode);
-
-		// スコア
-		{
-			const Point pos(fieldCenter.x, playerData.fieldPos.y + drawsize.y * cellSize.y + 50);
-			FontAsset(U"Text")(U"Score:{}"_fmt(player.score)).drawAt(pos.movedBy(2, 3), ColorF(0.0, 0.4));
-			FontAsset(U"Text")(U"Score:{}"_fmt(player.score)).drawAt(pos, ColorF(0.25));
-		}
-
-		// コンボ
-		if (player.combo > 0)
-		{
-			FontAsset(U"Combo")(U"{}"_fmt(player.combo)).drawAt(fieldCenter, ColorF(0.25, 0.75));
-		}
  
 		// 送るオジャマ
 		if (player.sendingObstructCnt > 0)
@@ -129,28 +123,6 @@ void Battle::draw() const
 			FontAsset(U"Obstruct")(U"{}"_fmt(player.sendingObstructCnt)).drawAt(from.lerp(to, e).moveBy(3, 5), ColorF(0.0, 0.4));
 			FontAsset(U"Obstruct")(U"{}"_fmt(player.sendingObstructCnt)).drawAt(from.lerp(to, e), ColorF(0.2));
 		}
-
-		/**
-		FontAsset(U"Text")(U"Maked:{}"_fmt(player.obstructsMaked))
-			.drawAt(playerData.fieldPos.movedBy(drawsize.x * cellSize.x / 2, 100), ColorF(0.25));
-		FontAsset(U"Text")(U"SentSum:{}"_fmt(player.obstructsSentSum))
-			.drawAt(playerData.fieldPos.movedBy(drawsize.x * cellSize.x / 2, 145), ColorF(0.25));
-		/**/
-
-		// 負けの知らせ
-		if (playerData.player.state != BattleState::playing)
-		{
-			const double e = EaseOutBounce(Min(player.stateTimer / player.stateCoolTime, 1.0));
-			const Vec2 to(fieldCenter);
-			const Vec2 from(fieldCenter.x, -100);
-			const String text
-				= player.state == BattleState::win ? U"Win"
-				: player.state == BattleState::tie ? U"Tie"
-				: player.state == BattleState::lose ? U"Lose"
-				: U"----";
-			FontAsset(U"Header")(text).drawAt(from.lerp(to, e), ColorF(0.2));
-			//FontAsset(U"Header")(text).drawAt(to, ColorF(0.2));
-		}
 	}
 
 	// タイトルに戻るカウントダウン
@@ -159,4 +131,12 @@ void Battle::draw() const
 		FontAsset(U"Text")(U"タイトルへ戻るまで{:.0f}s"_fmt(Max(backTime - backTimer, 0.0)))
 			.drawAt(Scene::Center(), ColorF(0.2));
 	}
+
+	// タイトルへ戻るボタン
+	titleButton
+		.drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4))
+		.draw(ColorF(1.0))
+		.draw(ColorF(0.8, titleTransition.value()))
+		.drawFrame(2, ColorF(0.2));
+	FontAsset(U"Menu")(U"もどる").drawAt(titleButton.center(), ColorF(0.25));
 }

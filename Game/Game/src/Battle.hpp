@@ -24,6 +24,9 @@ private:
 	// 終了時間時間
 	double backTime = 10.0;
 
+	Rect titleButton = Rect(Arg::bottomCenter(Scene::Center().x, Scene::Size().y - 64), 200, 60);
+	Transition titleTransition = Transition(0.4s, 0.2s);
+
 public:
 
 	// プレイヤーと、それぞれの操作キー

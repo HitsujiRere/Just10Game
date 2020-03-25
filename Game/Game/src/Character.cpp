@@ -3,10 +3,12 @@
 Array<Character> Character::characters;
 
 Character::Character()
-	: number(0)
+	: identity(U"Default")
+	, number(0)
 	, name(U"デフォルトくん")
 	, desc(U"ディフォルトです。")
 	, texture(Texture())
+	, dropCells1LoopNum({0, 1, 1, 1, 1, 1})
 	, atkRate(1.0)
 	, defRate(1.0)
 {
@@ -31,6 +33,7 @@ void Character::loadCharactersFromPath(String path, bool IsResourcePath)
 
 			if (character.number < 0)	continue;
 
+			character.identity = section.section;
 			character.name = ini[U"{}.name"_fmt(section.section)];
 			character.desc = ini[U"{}.desc"_fmt(section.section)].replaced(U"\\n", U"\n");
 			auto isResourceImgTxt = ini[U"{}.isResourceImage"_fmt(section.section)];

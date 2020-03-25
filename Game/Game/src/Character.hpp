@@ -16,6 +16,8 @@ private:
 
 public:
 
+	// キャラクター識別子
+	String identity;
 	// キャラクター番号
 	int32 number;
 	// 名前
