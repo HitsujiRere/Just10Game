@@ -62,7 +62,7 @@ Player& Player::operator=(const Player& another)
 	return *this;
 }
 
-void Player::update(PlayerKeySet keySet)
+void Player::update(std::shared_ptr<PlayerOperator> operaterPtr)
 {
 	const Size size = field.getSize();
 	const Size drawsize = field.getDrawsize();
@@ -87,7 +87,7 @@ void Player::update(PlayerKeySet keySet)
 		}
 
 		// セルをホールドする
-		if (keySet.KeysUp.down())
+		if (operaterPtr->isHold())
 		{
 			if (holdCell.getType() == CellType::Empty)
 			{
@@ -103,11 +103,11 @@ void Player::update(PlayerKeySet keySet)
 		}
 
 		// 落とすセルを移動する
-		if (keySet.KeysLeft.pressed() || keySet.KeysRight.pressed())
+		if (operaterPtr->isMoveL() || operaterPtr->isMoveR())
 		{
 			dropCellTimer += deltaTime;
 		}
-		if (keySet.KeysLeft.pressed() && dropCellFieldX > 0)
+		if (operaterPtr->isMoveL() && dropCellFieldX > 0)
 		{
 			if (dropCellTimer > dropCellCoolTime)
 			{
@@ -115,7 +115,7 @@ void Player::update(PlayerKeySet keySet)
 				dropCellTimer = 0.0;
 			}
 		}
-		if (keySet.KeysRight.pressed() && dropCellFieldX < drawsize.x - 1)
+		if (operaterPtr->isMoveR() && dropCellFieldX < drawsize.x - 1)
 		{
 			if (dropCellTimer > dropCellCoolTime)
 			{
@@ -123,13 +123,13 @@ void Player::update(PlayerKeySet keySet)
 				dropCellTimer = 0.0;
 			}
 		}
-		if (keySet.KeysLeft.up() || keySet.KeysRight.up())
+		if (operaterPtr->isMoveL() || operaterPtr->isMoveR())
 		{
 			dropCellTimer = dropCellCoolTime;
 		}
 
 		//セルを落下させる
-		if (canDrop && keySet.KeysDown.pressed())
+		if (canDrop && operaterPtr->isDrop())
 		{
 			field.pushTopCell(getDropCell(0), dropCellFieldX);
 

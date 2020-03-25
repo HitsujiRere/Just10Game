@@ -4,6 +4,7 @@
 # include "Common.hpp"
 # include "Battle.hpp"
 # include "Character.hpp"
+# include "PlayerOperatorManual.hpp"
 
 // バトル前設定
 class BattleSet : public MyApp::Scene

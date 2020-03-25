@@ -16,7 +16,8 @@ BattleSet::BattleSet(const InitData& init)
 		const KeyGroup moveR = (KeyD | KeyRight);
 		const KeyGroup drop = (KeyS | KeyDown);
 		const KeyGroup hold = (KeyW | KeyUp);
-		playerDatas.at(0).keySet = PlayerKeySet(moveL, moveR, drop, hold);
+
+		playerDatas.at(0).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorManual(moveL, moveR, drop, hold));
 	}
 
 	if (getData().playerCnt == PlayerCount::By2)
@@ -26,14 +27,14 @@ BattleSet::BattleSet(const InitData& init)
 			const KeyGroup moveR = (KeyD | Key());
 			const KeyGroup drop = (KeyS | Key());
 			const KeyGroup hold = (KeyW | Key());
-			playerDatas.at(0).keySet = PlayerKeySet(moveL, moveR, drop, hold);
+			playerDatas.at(0).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorManual(moveL, moveR, drop, hold));
 		}
 		{
 			const KeyGroup moveL = (KeyLeft | Key());
 			const KeyGroup moveR = (KeyRight | Key());
 			const KeyGroup drop = (KeyDown | Key());
 			const KeyGroup hold = (KeyUp | Key());
-			playerDatas.at(1).keySet = PlayerKeySet(moveL, moveR, drop, hold);
+			playerDatas.at(1).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorManual(moveL, moveR, drop, hold));
 		}
 	}
 
@@ -91,21 +92,21 @@ void BattleSet::update()
 	for (auto playerNum : step(playerCnt))
 	{
 		auto& playerData = Battle::playerDatas.at(playerNum);
-		const auto& keySets = playerData.keySet;
+		const auto& operater = *playerData.operaterPtr;
 
-		if (keySets.KeysLeft.down() && charactersChoiseNum.at(playerNum) > 0)
+		if (operater.isMoveL() && charactersChoiseNum.at(playerNum) > 0)
 		{
 			charactersChoiseNum.at(playerNum)--;
 			playerData.characterNum = charactersChoiseNum.at(playerNum);
 		}
 
-		if (keySets.KeysRight.down() && charactersChoiseNum.at(playerNum) < characters.size() - 1)
+		if (operater.isMoveR() && charactersChoiseNum.at(playerNum) < characters.size() - 1)
 		{
 			charactersChoiseNum.at(playerNum)++;
 			playerData.characterNum = charactersChoiseNum.at(playerNum);
 		}
 
-		if (keySets.KeysDown.down())
+		if (operater.isDecide())
 		{
 			charactersChoiseEnd.at(playerNum) ^= true;
 		}

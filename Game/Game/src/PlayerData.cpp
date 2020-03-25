@@ -3,7 +3,7 @@
 PlayerData::PlayerData()
 {
 	player = Player();
-	keySet = PlayerKeySet();
+	operaterPtr.reset();
 	fieldPos = Point();
 	drawMode = FieldDrawMode::Left;
 	characterNum = 0;
@@ -11,7 +11,7 @@ PlayerData::PlayerData()
 
 PlayerData::PlayerData(const PlayerData& another)
 	: player(another.player)
-	, keySet(another.keySet)
+	, operaterPtr(another.operaterPtr)
 	, fieldPos(another.fieldPos)
 	, drawMode(another.drawMode)
 	, characterNum(another.characterNum)
@@ -21,7 +21,7 @@ PlayerData::PlayerData(const PlayerData& another)
 PlayerData& PlayerData::operator=(const PlayerData& another)
 {
 	this->player = another.player;
-	this->keySet = another.keySet;
+	this->operaterPtr = another.operaterPtr;
 	this->fieldPos = another.fieldPos;
 	this->drawMode = another.drawMode;
 	this->characterNum = another.characterNum;

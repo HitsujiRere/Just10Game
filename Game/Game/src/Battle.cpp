@@ -73,7 +73,7 @@ void Battle::update()
 		auto& character = characters.at(playerData.characterNum);
 		auto& anotherplayerData = playerDatas.at((i + 1) % 2);
 
-		player.update(playerData.keySet);
+		player.update(playerData.operaterPtr);
 
 		if (getData().playerCnt == PlayerCount::By2 && player.isSendObstruct)
 		{

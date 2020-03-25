@@ -240,7 +240,8 @@
     <ClCompile Include="src\HowTo.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\PlayerData.cpp" />
-    <ClCompile Include="src\PlayerKeySet.cpp" />
+    <ClCompile Include="src\PlayerOperatorManual.cpp" />
+    <ClCompile Include="src\PlayerOperator.cpp" />
     <ClCompile Include="src\Title.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -253,7 +254,8 @@
     <ClInclude Include="src\Battle.hpp" />
     <ClInclude Include="src\HowTo.hpp" />
     <ClInclude Include="src\PlayerData.hpp" />
-    <ClInclude Include="src\PlayerKeySet.hpp" />
+    <ClInclude Include="src\PlayerOperatorManual.hpp" />
+    <ClInclude Include="src\PlayerOperator.hpp" />
     <ClInclude Include="src\Title.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

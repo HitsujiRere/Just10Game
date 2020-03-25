@@ -3,7 +3,7 @@
 
 # include <Siv3D.hpp>
 # include "Player.hpp"
-# include "PlayerKeySet.hpp"
+# include "PlayerOperator.hpp"
 # include "Character.hpp"
 
 // プレイヤーのデータ
@@ -11,7 +11,7 @@ class PlayerData
 {
 public:
 	Player player;
-	PlayerKeySet keySet;
+	std::shared_ptr<PlayerOperator> operaterPtr;
 	Point fieldPos;
 	FieldDrawMode drawMode;
 	int32 characterNum;

@@ -4,7 +4,7 @@
 # include "Common.hpp"
 # include "Cell.hpp"
 # include "CellField.hpp"
-# include "PlayerKeySet.hpp"
+# include "PlayerOperator.hpp"
 
 // ‡‚Ìó‘Ô
 enum class BattleState
@@ -144,7 +144,7 @@ public:
 	}
 
 	// XV‚·‚é
-	void update(PlayerKeySet keySet);
+	void update(std::shared_ptr<PlayerOperator> operaterPtr);
 
 	void draw(Point fieldPos, Size cellDrawSize, FieldDrawMode drawMode) const;
 
