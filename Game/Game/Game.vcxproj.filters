@@ -401,6 +401,9 @@
     <ClCompile Include="src\PlayerOperatorManual.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\PlayerOperatorAuto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Title.hpp">
@@ -437,6 +440,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\PlayerOperatorManual.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PlayerOperatorAuto.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

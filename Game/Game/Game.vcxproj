@@ -240,6 +240,7 @@
     <ClCompile Include="src\HowTo.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\PlayerData.cpp" />
+    <ClCompile Include="src\PlayerOperatorAuto.cpp" />
     <ClCompile Include="src\PlayerOperatorManual.cpp" />
     <ClCompile Include="src\PlayerOperator.cpp" />
     <ClCompile Include="src\Title.cpp" />
@@ -254,6 +255,7 @@
     <ClInclude Include="src\Battle.hpp" />
     <ClInclude Include="src\HowTo.hpp" />
     <ClInclude Include="src\PlayerData.hpp" />
+    <ClInclude Include="src\PlayerOperatorAuto.hpp" />
     <ClInclude Include="src\PlayerOperatorManual.hpp" />
     <ClInclude Include="src\PlayerOperator.hpp" />
     <ClInclude Include="src\Title.hpp" />
