@@ -5,7 +5,7 @@
 
 
 // バージョン
-const Vector3D<int32> Version(0, 5, 2);
+const Vector3D<int32> Version(1, 0, 0);
 
 // 戻るキー
 const KeyGroup KeysBack(KeyEscape, KeyX, KeyDelete, KeyBackspace);
@@ -43,13 +43,19 @@ struct GameData
 	int32 highScore = 0;
 
 	// プレイ回数
-	int32 play_time = 0;
+	int32 playTime = 0;
 
 	// デバッグのプリントの可否
-	bool debugPrint = false;
+	bool debug = false;
 
 	// プレイヤーの人数
 	PlayerCount playerCnt;
+
+	// キャラクターのパス
+	Array<String> charaPath;
+
+	// キャラクターのリソースパス
+	Array<String> charaResourcePath;
 
 	// ゲームデータを指定ファイルからロードする
 	// 返り値は、最新バージョンのGameDataがあったかどうか
@@ -57,6 +63,9 @@ struct GameData
 
 	// ゲームデータを指定ファイルにセーブする
 	void saveGameData(String path) const;
+
+	// ゲーム設定を指定ファイルからロードする
+	void loadSetting(String path);
 };
 
 // シーン管理クラス

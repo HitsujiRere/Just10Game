@@ -30,11 +30,15 @@ BattleSet::BattleSet(const InitData& init)
 			playerDatas.at(0).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorManual(moveL, moveR, drop, hold));
 		}
 		{
+			/**/
 			const KeyGroup moveL = (KeyLeft | Key());
 			const KeyGroup moveR = (KeyRight | Key());
 			const KeyGroup drop = (KeyDown | Key());
 			const KeyGroup hold = (KeyUp | Key());
 			playerDatas.at(1).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorManual(moveL, moveR, drop, hold));
+			/*/
+			playerDatas.at(1).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorAuto());
+			/**/
 		}
 	}
 
@@ -196,13 +200,13 @@ void BattleSet::draw() const
 		FontAsset(U"Desc")(character.desc).draw(descRect, ColorF(0.2));
 
 		String dropCells1LoopTxt = U"1ループのセル : ";
-		const int32 sum = character.dropCells1LoopNum.sum();
 		for (auto i : step(character.dropCells1LoopNum.size()))
 		{
 			const auto num = character.dropCells1LoopNum.at(i);
-			if (num > 0)
+			const auto txt = Format(i);
+			for (auto j : step(num))
 			{
-				dropCells1LoopTxt += U"{}={:.0f}%  "_fmt(i, 100.0 * num / sum);
+				dropCells1LoopTxt += U"{} "_fmt(txt);
 			}
 		}
 		FontAsset(U"Desc")(dropCells1LoopTxt).draw(imgPos.movedBy(0, imgSize.y + 24), ColorF(0.2));

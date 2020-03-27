@@ -10,6 +10,7 @@
 class PlayerData
 {
 public:
+
 	Player player;
 	std::shared_ptr<PlayerOperator> operaterPtr;
 	Point fieldPos;

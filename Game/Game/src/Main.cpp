@@ -1,6 +1,6 @@
 ﻿
 //
-// Just10Game  ver 0.5.2
+// Just10Game  ver 1.0.0
 // made by HitsujiRere
 //
 
@@ -57,7 +57,10 @@ void Main()
 	constexpr int32 load_version = 1;
 	// GameDataをロード
 	std::shared_ptr<GameData> gamedataPtr(new GameData());
-	bool isSaveGameData = gamedataPtr->loadGameData(U"GameData.bin");
+	gamedataPtr->loadSetting(U"data/setting.ini");
+	bool isSaveGameData = gamedataPtr->loadGameData(U"data/GameData.bin");
+
+	Character::loadCharacters(gamedataPtr->charaPath, gamedataPtr->charaResourcePath);
 
 	// シーンと遷移時の色を設定
 	MyApp manager(gamedataPtr);
@@ -80,7 +83,7 @@ void Main()
 
 			if (KeyF3.down())
 			{
-				gamedataPtr->debugPrint ^= true;
+				gamedataPtr->debug ^= true;
 			}
 
 			// 画面サイズ変更
@@ -103,7 +106,7 @@ void Main()
 				break;
 			}
 
-			if (gamedataPtr->debugPrint)
+			if (gamedataPtr->debug)
 			{
 				for (auto i : step(1, 7))
 				{

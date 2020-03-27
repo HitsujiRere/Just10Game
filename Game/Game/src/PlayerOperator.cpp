@@ -1,6 +1,10 @@
 
 # include "PlayerOperator.hpp"
 
+void PlayerOperator::update()
+{
+}
+
 bool PlayerOperator::isMoveL() const
 {
 	return false;

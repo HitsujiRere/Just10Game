@@ -30,7 +30,6 @@ Player& Player::operator=(const Player& another)
 
 	this->fieldColor = another.fieldColor;
 
-	this->dropCellTimer = another.dropCellTimer;
 	this->dropCellFieldX = another.dropCellFieldX;
 
 	this->holdCell = another.holdCell;
@@ -103,29 +102,13 @@ void Player::update(std::shared_ptr<PlayerOperator> operaterPtr)
 		}
 
 		// —Ž‚Æ‚·ƒZƒ‹‚ðˆÚ“®‚·‚é
-		if (operaterPtr->isMoveL() || operaterPtr->isMoveR())
-		{
-			dropCellTimer += deltaTime;
-		}
 		if (operaterPtr->isMoveL() && dropCellFieldX > 0)
 		{
-			if (dropCellTimer > dropCellCoolTime)
-			{
-				dropCellFieldX--;
-				dropCellTimer = 0.0;
-			}
+			dropCellFieldX--;
 		}
 		if (operaterPtr->isMoveR() && dropCellFieldX < drawsize.x - 1)
 		{
-			if (dropCellTimer > dropCellCoolTime)
-			{
-				dropCellFieldX++;
-				dropCellTimer = 0.0;
-			}
-		}
-		if (operaterPtr->isMoveL() || operaterPtr->isMoveR())
-		{
-			dropCellTimer = dropCellCoolTime;
+			dropCellFieldX++;
 		}
 
 		//ƒZƒ‹‚ð—Ž‰º‚³‚¹‚é

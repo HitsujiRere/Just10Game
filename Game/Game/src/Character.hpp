@@ -38,14 +38,9 @@ public:
 	// キャラクターたちを返す
 	inline static const Array<Character>& getCharacters()
 	{
-		if (characters.isEmpty())
-		{
-			loadCharacters();
-		}
-
 		return characters;
 	}
 
 	// charactersをロードする
-	static void loadCharacters();
+	static void loadCharacters(Array<String> charaPath, Array<String> charaResourcePath);
 };

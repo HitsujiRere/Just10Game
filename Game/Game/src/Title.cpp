@@ -123,5 +123,5 @@ void Title::draw() const
 	FontAsset(U"Menu")(U"おわる").drawAt(exitButton.center(), ColorF(0.25));
 
 	FontAsset(U"Score")(U"High Score : {}"_fmt(getData().highScore)).draw(Arg::leftCenter(Scene::Center().movedBy(170, 0)), ColorF(0.25));
-	FontAsset(U"Score")(U"Play Time : {}"_fmt(getData().play_time)).draw(Arg::leftCenter(Scene::Center().movedBy(170, 100)), ColorF(0.25));
+	FontAsset(U"Score")(U"Play Time : {}"_fmt(getData().playTime)).draw(Arg::leftCenter(Scene::Center().movedBy(170, 100)), ColorF(0.25));
 }

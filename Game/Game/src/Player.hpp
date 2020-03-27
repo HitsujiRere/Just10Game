@@ -76,10 +76,6 @@ public:
 	// フィールド（背景）の色
 	Color fieldColor = ColorF(0.8);
 
-	// 落とすセルの移動残り時間
-	double dropCellTimer = 0.1;
-	// 落とすセルの移動時間
-	const double dropCellCoolTime = 0.1;
 	// 落とすフィールドのx
 	int32 dropCellFieldX = 0;
 

@@ -2,39 +2,59 @@
 # include "PlayerOperatorAuto.hpp"
 
 PlayerOperatorAuto::PlayerOperatorAuto(double _moveCoolTime)
-	: moveCoolTime(_moveCoolTime)
+	: playerPtr()
+	, moveCoolTime(_moveCoolTime)
 {
 }
 
 PlayerOperatorAuto& PlayerOperatorAuto::operator=(const PlayerOperatorAuto& another)
 {
+	*this->playerPtr = *another.playerPtr;
+	this->isStartBattle = another.isStartBattle;
+
+	this->destX = another.destX;
+
+	this->moveTimer = another.moveTimer;
+	this->moveCoolTime = another.moveCoolTime;
+
 	return *this;
 }
 
-/*
-void PlayerOperatorAuto::update(const Player player)
+void PlayerOperatorAuto::update()
 {
-}
+	//Print << U"PlayerOperatorAuto::update() begin";
 
-/**
-void PlayerOperatorAuto::update(const Player& player)
-{
-	const auto deltaTime = Scene::DeltaTime();
+	Stopwatch stopwach;
 
-	updateDestX(player.field);
+	stopwach.start();
 
-	playerX = player.dropCellFieldX;
-
-	if (moveTimer > moveCoolTime)
+	if (isStartBattle)
 	{
-		moveTimer = 0.0;
+		const auto& deltaTime = Scene::DeltaTime();
+
+		updateDestX(playerPtr->field);
+
+		//Print << U"destX = {}"_fmt(destX);
+
+		if (moveTimer > moveCoolTime)
+		{
+			moveTimer = 0.0;
+		}
+		else
+		{
+			moveTimer += deltaTime;
+		}
+
+		//Print << U"moveTimer = {}"_fmt(moveTimer);
 	}
-	else
-	{
-		moveTimer += deltaTime;
-	}
+
+	stopwach.pause();
+
+	if (stopwach.ms() > 0)
+		Print << U"time = {}"_fmt(stopwach.ms());
+
+	//Print << U"PlayerOperatorAuto::update() end";
 }
-/**/
 
 void PlayerOperatorAuto::updateDestX(const CellField& field)
 {
@@ -47,6 +67,7 @@ void PlayerOperatorAuto::updateDestX(const CellField& field)
 			if (field.getField().at(y, x).getType() != CellType::Empty)
 			{
 				topY = y;
+				break;
 			}
 		}
 
@@ -57,17 +78,21 @@ void PlayerOperatorAuto::updateDestX(const CellField& field)
 		}
 	}
 
-	xOfMinTopY = destX;
+	destX = xOfMinTopY;
 }
 
 bool PlayerOperatorAuto::isMoveL() const
 {
-	return (moveTimer > moveCoolTime) && (destX < playerX);
+	if (isStartBattle && (moveTimer > moveCoolTime) && (destX < playerPtr->dropCellFieldX))
+		Print << U"move left!";
+	return isStartBattle && (moveTimer > moveCoolTime) && (destX < playerPtr->dropCellFieldX);
 }
 
 bool PlayerOperatorAuto::isMoveR() const
 {
-	return (moveTimer > moveCoolTime) && (destX > playerX);
+	if (isStartBattle && (moveTimer > moveCoolTime) && (destX > playerPtr->dropCellFieldX))
+		Print << U"move right!";
+	return isStartBattle && (moveTimer > moveCoolTime) && (destX > playerPtr->dropCellFieldX);
 }
 
 bool PlayerOperatorAuto::isHold() const
@@ -77,10 +102,18 @@ bool PlayerOperatorAuto::isHold() const
 
 bool PlayerOperatorAuto::isDrop() const
 {
-	return (moveTimer > moveCoolTime) && (destX == playerX);
+	if (isStartBattle && (moveTimer > moveCoolTime) && (destX == playerPtr->dropCellFieldX))
+		Print << U"drop!";
+	return isStartBattle && (moveTimer > moveCoolTime) && (destX == playerPtr->dropCellFieldX);
 }
 
 bool PlayerOperatorAuto::isDecide() const
 {
 	return false;
+}
+
+void PlayerOperatorAuto::setPlayer(Player& _player)
+{
+	playerPtr = std::unique_ptr<Player>(&_player);
+	isStartBattle = true;
 }

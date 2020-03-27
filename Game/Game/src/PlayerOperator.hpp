@@ -7,6 +7,9 @@
 class PlayerOperator
 {
 public:
+
+	virtual void update();
+
 	virtual bool isMoveL() const;
 
 	virtual bool isMoveR() const;

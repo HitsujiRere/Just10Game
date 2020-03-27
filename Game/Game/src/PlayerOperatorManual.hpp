@@ -8,12 +8,19 @@
 class PlayerOperatorManual : public PlayerOperator
 {
 private:
+
 	KeyGroup KeysLeft = KeyGroup();
 	KeyGroup KeysRight = KeyGroup();
 	KeyGroup KeysDown = KeyGroup();
 	KeyGroup KeysUp = KeyGroup();
 
+	// —Ž‚Æ‚·ƒZƒ‹‚ÌˆÚ“®Žc‚èŽžŠÔ
+	double dropCellTimer = 0.1;
+	// —Ž‚Æ‚·ƒZƒ‹‚ÌˆÚ“®ŽžŠÔ
+	const double dropCellCoolTime = 0.1;
+
 public:
+
 	PlayerOperatorManual();
 
 	PlayerOperatorManual(KeyGroup _KeysLeft, KeyGroup _KeysRight, KeyGroup _KeysDown, KeyGroup _KeysUp);

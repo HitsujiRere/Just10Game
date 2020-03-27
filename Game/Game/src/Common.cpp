@@ -14,17 +14,12 @@ bool GameData::loadGameData(String path)
 
 	int32 readedLoadDataVer;
 	reader.read(readedLoadDataVer);
+
 	switch (readedLoadDataVer)
 	{
-	case 2:
-		reader.read(highScore);
-		reader.read(play_time);
-		reader.read(debugPrint);
-		break;
-
 	case 1:
 		reader.read(highScore);
-		reader.read(play_time);
+		reader.read(playTime);
 		break;
 
 	default:
@@ -44,10 +39,23 @@ void GameData::saveGameData(String path) const
 		return;
 	}
 
-	const int32 loadGameDataVer = 2;
+	const int32 loadGameDataVer = 1;
 	writter.write(loadGameDataVer);
 
 	writter.write(highScore);
-	writter.write(play_time);
-	writter.write(debugPrint);
+	writter.write(playTime);
+}
+
+void GameData::loadSetting(String path)
+{
+	const INIData ini(path);
+
+	if (!ini)
+	{
+		return;
+	}
+
+	this->debug = Parse<bool>(ini[U"Debug.isDebug"]);
+	this->charaPath = ini[U"Chara.path"].split(',');
+	this->charaResourcePath = ini[U"Chara.resource"].split(',');
 }

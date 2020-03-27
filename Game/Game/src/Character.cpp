@@ -8,7 +8,7 @@ Character::Character()
 	, name(U"デフォルトくん")
 	, desc(U"ディフォルトです。")
 	, texture(Texture())
-	, dropCells1LoopNum({0, 1, 1, 1, 1, 1})
+	, dropCells1LoopNum({ 0, 1, 1, 1, 1, 1 })
 	, atkRate(1.0)
 	, defRate(1.0)
 {
@@ -57,10 +57,16 @@ void Character::loadCharactersFromPath(String path, bool IsResourcePath)
 	}
 }
 
-void Character::loadCharacters()
+void Character::loadCharacters(Array<String> charaPath, Array<String> charaResourcePath)
 {
-	loadCharactersFromPath(U"Text/charDataResource.ini", true);
-	loadCharactersFromPath(U"data/charData.ini");
+	for (auto path : charaPath)
+	{
+		loadCharactersFromPath(path);
+	}
+	for (auto path : charaResourcePath)
+	{
+		loadCharactersFromPath(path, true);
+	}
 
 	// 空の場合は、ディフォルトくんを追加する
 	if (characters.isEmpty())

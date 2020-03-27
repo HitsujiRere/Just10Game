@@ -8,7 +8,7 @@ Battle::Battle(const InitData& init)
 {
 	const auto& characters = Character::getCharacters();
 
-	getData().play_time++;
+	getData().playTime++;
 
 	if (getData().playerCnt == PlayerCount::By1)
 	{
@@ -32,6 +32,10 @@ Battle::Battle(const InitData& init)
 			playerDatas.at(1).player = player;
 			playerDatas.at(1).fieldPos = Point(cellSize * Size(4, 3)).movedBy(Scene::Center().x, 0);
 			playerDatas.at(1).drawMode = FieldDrawMode::Right;
+			/**
+			auto op = dynamic_cast<PlayerOperatorAuto*>(&*playerDatas.at(1).operaterPtr);
+			op->setPlayer(player);
+			/**/
 		}
 	}
 }
@@ -72,6 +76,8 @@ void Battle::update()
 		auto& characters = Character::getCharacters();
 		auto& character = characters.at(playerData.characterNum);
 		auto& anotherplayerData = playerDatas.at((i + 1) % 2);
+
+		playerData.operaterPtr->update();
 
 		player.update(playerData.operaterPtr);
 

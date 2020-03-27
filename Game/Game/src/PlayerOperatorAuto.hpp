@@ -10,8 +10,10 @@ class PlayerOperatorAuto : public PlayerOperator
 {
 private:
 
-	// 現在のX
-	int32 playerX = 0;
+	// プレイヤー
+	std::unique_ptr<Player> playerPtr;
+	// バトル開始かどうか
+	bool isStartBattle = false;
 
 	// 行き先のX
 	int32 destX = 0;
@@ -27,9 +29,7 @@ public:
 
 	PlayerOperatorAuto& operator=(const PlayerOperatorAuto& another);
 
-	//void update(const Player player) override;
-
-	//void update(const Player& player) override;
+	void update() override;
 
 	void updateDestX(const CellField& field);
 
@@ -42,4 +42,6 @@ public:
 	bool isDrop() const override;
 
 	bool isDecide() const override;
+
+	void setPlayer(Player& _player);
 };
