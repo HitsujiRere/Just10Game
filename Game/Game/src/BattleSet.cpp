@@ -23,6 +23,7 @@ BattleSet::BattleSet(const InitData& init)
 
 	if (getData().playerCnt == PlayerCount::By2)
 	{
+		if (getData().playersType.at(0) == PlayerType::Manual)
 		{
 			const KeyGroup moveL = (KeyA | Key());
 			const KeyGroup moveR = (KeyD | Key());
@@ -30,16 +31,22 @@ BattleSet::BattleSet(const InitData& init)
 			const KeyGroup hold = (KeyW | Key());
 			playerDatas.at(0).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorManual(moveL, moveR, drop, hold));
 		}
+		else
 		{
-			/**
+			playerDatas.at(0).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorAuto());
+		}
+
+		if (getData().playersType.at(1) == PlayerType::Manual)
+		{
 			const KeyGroup moveL = (KeyLeft | Key());
 			const KeyGroup moveR = (KeyRight | Key());
 			const KeyGroup drop = (KeyDown | Key());
 			const KeyGroup hold = (KeyUp | Key());
 			playerDatas.at(1).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorManual(moveL, moveR, drop, hold));
-			/*/
+		}
+		else
+		{
 			playerDatas.at(1).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorAuto());
-			/**/
 		}
 	}
 
@@ -50,6 +57,11 @@ BattleSet::BattleSet(const InitData& init)
 	}
 
 	charactersChoiseEnd.resize(playerCnt);
+	for (auto i : step(playerCnt))
+	{
+		if (getData().playersType.at(i) == PlayerType::Auto)
+			charactersChoiseEnd.at(i) = true;
+	}
 
 	{
 		TextReader reader(Resource(U"Text/HowTo_Play.txt"));

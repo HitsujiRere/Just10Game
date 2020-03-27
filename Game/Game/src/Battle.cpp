@@ -25,6 +25,12 @@ Battle::Battle(const InitData& init)
 			playerDatas.at(0).playerPtr = std::shared_ptr<Player>(playerPtr);
 			playerDatas.at(0).fieldPos = Point(cellSize * Size(4, 3));
 			playerDatas.at(0).drawMode = FieldDrawMode::Left;
+
+			if (getData().playersType.at(0) == PlayerType::Auto)
+			{
+				auto op = std::dynamic_pointer_cast<PlayerOperatorAuto>(playerDatas.at(0).operaterPtr);
+				op->setPlayer(playerPtr);
+			}
 		}
 		{
 			auto playerPtr = std::make_shared<Player>(characters.at(playerDatas.at(1).characterNum).dropCells1LoopNum);
@@ -32,10 +38,12 @@ Battle::Battle(const InitData& init)
 			playerDatas.at(1).playerPtr = std::shared_ptr<Player>(playerPtr);
 			playerDatas.at(1).fieldPos = Point(cellSize * Size(4, 3)).movedBy(Scene::Center().x, 0);
 			playerDatas.at(1).drawMode = FieldDrawMode::Right;
-			/**/
-			auto op = std::dynamic_pointer_cast<PlayerOperatorAuto>(playerDatas.at(1).operaterPtr);
-			op->setPlayer(playerPtr);
-			/**/
+
+			if (getData().playersType.at(1) == PlayerType::Auto)
+			{
+				auto op = std::dynamic_pointer_cast<PlayerOperatorAuto>(playerDatas.at(1).operaterPtr);
+				op->setPlayer(playerPtr);
+			}
 		}
 	}
 }

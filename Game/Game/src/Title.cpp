@@ -11,11 +11,12 @@ Title::Title(const InitData& init)
 void Title::update()
 {
 	placticeTransition.update(placticeButton.mouseOver());
-	battleTransition.update(battleButton.mouseOver());
+	battle2PTransition.update(battle2PButton.mouseOver());
+	battleCPUTransition.update(battleCPUButton.mouseOver());
 	howtoTransition.update(howtoButton.mouseOver());
 	exitTransition.update(exitButton.mouseOver());
 
-	if (placticeButton.mouseOver() || battleButton.mouseOver()
+	if (placticeButton.mouseOver() || battle2PButton.mouseOver() || battleCPUButton.mouseOver()
 		|| howtoButton.mouseOver() || exitButton.mouseOver())
 	{
 		Cursor::RequestStyle(CursorStyle::Hand);
@@ -27,15 +28,32 @@ void Title::update()
 		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
 
 		getData().playerCnt = PlayerCount::By1;
+		getData().playersType.resize(1);
+		getData().playersType.at(0) = PlayerType::Manual;
 		changeScene(State::BattleSet);
 	}
 
-	if (battleButton.leftClicked())
+	if (battle2PButton.leftClicked())
 	{
 		// ESCキーで終了しない
 		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
 
 		getData().playerCnt = PlayerCount::By2;
+		getData().playersType.resize(2);
+		getData().playersType.at(0) = PlayerType::Manual;
+		getData().playersType.at(1) = PlayerType::Manual;
+		changeScene(State::BattleSet);
+	}
+
+	if (battleCPUButton.leftClicked())
+	{
+		// ESCキーで終了しない
+		System::SetTerminationTriggers(System::GetTerminationTriggers() & (~UserAction::EscapeKeyDown));
+
+		getData().playerCnt = PlayerCount::By2;
+		getData().playersType.resize(2);
+		getData().playersType.at(0) = PlayerType::Manual;
+		getData().playersType.at(1) = PlayerType::Auto;
 		changeScene(State::BattleSet);
 	}
 
@@ -101,10 +119,15 @@ void Title::draw() const
 		.draw(ColorF(1.0))
 		.draw(ColorF(0.8, placticeTransition.value()))
 		.drawFrame(2, ColorF(0.2));
-	battleButton
+	battle2PButton
 		.drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4))
 		.draw(ColorF(1.0))
-		.draw(ColorF(0.8, battleTransition.value()))
+		.draw(ColorF(0.8, battle2PTransition.value()))
+		.drawFrame(2, ColorF(0.2));
+	battleCPUButton
+		.drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4))
+		.draw(ColorF(1.0))
+		.draw(ColorF(0.8, battleCPUTransition.value()))
 		.drawFrame(2, ColorF(0.2));
 	howtoButton
 		.drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4))
@@ -118,7 +141,8 @@ void Title::draw() const
 		.drawFrame(2, ColorF(0.2));
 
 	FontAsset(U"Menu")(U"1人で あそぶ").drawAt(placticeButton.center(), ColorF(0.25));
-	FontAsset(U"Menu")(U"2人で たたかう").drawAt(battleButton.center(), ColorF(0.25));
+	FontAsset(U"Menu")(U"2人で たたかう").drawAt(battle2PButton.center(), ColorF(0.25));
+	FontAsset(U"Menu")(U"CPUと たたかう").drawAt(battleCPUButton.center(), ColorF(0.25));
 	FontAsset(U"Menu")(U"あそびかた").drawAt(howtoButton.center(), ColorF(0.25));
 	FontAsset(U"Menu")(U"おわる").drawAt(exitButton.center(), ColorF(0.25));
 

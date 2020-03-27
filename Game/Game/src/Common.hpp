@@ -36,6 +36,16 @@ enum class PlayerCount
 	By2 = 2,
 };
 
+// プレイヤーの種類
+enum class PlayerType
+{
+	// プレイヤーが操作する
+	Manual,
+
+	// 自動で操作する
+	Auto,
+};
+
 // ゲームデータ
 struct GameData
 {
@@ -50,6 +60,9 @@ struct GameData
 
 	// プレイヤーの人数
 	PlayerCount playerCnt;
+
+	// 各プレイヤーの種類
+	Array<PlayerType> playersType;
 
 	// キャラクターのパス
 	Array<String> charaPath;

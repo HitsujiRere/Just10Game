@@ -28,11 +28,6 @@ void PlayerOperatorAuto::update()
 
 		updateDestX(playerPtr->field);
 
-		Print << U"destX = {}"_fmt(destX);
-
-		//Print << U"playerPtr->field";
-		//Print << playerPtr->field.getField();
-
 		if (moveTimer > moveCoolTime)
 		{
 			moveTimer = 0.0;
@@ -73,15 +68,11 @@ void PlayerOperatorAuto::updateDestX(const CellField& field)
 
 bool PlayerOperatorAuto::isMoveL() const
 {
-	if (isStartBattle && (moveTimer > moveCoolTime) && (destX < playerPtr->dropCellFieldX))
-		Print << U"move left!";
 	return isStartBattle && (moveTimer > moveCoolTime) && (destX < playerPtr->dropCellFieldX);
 }
 
 bool PlayerOperatorAuto::isMoveR() const
 {
-	if (isStartBattle && (moveTimer > moveCoolTime) && (destX > playerPtr->dropCellFieldX))
-		Print << U"move right!";
 	return isStartBattle && (moveTimer > moveCoolTime) && (destX > playerPtr->dropCellFieldX);
 }
 
@@ -92,8 +83,6 @@ bool PlayerOperatorAuto::isHold() const
 
 bool PlayerOperatorAuto::isDrop() const
 {
-	if (isStartBattle && (moveTimer > moveCoolTime) && (destX == playerPtr->dropCellFieldX))
-		Print << U"drop!";
 	return isStartBattle && (moveTimer > moveCoolTime) && (destX == playerPtr->dropCellFieldX);
 }
 
