@@ -75,7 +75,6 @@ void Battle::update()
 		auto& player = playerData.player;
 		auto& characters = Character::getCharacters();
 		auto& character = characters.at(playerData.characterNum);
-		auto& anotherplayerData = playerDatas.at((i + 1) % 2);
 
 		playerData.operaterPtr->update();
 
@@ -83,6 +82,7 @@ void Battle::update()
 
 		if (getData().playerCnt == PlayerCount::By2 && player.isSendObstruct)
 		{
+			auto& anotherplayerData = playerDatas.at((i + 1) % 2);
 			anotherplayerData.player.sentObstructs(player.sendingObstructCnt * character.atkRate / characters.at(anotherplayerData.characterNum).defRate);
 		}
 
@@ -94,6 +94,7 @@ void Battle::update()
 
 			if (getData().playerCnt == PlayerCount::By2)
 			{
+				auto& anotherplayerData = playerDatas.at((i + 1) % 2);
 				anotherplayerData.player.state = BattleState::win;
 			}
 
@@ -120,7 +121,7 @@ void Battle::draw() const
 		player.draw(playerData.fieldPos, cellSize, playerData.drawMode);
  
 		// ‘—‚éƒIƒWƒƒƒ}
-		if (player.sendingObstructCnt > 0)
+		if (getData().playerCnt == PlayerCount::By2 && player.sendingObstructCnt > 0)
 		{
 			const auto& anotherPlayerData = playerDatas.at((i + 1) % 2);
 			const double e = EaseInExpo(Min(player.sendingObstructTimer / player.sendingObstructCoolTime, 1.0));

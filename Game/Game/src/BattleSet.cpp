@@ -8,6 +8,7 @@ BattleSet::BattleSet(const InitData& init)
 	auto& playerDatas = Battle::playerDatas;
 	int32 playerCnt = static_cast<int32>(getData().playerCnt);
 
+	playerDatas.clear();
 	playerDatas.resize(playerCnt);
 
 	if (getData().playerCnt == PlayerCount::By1)
