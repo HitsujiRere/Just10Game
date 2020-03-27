@@ -11,7 +11,7 @@ class PlayerData
 {
 public:
 
-	Player player;
+	std::shared_ptr<Player> playerPtr;
 	std::shared_ptr<PlayerOperator> operaterPtr;
 	Point fieldPos;
 	FieldDrawMode drawMode;

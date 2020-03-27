@@ -11,7 +11,7 @@ class PlayerOperatorAuto : public PlayerOperator
 private:
 
 	// プレイヤー
-	std::unique_ptr<Player> playerPtr;
+	std::shared_ptr<Player> playerPtr;
 	// バトル開始かどうか
 	bool isStartBattle = false;
 
@@ -25,7 +25,7 @@ private:
 
 public:
 
-	PlayerOperatorAuto(double _moveCoolTime = 3.0);
+	PlayerOperatorAuto(double _moveCoolTime = 1.0);
 
 	PlayerOperatorAuto& operator=(const PlayerOperatorAuto& another);
 
@@ -43,5 +43,5 @@ public:
 
 	bool isDecide() const override;
 
-	void setPlayer(Player& _player);
+	void setPlayer(std::shared_ptr<Player> _playerPtr);
 };

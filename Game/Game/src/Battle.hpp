@@ -6,7 +6,7 @@
 # include "CellField.hpp"
 # include "Player.hpp"
 # include "PlayerOperatorManual.hpp"
-//# include "PlayerOperatorAuto.hpp"
+# include "PlayerOperatorAuto.hpp"
 # include "PlayerData.hpp"
 
 // ゲームシーン

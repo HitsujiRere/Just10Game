@@ -31,7 +31,7 @@ BattleSet::BattleSet(const InitData& init)
 			playerDatas.at(0).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorManual(moveL, moveR, drop, hold));
 		}
 		{
-			/**/
+			/**
 			const KeyGroup moveL = (KeyLeft | Key());
 			const KeyGroup moveR = (KeyRight | Key());
 			const KeyGroup drop = (KeyDown | Key());

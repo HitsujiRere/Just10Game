@@ -22,19 +22,16 @@ PlayerOperatorAuto& PlayerOperatorAuto::operator=(const PlayerOperatorAuto& anot
 
 void PlayerOperatorAuto::update()
 {
-	//Print << U"PlayerOperatorAuto::update() begin";
-
-	Stopwatch stopwach;
-
-	stopwach.start();
-
 	if (isStartBattle)
 	{
 		const auto& deltaTime = Scene::DeltaTime();
 
 		updateDestX(playerPtr->field);
 
-		//Print << U"destX = {}"_fmt(destX);
+		Print << U"destX = {}"_fmt(destX);
+
+		//Print << U"playerPtr->field";
+		//Print << playerPtr->field.getField();
 
 		if (moveTimer > moveCoolTime)
 		{
@@ -44,25 +41,16 @@ void PlayerOperatorAuto::update()
 		{
 			moveTimer += deltaTime;
 		}
-
-		//Print << U"moveTimer = {}"_fmt(moveTimer);
 	}
-
-	stopwach.pause();
-
-	if (stopwach.ms() > 0)
-		Print << U"time = {}"_fmt(stopwach.ms());
-
-	//Print << U"PlayerOperatorAuto::update() end";
 }
 
 void PlayerOperatorAuto::updateDestX(const CellField& field)
 {
-	int32 minTopY = 0, xOfMinTopY = 0;
-	for (auto x : step(field.getSize().x))
+	int32 maxTopY = 0, xOfMaxTopY = 0;
+	for (auto x : step(field.getDrawsize().x))
 	{
-		int32 topY = field.getSize().y;
-		for (auto y : step(field.getSize().y))
+		int32 topY = field.getDrawsize().y;
+		for (auto y : step(field.getDrawsize().y))
 		{
 			if (field.getField().at(y, x).getType() != CellType::Empty)
 			{
@@ -71,14 +59,16 @@ void PlayerOperatorAuto::updateDestX(const CellField& field)
 			}
 		}
 
-		if (minTopY > topY)
+		//Print << U"x = {}, topY = {}"_fmt(x, topY);
+
+		if (maxTopY < topY)
 		{
-			minTopY = topY;
-			xOfMinTopY = x;
+			maxTopY = topY;
+			xOfMaxTopY = x;
 		}
 	}
 
-	destX = xOfMinTopY;
+	destX = xOfMaxTopY;
 }
 
 bool PlayerOperatorAuto::isMoveL() const
@@ -112,8 +102,8 @@ bool PlayerOperatorAuto::isDecide() const
 	return false;
 }
 
-void PlayerOperatorAuto::setPlayer(Player& _player)
+void PlayerOperatorAuto::setPlayer(std::shared_ptr<Player> _playerPtr)
 {
-	playerPtr = std::unique_ptr<Player>(&_player);
+	playerPtr = _playerPtr;
 	isStartBattle = true;
 }

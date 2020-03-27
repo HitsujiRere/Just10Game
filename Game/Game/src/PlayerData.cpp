@@ -3,7 +3,7 @@
 
 PlayerData::PlayerData()
 {
-	player = Player();
+	playerPtr.reset();
 	operaterPtr.reset();
 	fieldPos = Point();
 	drawMode = FieldDrawMode::Left;
@@ -11,7 +11,7 @@ PlayerData::PlayerData()
 }
 
 PlayerData::PlayerData(const PlayerData& another)
-	: player(another.player)
+	: playerPtr(another.playerPtr)
 	, operaterPtr(another.operaterPtr)
 	, fieldPos(another.fieldPos)
 	, drawMode(another.drawMode)
@@ -21,7 +21,7 @@ PlayerData::PlayerData(const PlayerData& another)
 
 PlayerData& PlayerData::operator=(const PlayerData& another)
 {
-	this->player = another.player;
+	this->playerPtr = another.playerPtr;
 	this->operaterPtr = another.operaterPtr;
 	this->fieldPos = another.fieldPos;
 	this->drawMode = another.drawMode;
