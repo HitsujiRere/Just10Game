@@ -33,7 +33,11 @@ BattleSet::BattleSet(const InitData& init)
 		}
 		else
 		{
-			playerDatas.at(0).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorAuto());
+			const KeyGroup moveL = (KeyA | Key());
+			const KeyGroup moveR = (KeyD | Key());
+			const KeyGroup drop = (KeyS | Key());
+			const KeyGroup hold = (KeyW | Key());
+			playerDatas.at(0).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorAuto(moveL, moveR, drop, hold));
 		}
 
 		if (getData().playersType.at(1) == PlayerType::Manual)
@@ -46,7 +50,11 @@ BattleSet::BattleSet(const InitData& init)
 		}
 		else
 		{
-			playerDatas.at(1).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorAuto());
+			const KeyGroup moveL = (KeyLeft | Key());
+			const KeyGroup moveR = (KeyRight | Key());
+			const KeyGroup drop = (KeyDown | Key());
+			const KeyGroup hold = (KeyUp | Key());
+			playerDatas.at(1).operaterPtr = std::shared_ptr<PlayerOperator>(new PlayerOperatorAuto(moveL, moveR, drop, hold));
 		}
 	}
 
@@ -57,18 +65,20 @@ BattleSet::BattleSet(const InitData& init)
 	}
 
 	charactersChoiseEnd.resize(playerCnt);
+	/**/
 	for (auto i : step(playerCnt))
 	{
 		if (getData().playersType.at(i) == PlayerType::Auto)
 			charactersChoiseEnd.at(i) = true;
 	}
+	/**/
 
 	{
-		TextReader reader(Resource(U"Text/HowTo_Play.txt"));
+		TextReader reader(Resource(U"Text/BattleSet_HowTo_Manual.txt"));
 
 		if (reader)
 		{
-			playDescs.resize(1);
+			manualDescs.resize(1);
 
 			int32 i = 0;
 			String line;
@@ -78,11 +88,35 @@ BattleSet::BattleSet(const InitData& init)
 				if (line.isEmpty())
 				{
 					++i;
-					playDescs.push_back(U"");
+					manualDescs.push_back(U"");
 				}
 				else
 				{
-					playDescs.at(i) += line + U"\n";
+					manualDescs.at(i) += line + U"\n";
+				}
+			}
+		}
+	}
+	{
+		TextReader reader(Resource(U"Text/BattleSet_HowTo_Auto.txt"));
+
+		if (reader)
+		{
+			autoDescs.resize(1);
+
+			int32 i = 0;
+			String line;
+
+			while (reader.readLine(line))
+			{
+				if (line.isEmpty())
+				{
+					++i;
+					autoDescs.push_back(U"");
+				}
+				else
+				{
+					autoDescs.at(i) += line + U"\n";
 				}
 			}
 		}
@@ -172,7 +206,7 @@ void BattleSet::draw() const
 				const Vec2 choisePos(size.x / 2.0 - choiseSize.x / 2.0 + i * (choiseSize.x + 36) + pos.x, 128);
 
 				Rect(Arg::center(choisePos.asPoint()), choiseSize.asPoint())
-					.drawShadow(Vec2(9, 15), 10.0, 10.0, ColorF(0.0, 0.4))
+					.drawShadow(Vec2(9, 15), 10.0, 4.0, ColorF(0.0, 0.4))
 					.draw(ColorF(1.0))
 					.drawFrame(0.0, 4.0, ColorF(0.2));
 
@@ -232,10 +266,13 @@ void BattleSet::draw() const
 			TextureAsset(U"check-square").drawAt(pos + size / 2, ColorF(0.2));
 		}
 
-		if (playerCnt + playerNum - 1 < playDescs.size())
+		if (playerCnt + playerNum - 1 < manualDescs.size())
 		{
-			FontAsset(U"Desc")(playDescs.at(playerCnt + playerNum - 1))
-				.draw(imgPos.movedBy(0, imgSize.y + 24 + 40 * 3), ColorF(0.2));
+			auto desc =
+				getData().playersType.at(playerNum) == PlayerType::Manual ? manualDescs.at(playerCnt + playerNum - 1) :
+				getData().playersType.at(playerNum) == PlayerType::Auto ? autoDescs.at(playerCnt + playerNum - 1) :
+				U"";
+			FontAsset(U"Desc")(desc).draw(imgPos.movedBy(0, imgSize.y + 24 + 40 * 3), ColorF(0.2));
 		}
 	}
 

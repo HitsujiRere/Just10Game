@@ -1,8 +1,12 @@
 
 # include "PlayerOperatorAuto.hpp"
 
-PlayerOperatorAuto::PlayerOperatorAuto(double _moveCoolTime)
+PlayerOperatorAuto::PlayerOperatorAuto(KeyGroup _KeysLeft, KeyGroup _KeysRight, KeyGroup _KeysDown, KeyGroup _KeysUp, double _moveCoolTime)
 	: playerPtr()
+	, KeysLeft(_KeysLeft)
+	, KeysRight(_KeysRight)
+	, KeysDown(_KeysDown)
+	, KeysUp(_KeysUp)
 	, moveCoolTime(_moveCoolTime)
 {
 }
@@ -10,9 +14,14 @@ PlayerOperatorAuto::PlayerOperatorAuto(double _moveCoolTime)
 PlayerOperatorAuto& PlayerOperatorAuto::operator=(const PlayerOperatorAuto& another)
 {
 	*this->playerPtr = *another.playerPtr;
-	this->isStartBattle = another.isStartBattle;
+	this->isBattleMode = another.isBattleMode;
 
 	this->destX = another.destX;
+
+	this->KeysLeft = another.KeysLeft;
+	this->KeysRight = another.KeysRight;
+	this->KeysDown = another.KeysDown;
+	this->KeysUp = another.KeysUp;
 
 	this->moveTimer = another.moveTimer;
 	this->moveCoolTime = another.moveCoolTime;
@@ -22,7 +31,7 @@ PlayerOperatorAuto& PlayerOperatorAuto::operator=(const PlayerOperatorAuto& anot
 
 void PlayerOperatorAuto::update()
 {
-	if (isStartBattle)
+	if (isBattleMode)
 	{
 		const auto& deltaTime = Scene::DeltaTime();
 
@@ -68,12 +77,12 @@ void PlayerOperatorAuto::updateDestX(const CellField& field)
 
 bool PlayerOperatorAuto::isMoveL() const
 {
-	return isStartBattle && (moveTimer > moveCoolTime) && (destX < playerPtr->dropCellFieldX);
+	return (isBattleMode && (moveTimer > moveCoolTime) && (destX < playerPtr->dropCellFieldX)) || (KeysLeft.down());
 }
 
 bool PlayerOperatorAuto::isMoveR() const
 {
-	return isStartBattle && (moveTimer > moveCoolTime) && (destX > playerPtr->dropCellFieldX);
+	return (isBattleMode && (moveTimer > moveCoolTime) && (destX > playerPtr->dropCellFieldX)) || (KeysRight.down());
 }
 
 bool PlayerOperatorAuto::isHold() const
@@ -83,16 +92,16 @@ bool PlayerOperatorAuto::isHold() const
 
 bool PlayerOperatorAuto::isDrop() const
 {
-	return isStartBattle && (moveTimer > moveCoolTime) && (destX == playerPtr->dropCellFieldX);
+	return isBattleMode && (moveTimer > moveCoolTime) && (destX == playerPtr->dropCellFieldX);
 }
 
 bool PlayerOperatorAuto::isDecide() const
 {
-	return false;
+	return KeysUp.down() || KeysDown.down();
 }
 
 void PlayerOperatorAuto::setPlayer(std::shared_ptr<Player> _playerPtr)
 {
 	playerPtr = _playerPtr;
-	isStartBattle = true;
+	isBattleMode = true;
 }

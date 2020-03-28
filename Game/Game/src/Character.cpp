@@ -29,10 +29,7 @@ void Character::loadCharactersFromPath(String path, bool IsResourcePath)
 		{
 			Character character;
 
-			character.number = Parse<int32>(ini[U"{}.number"_fmt(section.section)]);
-
-			if (character.number < 0)	continue;
-
+			character.number = static_cast<int32>(characters.size());
 			character.identity = section.section;
 			character.name = ini[U"{}.name"_fmt(section.section)];
 			character.desc = ini[U"{}.desc"_fmt(section.section)].replaced(U"\\n", U"\n");
@@ -44,11 +41,7 @@ void Character::loadCharactersFromPath(String path, bool IsResourcePath)
 			character.atkRate = Parse<double>(ini[U"{}.atk"_fmt(section.section)]);
 			character.defRate = Parse<double>(ini[U"{}.def"_fmt(section.section)]);
 
-			if (character.number >= characters.size())
-			{
-				characters.resize(character.number + 1);
-			}
-			characters.at(character.number) = character;
+			characters << character;
 		}
 		catch (const Error & e)
 		{
@@ -59,13 +52,13 @@ void Character::loadCharactersFromPath(String path, bool IsResourcePath)
 
 void Character::loadCharacters(Array<String> charaPath, Array<String> charaResourcePath)
 {
-	for (auto path : charaPath)
-	{
-		loadCharactersFromPath(path);
-	}
 	for (auto path : charaResourcePath)
 	{
 		loadCharactersFromPath(path, true);
+	}
+	for (auto path : charaPath)
+	{
+		loadCharactersFromPath(path);
 	}
 
 	// 空の場合は、ディフォルトくんを追加する

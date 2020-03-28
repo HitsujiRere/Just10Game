@@ -13,19 +13,24 @@ private:
 	// プレイヤー
 	std::shared_ptr<Player> playerPtr;
 	// バトル開始かどうか
-	bool isStartBattle = false;
+	bool isBattleMode = false;
 
 	// 行き先のX
 	int32 destX = 0;
 
+	KeyGroup KeysLeft = KeyGroup();
+	KeyGroup KeysRight = KeyGroup();
+	KeyGroup KeysDown = KeyGroup();
+	KeyGroup KeysUp = KeyGroup();
+
 	// 移動待機残り時間
 	double moveTimer = 0.0;
 	// 移動待機最大時間
-	double moveCoolTime = 3.0;
+	double moveCoolTime = 1.0;
 
 public:
 
-	PlayerOperatorAuto(double _moveCoolTime = 1.0);
+	PlayerOperatorAuto(KeyGroup _KeysLeft, KeyGroup _KeysRight, KeyGroup _KeysDown, KeyGroup _KeysUp, double _moveCoolTime = 1.0);
 
 	PlayerOperatorAuto& operator=(const PlayerOperatorAuto& another);
 
