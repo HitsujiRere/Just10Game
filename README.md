@@ -1,4 +1,4 @@
-# Just10Game  ver 1.1.0
+# Just10Game  ver 1.0.0
 
 ## LICENSE
 
