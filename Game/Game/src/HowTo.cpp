@@ -43,6 +43,9 @@ void HowTo::update()
 
 void HowTo::draw() const
 {
+	Rect(0, static_cast<int32>(Scene::Height() * 0.7), Scene::Width(), static_cast<int32>(Scene::Height() * 0.3))
+		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
+
 	// タイトルの表示
 	{
 		const Vec2 center(Scene::Center().x, 80);

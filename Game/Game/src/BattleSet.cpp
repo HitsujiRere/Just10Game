@@ -236,7 +236,7 @@ void BattleSet::draw() const
 		}
 
 		Rect(imgPos.asPoint(), imgSize.asPoint())
-			.drawShadow(Vec2(9, 15), 10.0, 10.0, ColorF(0.0, 0.4))
+			.drawShadow(Vec2(9, 15), 10.0, 4.0, ColorF(0.0, 0.4))
 			.draw(ColorF(1.0))
 			.drawFrame(0.0, 4.0, ColorF(0.2));
 
