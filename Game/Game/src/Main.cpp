@@ -124,8 +124,5 @@ void Main()
 	}
 
 	// GameDataを保存
-	if (isSaveGameData)
-	{
-		gamedataPtr->saveGameData(U"data/GameData.bin");
-	}
+	gamedataPtr->saveGameData(U"data/GameData.bin");
 }
