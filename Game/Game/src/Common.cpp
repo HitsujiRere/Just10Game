@@ -23,7 +23,6 @@ bool GameData::loadGameData(String path)
 		break;
 
 	default:
-		ret = false;
 		break;
 	}
 
