@@ -5,6 +5,9 @@
 # include "Cell.hpp"
 # include "CellField.hpp"
 # include "PlayerOperator.hpp"
+# include "PlayerData.hpp"
+
+class PlayerData;
 
 // 試合の状態
 enum class BattleState
@@ -142,7 +145,8 @@ public:
 	// 更新する
 	void update(std::shared_ptr<PlayerOperator> operaterPtr);
 
-	void draw(Point fieldPos, Size cellDrawSize, FieldDrawMode drawMode) const;
+	// 描画する
+	void draw(const PlayerData& data, Size cellSize) const;
 
 	// オジャマを送る
 	void sentObstructs(double sent_obstructs);

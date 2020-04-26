@@ -184,7 +184,7 @@ void BattleSet::draw() const
 	const int32 playerCnt = static_cast<int32>(getData().playerCnt);
 
 	Rect(0, static_cast<int32>(Scene::Height() * 0.7), Scene::Width(), static_cast<int32>(Scene::Height() * 0.3))
-		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.5));
+		.draw(Arg::top = ColorF(0.0, 0.0), Arg::bottom = ColorF(0.0, 0.3));
 
 	for (auto playerNum : step(playerCnt))
 	{

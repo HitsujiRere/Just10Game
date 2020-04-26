@@ -126,7 +126,7 @@ void Battle::draw() const
 		const Size drawsize = player.field.getDrawsize();
 		const Point fieldCenter = playerData.fieldPos + drawsize * cellSize / 2;
 
-		player.draw(playerData.fieldPos, cellSize, playerData.drawMode);
+		player.draw(playerData, cellSize);
  
 		// ‘—‚éƒIƒWƒƒƒ}
 		if (getData().playerCnt == PlayerCount::By2 && player.sendingObstructCnt > 0)

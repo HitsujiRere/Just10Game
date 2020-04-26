@@ -6,6 +6,9 @@
 # include "PlayerOperator.hpp"
 # include "Character.hpp"
 
+class Player;
+enum class FieldDrawMode;
+
 // プレイヤーのデータ
 class PlayerData
 {

@@ -211,13 +211,16 @@ void Player::update(std::shared_ptr<PlayerOperator> operaterPtr)
 	}
 }
 
-void Player::draw(Point fieldPos, Size cellSize, FieldDrawMode drawMode) const
+void Player::draw(const PlayerData& data, Size cellSize) const
 {
+	const Point fieldPos = data.fieldPos;
+	const FieldDrawMode drawMode = data.drawMode;
 	const Size drawsize = field.getDrawsize();
 	const Point textMoved = (Vec2(0, -1.5) * cellSize).asPoint();
 	const Point fieldCenter = fieldPos + drawsize * cellSize / 2;
+	const Character& chara = Character::getCharacters().at(data.characterNum);
 
-	// Nextセルの描画
+	// Nextセル，キャラクターの描画
 	{
 		const Point nextPos =
 			drawMode == FieldDrawMode::Left ? fieldPos + Point(-2, 1) * cellSize :
@@ -227,6 +230,7 @@ void Player::draw(Point fieldPos, Size cellSize, FieldDrawMode drawMode) const
 			drawMode == FieldDrawMode::Left ? (Vec2(0.5, -0.5) * cellSize).asPoint() :
 			drawMode == FieldDrawMode::Right ? (Vec2(-0.5, -0.5) * cellSize).asPoint() :
 			Point();
+
 		FontAsset(U"Text")(U"Next").drawAt(nextPos.movedBy(textMoved).movedBy(2, 3), ColorF(0.0, 0.4));
 		FontAsset(U"Text")(U"Next").drawAt(nextPos.movedBy(textMoved), ColorF(0.2));
 		Rect(Arg::center(nextPos), cellSize * 2).drawShadow(Vec2(9, 15), 10.0, 0.0, ColorF(0.0, 0.4));
@@ -239,6 +243,8 @@ void Player::draw(Point fieldPos, Size cellSize, FieldDrawMode drawMode) const
 		{
 			getDropCellNotAdd(i).getTexture().resized(cellSize).drawAt(nextPos + nextPosDiff + i * Point(0, cellSize.y + 4));
 		}
+
+		chara.texture.fitted(cellSize * 5).draw(Arg::topCenter = nextPos.movedBy(0, (cellSize.y + 4) * 5.5));
 	}
 
 	// ホールドの表示

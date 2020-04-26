@@ -1,6 +1,6 @@
 ﻿
 //
-// Just10Game  ver 1.0.0
+// Just10Game  ver 1.1.0
 // made by HitsujiRere
 //
 
@@ -53,8 +53,6 @@ void Main()
 	// 使用するテクスチャーアセット
 	TextureAsset::Register(U"check-square", Icon(0xf14a, 500));
 
-	// 同じ形式かどうかはloadVersionで判定
-	constexpr int32 load_version = 1;
 	// GameDataをロード
 	std::shared_ptr<GameData> gamedataPtr(new GameData());
 	gamedataPtr->loadSetting(U"data/setting.ini");
